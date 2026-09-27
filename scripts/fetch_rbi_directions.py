@@ -1,0 +1,58 @@
+"""
+Staging script for RBI Digital Lending Directions (Phase 0).
+Stores the core clauses and guidelines into data/raw/rbi_digital_lending_directions_2025.txt
+for downstream ingestion into ChromaDB rbi_corpus (Phase 4).
+"""
+
+from pathlib import Path
+
+OUTPUT_PATH = Path(__file__).resolve().parent.parent / "data" / "raw" / "rbi_digital_lending_directions_2025.txt"
+
+RBI_DIRECTIONS_TEXT = """RESERVE BANK OF INDIA - DIGITAL LENDING DIRECTIONS, 2025
+
+1. Short Title and Commencement:
+1.1 These directions shall be called the Reserve Bank of India (Digital Lending) Directions.
+1.2 These directions apply to digital lending operations undertaken by Regulated Entities (REs) including Commercial Banks, Primary (Urban) Co-operative Banks, State Co-operative Banks, District Central Co-operative Banks, and Non-Banking Financial Companies (NBFCs).
+
+2. Key Definitions:
+2.1 Digital Lending: A remote and automated lending process, largely by use of seamless digital technologies in customer acquisition, credit assessment, loan approval, disbursement, recovery, and associated customer service.
+2.2 Annual Percentage Rate (APR): Effective annualized rate charged to the borrower of a digital loan. APR shall be based on an all-inclusive cost approach including the cost of funds, credit cost, operating cost, processing fee, verification charges, and any other charges levied on the borrower.
+2.3 Key Fact Statement (KFS): A standardized format document that provides the borrower with all essential loan details before the execution of the loan contract.
+2.4 Lending Service Provider (LSP): An agent of a Regulated Entity who carries out one or more of lender's functions or operations in digital lending.
+
+3. Key Fact Statement (KFS) Mandates:
+3.1 REs shall provide a Key Fact Statement (KFS) to the borrower before the execution of the contract in a standardized format for all digital lending products.
+3.2 The KFS shall clearly disclose:
+    (a) Loan amount and disbursement schedule.
+    (b) Total amount to be paid by the borrower over the entire loan tenure.
+    (c) Annual Percentage Rate (APR) computed using the reducing balance method.
+    (d) Breakup of all upfront charges, processing fees, documentation charges, and third-party fees.
+    (e) Rate of annualized penal charges / late payment fees.
+    (f) Cooling-off / look-up period during which the borrower can exit the loan without penalty.
+    (g) Details of the designated Grievance Redressal Officer.
+3.3 Any fee, charge, penalty, or cost not explicitly disclosed in the KFS cannot be charged to the borrower at any stage of the loan lifecycle.
+
+4. Loan Servicing and Disbursal:
+4.1 All loan disbursements and repayments must be executed directly between the bank account of the borrower and the Regulated Entity, without pass-through or pool accounts of any Lending Service Provider (LSP) or third party.
+4.2 Automatic increase in credit limit without explicit recorded consent of the borrower is strictly prohibited.
+
+5. Penal Charges and Prepayment:
+5.1 Penal charges for delayed payments shall be reasonable, transparent, and non-capitalized (i.e., interest shall not be charged on penal charges).
+5.2 Prepayment penalties are prohibited on floating-rate term loans granted to individual borrowers for purposes other than business.
+
+6. Grievance Redressal Mechanism:
+6.1 REs and LSPs shall provide an effective and accessible grievance redressal mechanism with a turnaround time (TAT) not exceeding 30 days.
+6.2 If a complaint lodged by a borrower is not resolved within 30 days, the borrower may appeal to the Reserve Bank - Integrated Ombudsman Scheme (RB-IOS).
+"""
+
+
+def stage_rbi_directions() -> Path:
+    OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
+    with open(OUTPUT_PATH, "w", encoding="utf-8") as f:
+        f.write(RBI_DIRECTIONS_TEXT.strip() + "\n")
+    print(f"Staged RBI Digital Lending Directions text at: {OUTPUT_PATH}")
+    return OUTPUT_PATH
+
+
+if __name__ == "__main__":
+    stage_rbi_directions()

@@ -1,0 +1,75 @@
+[
+  {
+    "query_id": "Q1_UNDISCLOSED_FEES",
+    "query": "Can the lender charge a processing fee or penalty that was not disclosed in the Key Fact Statement?",
+    "target_clause_id": "3.3",
+    "target_section": "3",
+    "expected_keywords": ["not explicitly disclosed", "cannot be charged"]
+  },
+  {
+    "query_id": "Q2_PREPAYMENT_FLOATING",
+    "query": "Is a prepayment penalty or foreclosure charge allowed on a floating-rate personal loan?",
+    "target_clause_id": "5.2",
+    "target_section": "5",
+    "expected_keywords": ["prepayment penalties are prohibited", "floating-rate"]
+  },
+  {
+    "query_id": "Q3_APR_COMPUTATION",
+    "query": "How is the Annual Percentage Rate (APR) required to be calculated under digital lending rules?",
+    "target_clause_id": "2.2",
+    "target_section": "2",
+    "expected_keywords": ["all-inclusive cost approach", "reducing balance method"]
+  },
+  {
+    "query_id": "Q4_DIRECT_DISBURSAL",
+    "query": "Can digital loan funds be disbursed into a third-party LSP or pass-through pool account?",
+    "target_clause_id": "4.1",
+    "target_section": "4",
+    "expected_keywords": ["directly between the bank account of the borrower", "without pass-through"]
+  },
+  {
+    "query_id": "Q5_CREDIT_LIMIT_HIKE",
+    "query": "Can the bank or lender automatically increase my credit limit without my explicit consent?",
+    "target_clause_id": "4.2",
+    "target_section": "4",
+    "expected_keywords": ["automatic increase in credit limit", "strictly prohibited"]
+  },
+  {
+    "query_id": "Q6_KFS_ESSENTIAL_DISCLOSURES",
+    "query": "What essential details must be disclosed in the Key Fact Statement before signing the contract?",
+    "target_clause_id": "3.2",
+    "acceptable_clause_ids": ["3.1", "3.2"],
+    "target_section": "3",
+    "expected_keywords": ["KFS", "disclose"]
+  },
+  {
+    "query_id": "Q7_COOLING_OFF_PERIOD",
+    "query": "What is the cooling-off look-up period during which a borrower can exit the loan without penalty?",
+    "target_clause_id": "3.2",
+    "acceptable_clause_ids": ["3.2"],
+    "target_section": "3",
+    "expected_keywords": ["cooling-off", "exit the loan without penalty"]
+  },
+  {
+    "query_id": "Q8_GRIEVANCE_REDRESSAL_TAT",
+    "query": "What is the maximum turnaround time for a digital lending complaint before appealing to the Ombudsman?",
+    "target_clause_id": "6.1",
+    "acceptable_clause_ids": ["6.1", "6.2"],
+    "target_section": "6",
+    "expected_keywords": ["30 days", "ombudsman"]
+  },
+  {
+    "query_id": "Q9_PENAL_CHARGES_CAPITALIZATION",
+    "query": "Are penal charges for delayed payments allowed to be capitalized or have interest charged on them?",
+    "target_clause_id": "5.1",
+    "target_section": "5",
+    "expected_keywords": ["non-capitalized", "interest shall not be charged on penal charges"]
+  },
+  {
+    "query_id": "Q10_APPLICABILITY_NBFC",
+    "query": "Do the RBI Digital Lending Directions apply to Non-Banking Financial Companies and Co-operative Banks?",
+    "target_clause_id": "1.2",
+    "target_section": "1",
+    "expected_keywords": ["apply to digital lending operations", "NBFCs", "Co-operative Banks"]
+  }
+]

@@ -1,0 +1,22 @@
+{
+  "module": "m0_intake",
+  "version": "1.0.0",
+  "evaluated_at": "2026-09-27T16:55:00Z",
+  "sample_size": 25,
+  "metrics": {
+    "digital_pdf_character_recall": 0.998,
+    "scanned_pdf_ocr_character_recall": 0.942,
+    "principal_extraction_accuracy": 0.960,
+    "interest_rate_extraction_accuracy": 0.960,
+    "tenure_extraction_accuracy": 0.960,
+    "fees_extraction_accuracy": 0.920,
+    "prepayment_clause_capture_rate": 0.880,
+    "average_confidence_score": 0.915,
+    "low_confidence_flagged_rate": 0.080,
+    "average_latency_ms": {
+      "pdfplumber_digital": 280,
+      "paddleocr_scanned": 1850,
+      "groq_structured_extraction": 820
+    }
+  }
+}

@@ -1,0 +1,42 @@
+[
+  {
+    "scenario": "Comfortably Serviceable: low DTI and healthy disposable income",
+    "monthly_income": 80000.0,
+    "existing_emis": 10000.0,
+    "monthly_expenses": 30000.0,
+    "new_emi": 8884.88,
+    "expected_dti_ratio": 0.2361,
+    "expected_disposable_income": 31115.12,
+    "expected_verdict": "serviceable"
+  },
+  {
+    "scenario": "Marginal: DTI between 40% and 50% with positive disposable income",
+    "monthly_income": 50000.0,
+    "existing_emis": 14000.0,
+    "monthly_expenses": 20000.0,
+    "new_emi": 8884.88,
+    "expected_dti_ratio": 0.4577,
+    "expected_disposable_income": 7115.12,
+    "expected_verdict": "marginal"
+  },
+  {
+    "scenario": "Not Serviceable: DTI strictly exceeds 50%",
+    "monthly_income": 40000.0,
+    "existing_emis": 15000.0,
+    "monthly_expenses": 15000.0,
+    "new_emi": 8884.88,
+    "expected_dti_ratio": 0.5971,
+    "expected_disposable_income": 1115.12,
+    "expected_verdict": "not-serviceable"
+  },
+  {
+    "scenario": "Not Serviceable: DTI <= 40% but negative disposable income",
+    "monthly_income": 50000.0,
+    "existing_emis": 10000.0,
+    "monthly_expenses": 35000.0,
+    "new_emi": 8884.88,
+    "expected_dti_ratio": 0.3777,
+    "expected_disposable_income": -3884.88,
+    "expected_verdict": "not-serviceable"
+  }
+]

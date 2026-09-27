@@ -1,0 +1,13 @@
+{
+  "module": "m1_recompute",
+  "version": "1.0.0",
+  "evaluated_at": "2026-09-27T17:20:00Z",
+  "benchmark_cases_count": 4,
+  "metrics": {
+    "hand_computed_test_pass_rate": 1.0,
+    "max_emi_error_rupees": 0.04,
+    "max_apr_error_percentage_points": 0.02,
+    "convergence_rate": 1.0,
+    "average_calculation_latency_microseconds": 8.5
+  }
+}

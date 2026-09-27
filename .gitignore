@@ -1,0 +1,48 @@
+# Environment variables and secrets
+.env
+*.env
+!.env.example
+*.pem
+*.key
+*.cert
+
+# Python bytecode & cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Virtual environments
+venv/
+.venv/
+env/
+ENV/
+
+# Model weights and HuggingFace cache
+models/
+model_weights/
+.cache/
+hf_cache/
+
+# Raw/processed data directories (keep structure via .gitkeep)
+data/raw/*
+!data/raw/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
+
+# ChromaDB local persistence data
+chroma_data/
+.chroma/
+
+# IDE & OS files
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+supabase\node_modules

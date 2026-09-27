@@ -1,0 +1,189 @@
+[
+  {
+    "scenario_id": "CASE_1_CLEAN_MATCH",
+    "description": "Standard personal loan where manual terms, T&C, and KFS all agree within tolerance.",
+    "manual_terms": {
+      "principal": 100000.0,
+      "disclosed_rate": 12.0,
+      "tenure_months": 12,
+      "fees": 1500.0
+    },
+    "tnc_extracted": {
+      "principal": 100000.0,
+      "disclosed_rate": 12.0,
+      "tenure_months": 12,
+      "processing_fee": 1500.0,
+      "prepayment_clause": "No foreclosure charges or prepayment penalty applicable on floating rate personal loan facility as per RBI guidelines."
+    },
+    "kfs_extracted": {
+      "principal": 100000.0,
+      "disclosed_rate": 12.0,
+      "tenure_months": 12,
+      "processing_fee": 1500.0,
+      "prepayment_clause": "Nil prepayment / foreclosure penalty applicable during loan tenure."
+    },
+    "expected_results": {
+      "overall_status": "match",
+      "mismatch_count": 0,
+      "missing_count": 0,
+      "match_count": 5,
+      "field_statuses": {
+        "principal": "match",
+        "disclosed_rate": "match",
+        "tenure_months": "match",
+        "fees": "match",
+        "prepayment_clause": "match"
+      },
+      "requires_human_review": false
+    }
+  },
+  {
+    "scenario_id": "CASE_2_HIDDEN_FEE_MISMATCH",
+    "description": "Classic predatory mismatch: KFS states upfront fees of INR 500, but T&C stipulates an unexpected INR 3,500 non-refundable charge.",
+    "manual_terms": {
+      "principal": 250000.0,
+      "disclosed_rate": 14.5,
+      "tenure_months": 24,
+      "fees": 500.0
+    },
+    "tnc_extracted": {
+      "principal": 250000.0,
+      "disclosed_rate": 14.5,
+      "tenure_months": 24,
+      "processing_fee": 3500.0,
+      "prepayment_clause": "Nil foreclosure charges."
+    },
+    "kfs_extracted": {
+      "principal": 250000.0,
+      "disclosed_rate": 14.5,
+      "tenure_months": 24,
+      "processing_fee": 500.0,
+      "prepayment_clause": "Nil foreclosure charges."
+    },
+    "expected_results": {
+      "overall_status": "mismatch",
+      "mismatch_count": 1,
+      "missing_count": 0,
+      "match_count": 4,
+      "field_statuses": {
+        "principal": "match",
+        "disclosed_rate": "match",
+        "tenure_months": "match",
+        "fees": "mismatch",
+        "prepayment_clause": "match"
+      },
+      "mismatched_fields": ["fees"],
+      "requires_human_review": false
+    }
+  },
+  {
+    "scenario_id": "CASE_3_RATE_MARKUP_MISMATCH",
+    "description": "Disclosed rate disparity: borrower entered 11.5% and T&C states 11.5%, but KFS reveals a 13.75% rate.",
+    "manual_terms": {
+      "principal": 500000.0,
+      "disclosed_rate": 11.5,
+      "tenure_months": 36,
+      "fees": 2500.0
+    },
+    "tnc_extracted": {
+      "principal": 500000.0,
+      "disclosed_rate": 11.5,
+      "tenure_months": 36,
+      "processing_fee": 2500.0,
+      "prepayment_clause": "No prepayment charges."
+    },
+    "kfs_extracted": {
+      "principal": 500000.0,
+      "disclosed_rate": 13.75,
+      "tenure_months": 36,
+      "processing_fee": 2500.0,
+      "prepayment_clause": "No prepayment charges."
+    },
+    "expected_results": {
+      "overall_status": "mismatch",
+      "mismatch_count": 1,
+      "missing_count": 0,
+      "match_count": 4,
+      "field_statuses": {
+        "principal": "match",
+        "disclosed_rate": "mismatch",
+        "tenure_months": "match",
+        "fees": "match",
+        "prepayment_clause": "match"
+      },
+      "mismatched_fields": ["disclosed_rate"],
+      "requires_human_review": false
+    }
+  },
+  {
+    "scenario_id": "CASE_4_PREPAYMENT_CONTRADICTION",
+    "description": "T&C states 3.5% foreclosure fee, but KFS promises zero charges. Requires mandatory human review.",
+    "manual_terms": {
+      "principal": 150000.0,
+      "disclosed_rate": 13.0,
+      "tenure_months": 18,
+      "fees": 1000.0
+    },
+    "tnc_extracted": {
+      "principal": 150000.0,
+      "disclosed_rate": 13.0,
+      "tenure_months": 18,
+      "processing_fee": 1000.0,
+      "prepayment_clause": "A prepayment penalty of 3.5% plus applicable GST shall be levied on the outstanding principal balance upon early foreclosure."
+    },
+    "kfs_extracted": {
+      "principal": 150000.0,
+      "disclosed_rate": 13.0,
+      "tenure_months": 18,
+      "processing_fee": 1000.0,
+      "prepayment_clause": "Foreclosure and prepayment charges are nil for individual borrowers as per regulatory mandates."
+    },
+    "expected_results": {
+      "overall_status": "mismatch",
+      "mismatch_count": 1,
+      "missing_count": 0,
+      "match_count": 4,
+      "field_statuses": {
+        "principal": "match",
+        "disclosed_rate": "match",
+        "tenure_months": "match",
+        "fees": "match",
+        "prepayment_clause": "mismatch"
+      },
+      "mismatched_fields": ["prepayment_clause"],
+      "requires_human_review": true
+    }
+  },
+  {
+    "scenario_id": "CASE_5_INCOMPLETE_DOCUMENTS",
+    "description": "Borrower entered manual terms and uploaded T&C, but KFS document has not been uploaded yet.",
+    "manual_terms": {
+      "principal": 300000.0,
+      "disclosed_rate": 12.5,
+      "tenure_months": 24,
+      "fees": 2000.0
+    },
+    "tnc_extracted": {
+      "principal": 300000.0,
+      "disclosed_rate": 12.5,
+      "tenure_months": 24,
+      "processing_fee": 2000.0,
+      "prepayment_clause": "Nil prepayment charges."
+    },
+    "kfs_extracted": null,
+    "expected_results": {
+      "overall_status": "missing",
+      "mismatch_count": 0,
+      "missing_count": 5,
+      "match_count": 0,
+      "field_statuses": {
+        "principal": "missing",
+        "disclosed_rate": "missing",
+        "tenure_months": "missing",
+        "fees": "missing",
+        "prepayment_clause": "missing"
+      },
+      "requires_human_review": false
+    }
+  }
+]

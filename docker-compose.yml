@@ -1,0 +1,33 @@
+services:
+  chromadb:
+    image: chromadb/chroma:0.5.23
+    container_name: guardian-chromadb
+    ports:
+      - "8000:8000"
+    volumes:
+      - chroma_data:/chroma/chroma
+    environment:
+      - IS_PERSISTENT=TRUE
+      - PERSISTENCE_DIRECTORY=/chroma/chroma
+      - ANONYMIZED_TELEMETRY=FALSE
+    restart: unless-stopped
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: guardian-api
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    environment:
+      - CHROMA_HOST=chromadb
+      - CHROMA_PORT=8000
+    depends_on:
+      - chromadb
+    restart: unless-stopped
+
+volumes:
+  chroma_data:
+    driver: local

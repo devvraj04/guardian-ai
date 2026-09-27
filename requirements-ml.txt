@@ -1,0 +1,13 @@
+# ==========================================
+# Machine Learning, Vector Store, NLP & OCR
+# Install second: pip install -r requirements-ml.txt
+# ==========================================
+
+chromadb>=0.5.5,<0.6.0
+pdfplumber>=0.11.0
+pymupdf>=1.24.0
+scikit-learn>=1.5.0
+transformers>=4.44.0
+torch>=2.2.0
+paddlepaddle>=2.6.0
+paddleocr>=2.8.0

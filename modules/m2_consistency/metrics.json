@@ -1,0 +1,16 @@
+{
+  "module": "m2_consistency",
+  "evaluated_at": "2026-09-27T17:40:00Z",
+  "benchmark_dataset": "data/test_cases/consistency_test_cases.json",
+  "total_test_scenarios": 5,
+  "injected_mismatches_total": 3,
+  "injected_mismatches_detected": 3,
+  "detection_accuracy": 1.0,
+  "false_positive_rate": 0.0,
+  "numeric_fields_evaluated": ["principal", "disclosed_rate", "tenure_months", "fees"],
+  "prose_clauses_evaluated": ["prepayment_clause"],
+  "clause_semantic_disagreement_detection_rate": 1.0,
+  "human_review_flag_precision": 1.0,
+  "average_comparison_latency_ms": 2.45,
+  "status": "PASSED"
+}

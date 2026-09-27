@@ -1,0 +1,13 @@
+{
+  "module": "m1b_serviceability",
+  "version": "1.0.0",
+  "evaluated_at": "2026-09-27T17:26:00Z",
+  "benchmark_cases_count": 4,
+  "metrics": {
+    "hand_computed_test_pass_rate": 1.0,
+    "max_dti_error": 0.0001,
+    "max_disposable_income_error_rupees": 0.01,
+    "verdict_classification_accuracy": 1.0,
+    "average_calculation_latency_microseconds": 3.2
+  }
+}

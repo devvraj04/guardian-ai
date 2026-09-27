@@ -1,0 +1,46 @@
+[
+  {
+    "description": "Standard 1-year loan with Rs. 2000 upfront fee",
+    "principal": 100000.0,
+    "disclosed_rate": 12.0,
+    "tenure_months": 12,
+    "fees": 2000.0,
+    "expected_emi": 8884.88,
+    "expected_apr": 15.89,
+    "expected_total_payment": 106618.55,
+    "tolerance_apr": 0.05
+  },
+  {
+    "description": "Zero fee 2-year loan where APR equals nominal rate",
+    "principal": 50000.0,
+    "disclosed_rate": 14.0,
+    "tenure_months": 24,
+    "fees": 0.0,
+    "expected_emi": 2400.60,
+    "expected_apr": 14.00,
+    "expected_total_payment": 57614.35,
+    "tolerance_apr": 0.02
+  },
+  {
+    "description": "Short-term microloan with heavy upfront fee",
+    "principal": 10000.0,
+    "disclosed_rate": 18.0,
+    "tenure_months": 6,
+    "fees": 500.0,
+    "expected_emi": 1755.25,
+    "expected_apr": 36.33,
+    "expected_total_payment": 10531.51,
+    "tolerance_apr": 0.05
+  },
+  {
+    "description": "3-year high-value loan with Rs. 5000 processing fee",
+    "principal": 500000.0,
+    "disclosed_rate": 10.5,
+    "tenure_months": 36,
+    "fees": 5000.0,
+    "expected_emi": 16251.22,
+    "expected_apr": 11.19,
+    "expected_total_payment": 585043.98,
+    "tolerance_apr": 0.05
+  }
+]
