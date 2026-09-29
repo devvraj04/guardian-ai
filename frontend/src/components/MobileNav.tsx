@@ -11,10 +11,36 @@ import {
   Scale,
   Activity,
   ShieldCheck,
+  LogOut,
 } from "lucide-react";
+import { supabase } from "@/lib/supabase";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function MobileNav() {
   const [open, setOpen] = useState(false);
+  const [email, setEmail] = useState<string | null>(null);
+  const router = useRouter();
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session?.user?.email) {
+        setEmail(session.user.email);
+      }
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setEmail(session?.user?.email || null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    setOpen(false);
+    router.push("/auth");
+  };
 
   const navLinks = [
     { href: "/", label: "Dashboard", icon: LayoutDashboard },
@@ -82,16 +108,41 @@ export default function MobileNav() {
         </nav>
 
         {/* User Info */}
-        <div className="absolute bottom-0 left-0 right-0 p-5 border-t border-[#e5e7eb]">
-          <div className="flex items-center gap-3">
-            <div className="h-10 w-10 rounded-full bg-gradient-to-br from-[#0052cc] to-[#0078d4] flex items-center justify-center text-white text-sm font-bold shadow-sm">
-              TB
+        <div className="absolute bottom-0 left-0 right-0 p-5 border-t border-[#e5e7eb] bg-white">
+          {email ? (
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="h-10 w-10 rounded-full bg-gradient-to-br from-[#0052cc] to-[#0078d4] flex items-center justify-center text-white text-sm font-bold shadow-sm">
+                  {email.split("@")[0].substring(0, 2).toUpperCase()}
+                </div>
+                <div>
+                  <p className="text-[13px] font-semibold text-[#1a1d23] truncate w-32">
+                    {email.split("@")[0]}
+                  </p>
+                  <p className="text-[11px] text-[#9ca3af] truncate w-32">
+                    {email}
+                  </p>
+                </div>
+              </div>
+              <button
+                onClick={handleSignOut}
+                className="h-9 w-9 rounded-lg border border-[#e5e7eb] bg-white hover:bg-[#fef2f2] hover:text-[#ef4444] hover:border-[#fca5a5] flex items-center justify-center transition-colors group"
+                title="Sign Out"
+              >
+                <LogOut className="h-4 w-4 text-[#6b7280] group-hover:text-[#ef4444]" />
+              </button>
             </div>
-            <div>
-              <p className="text-[13px] font-semibold text-[#1a1d23]">Test Borrower</p>
-              <p className="text-[11px] text-[#9ca3af]">test_borrower@guardian.local</p>
+          ) : (
+            <div className="flex flex-col gap-2">
+              <Link
+                href="/auth"
+                onClick={() => setOpen(false)}
+                className="w-full flex justify-center py-2 px-4 border border-[#0052cc] rounded-lg text-sm font-semibold text-[#0052cc] hover:bg-[#e8f0fe] transition-colors"
+              >
+                Sign In
+              </Link>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </>

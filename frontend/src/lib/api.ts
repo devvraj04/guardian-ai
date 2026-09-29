@@ -1,24 +1,26 @@
-export const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api/v1";
+import { supabase } from "./supabase";
 
-// Auth token management — uses demo JWT by default, swappable for real Supabase Auth
-let authToken: string | null = null;
+export const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api/v1";
 
 // Valid JWT for test_borrower@guardian.local registered in Supabase
 const DEMO_JWT = process.env.NEXT_PUBLIC_DEMO_JWT || "";
 
-export function setAuthToken(token: string | null) {
-  authToken = token;
-}
-
-export function getAuthToken(): string {
-  return authToken || DEMO_JWT;
+export async function getAuthToken(): Promise<string> {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (session?.access_token) {
+    return session.access_token;
+  }
+  return DEMO_JWT;
 }
 
 export async function fetchApi(endpoint: string, options: RequestInit = {}) {
   const url = `${API_BASE}${endpoint}`;
 
   const headers = new Headers(options.headers || {});
-  headers.set("Authorization", `Bearer ${getAuthToken()}`);
+  const token = await getAuthToken();
+  if (token) {
+    headers.set("Authorization", `Bearer ${token}`);
+  }
   if (!(options.body instanceof FormData)) {
     headers.set("Content-Type", "application/json");
   }
