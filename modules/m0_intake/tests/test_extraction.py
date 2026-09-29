@@ -1,9 +1,11 @@
 import pytest
-import io
 import fitz
 from pydantic import ValidationError
-from app.schemas.extraction import ExtractedTerms, FieldConfidence
-from modules.m0_intake.extraction import extract_raw_text_from_pdf, fallback_regex_extraction
+from app.schemas.extraction import ExtractedTerms
+from modules.m0_intake.extraction import (
+    extract_raw_text_from_pdf,
+    fallback_regex_extraction,
+)
 
 
 def create_dummy_pdf(text: str) -> bytes:
@@ -40,7 +42,10 @@ def test_fallback_regex_extraction():
     assert terms.tenure_months == 24
     assert terms.processing_fee == 1200.0
     assert terms.prepayment_clause is not None
-    assert "Foreclosure" in terms.prepayment_clause or "prepayment" in terms.prepayment_clause.lower()
+    assert (
+        "Foreclosure" in terms.prepayment_clause
+        or "prepayment" in terms.prepayment_clause.lower()
+    )
 
 
 def test_extracted_terms_schema_extra_forbidden():

@@ -1,4 +1,3 @@
-from typing import List
 from app.core.logging import logger
 from modules.m0_intake.chunker import chunk_document_text
 from rag.chroma_client import insert_user_document_chunks
@@ -35,5 +34,7 @@ def ingest_document_into_chroma(
         chunk_ids=chunk_ids,
     )
 
-    logger.info(f"Ingested {len(chunks)} chunks into ChromaDB user_documents for doc_id: {doc_id}")
+    logger.info(
+        f"Ingested {len(chunks)} chunks into ChromaDB user_documents for doc_id: {doc_id}"
+    )
     return len(chunks)

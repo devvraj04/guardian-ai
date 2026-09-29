@@ -1,4 +1,3 @@
-import httpx
 from fastapi import APIRouter, status
 from pydantic import BaseModel
 from supabase import create_client, Client
@@ -26,7 +25,9 @@ async def check_health() -> HealthStatus:
 
     # Check Supabase connectivity
     try:
-        supabase: Client = create_client(settings.SUPABASE_URL, settings.SUPABASE_ANON_KEY)
+        supabase: Client = create_client(
+            settings.SUPABASE_URL, settings.SUPABASE_ANON_KEY
+        )
         # Verify connectivity by performing a lightweight query
         res = supabase.table("loans").select("id").limit(1).execute()
         if res is not None:
@@ -47,7 +48,9 @@ async def check_health() -> HealthStatus:
         logger.warning(f"ChromaDB health check connection error: {type(e).__name__}")
         chroma_status = f"unreachable: {str(e)}"
 
-    overall_healthy = (supabase_status == "connected") and (chroma_status == "connected")
+    overall_healthy = (supabase_status == "connected") and (
+        chroma_status == "connected"
+    )
 
     return HealthStatus(
         status="healthy" if overall_healthy else "degraded",

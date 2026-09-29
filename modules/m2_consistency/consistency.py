@@ -24,6 +24,7 @@ def get_embedding_function():
     if _embedding_function is None:
         try:
             from chromadb.utils.embedding_functions import DefaultEmbeddingFunction
+
             _embedding_function = DefaultEmbeddingFunction()
         except Exception:
             _embedding_function = None
@@ -61,12 +62,22 @@ def compare_numeric_field(
     Tolerance-based comparison for numeric loan terms across manual, T&C, and KFS sources.
     """
     rule = TOLERANCE_RULES.get(field_name, {"type": "abs", "abs": 0.01, "unit": ""})
-    tolerance_desc = f"{rule['abs']} {rule['unit']}" if rule["type"] == "abs" else f"{rule['abs']} {rule['unit']} or {rule['rel']*100}%"
+    tolerance_desc = (
+        f"{rule['abs']} {rule['unit']}"
+        if rule["type"] == "abs"
+        else f"{rule['abs']} {rule['unit']} or {rule['rel']*100}%"
+    )
 
     values = {
-        "manual": float(manual_val) if manual_val is not None and str(manual_val).strip() != "" else None,
-        "tnc": float(tnc_val) if tnc_val is not None and str(tnc_val).strip() != "" else None,
-        "kfs": float(kfs_val) if kfs_val is not None and str(kfs_val).strip() != "" else None,
+        "manual": float(manual_val)
+        if manual_val is not None and str(manual_val).strip() != ""
+        else None,
+        "tnc": float(tnc_val)
+        if tnc_val is not None and str(tnc_val).strip() != ""
+        else None,
+        "kfs": float(kfs_val)
+        if kfs_val is not None and str(kfs_val).strip() != ""
+        else None,
     }
 
     present_values = {src: val for src, val in values.items() if val is not None}
@@ -119,7 +130,9 @@ def compare_numeric_field(
             allowed_tol = max(rule["abs"], rule["rel"] * max_v)
 
         if diff > allowed_tol:
-            mismatches.append(f"{s1} ({v1}) vs {s2} ({v2}) diff {diff:.2f} > tol {allowed_tol:.2f}")
+            mismatches.append(
+                f"{s1} ({v1}) vs {s2} ({v2}) diff {diff:.2f} > tol {allowed_tol:.2f}"
+            )
 
     if mismatches:
         return FieldComparison(
@@ -205,7 +218,9 @@ def compare_prepayment_clauses(
     kfs_pct = extract_prepayment_penalty_pct(kfs_val)
 
     # Contradiction: One says nil, other specifies a positive fee or penalty percentage
-    if (tnc_nil and kfs_pct is not None and kfs_pct > 0) or (kfs_nil and tnc_pct is not None and tnc_pct > 0):
+    if (tnc_nil and kfs_pct is not None and kfs_pct > 0) or (
+        kfs_nil and tnc_pct is not None and tnc_pct > 0
+    ):
         notes = (
             f"Direct contradiction detected: T&C indicates {'nil charges' if tnc_nil else f'{tnc_pct}% penalty'} "
             f"whereas KFS states {'nil charges' if kfs_nil else f'{kfs_pct}% penalty'}."
@@ -291,24 +306,45 @@ def run_consistency_check(
     kfs = kfs_extracted or {}
 
     # Numeric fields
-    principal_check = compare_numeric_field("principal", manual.get("principal"), tnc.get("principal"), kfs.get("principal"))
-    rate_check = compare_numeric_field("disclosed_rate", manual.get("disclosed_rate"), tnc.get("disclosed_rate"), kfs.get("disclosed_rate"))
-    tenure_check = compare_numeric_field("tenure_months", manual.get("tenure_months"), tnc.get("tenure_months"), kfs.get("tenure_months"))
+    principal_check = compare_numeric_field(
+        "principal", manual.get("principal"), tnc.get("principal"), kfs.get("principal")
+    )
+    rate_check = compare_numeric_field(
+        "disclosed_rate",
+        manual.get("disclosed_rate"),
+        tnc.get("disclosed_rate"),
+        kfs.get("disclosed_rate"),
+    )
+    tenure_check = compare_numeric_field(
+        "tenure_months",
+        manual.get("tenure_months"),
+        tnc.get("tenure_months"),
+        kfs.get("tenure_months"),
+    )
 
     # Fee mapping: manual uses 'fees', extraction uses 'processing_fee'
     manual_fees = manual.get("fees")
-    tnc_fees = tnc.get("processing_fee") if tnc.get("processing_fee") is not None else tnc.get("fees")
-    kfs_fees = kfs.get("processing_fee") if kfs.get("processing_fee") is not None else kfs.get("fees")
+    tnc_fees = (
+        tnc.get("processing_fee")
+        if tnc.get("processing_fee") is not None
+        else tnc.get("fees")
+    )
+    kfs_fees = (
+        kfs.get("processing_fee")
+        if kfs.get("processing_fee") is not None
+        else kfs.get("fees")
+    )
     fees_check = compare_numeric_field("fees", manual_fees, tnc_fees, kfs_fees)
 
     # Prose clause comparison
-    prepayment_check = compare_prepayment_clauses(tnc.get("prepayment_clause"), kfs.get("prepayment_clause"))
+    prepayment_check = compare_prepayment_clauses(
+        tnc.get("prepayment_clause"), kfs.get("prepayment_clause")
+    )
 
     checks = [principal_check, rate_check, tenure_check, fees_check, prepayment_check]
 
     mismatches = [c for c in checks if c.match_status == "mismatch"]
     missings = [c for c in checks if c.match_status == "missing"]
-    matches = [c for c in checks if c.match_status == "match"]
 
     requires_human_review = any(c.requires_human_review for c in checks)
 

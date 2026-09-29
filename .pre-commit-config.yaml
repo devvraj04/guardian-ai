@@ -1,3 +1,4 @@
+exclude: '^(supabase/node_modules/|supabase/\.temp/|supabase/supabase/\.temp/|\.secrets\.baseline)'
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.6.0
@@ -13,7 +14,7 @@ repos:
     hooks:
       - id: detect-secrets
         args: ['--baseline', '.secrets.baseline']
-        exclude_files: ^(\.env\.example|tests/.*)$
+        exclude: ^(\.env\.example|tests/.*|supabase/node_modules/.*)$
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.6.8

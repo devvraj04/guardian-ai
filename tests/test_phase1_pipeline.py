@@ -1,6 +1,4 @@
-import io
 import fitz
-import pytest
 from fastapi.testclient import TestClient
 from app.main import app
 from app.deps.auth import AuthenticatedUser, get_current_user
@@ -9,16 +7,22 @@ from supabase import create_client
 from app.core.config import settings
 
 # Retrieve or create real test user from Supabase Auth
-supabase_admin = create_client(settings.SUPABASE_URL, settings.SUPABASE_SERVICE_ROLE_KEY)
+supabase_admin = create_client(
+    settings.SUPABASE_URL, settings.SUPABASE_SERVICE_ROLE_KEY
+)
 users_list = supabase_admin.auth.admin.list_users()
-test_user = next((u for u in users_list if u.email == "test_borrower@guardian.local"), None)
+test_user = next(
+    (u for u in users_list if u.email == "test_borrower@guardian.local"), None
+)
 
 if test_user is None:
-    test_user_res = supabase_admin.auth.admin.create_user({
-        "email": "test_borrower@guardian.local",
-        "password": "TestPassword123!",
-        "email_confirm": True,
-    })
+    test_user_res = supabase_admin.auth.admin.create_user(
+        {
+            "email": "test_borrower@guardian.local",
+            "password": "TestPassword123!",
+            "email_confirm": True,
+        }
+    )
     TEST_USER_ID = test_user_res.user.id
 else:
     TEST_USER_ID = test_user.id
@@ -59,7 +63,10 @@ def test_loan_intake_and_manual_terms_pipeline():
     # 1. Create a Loan
     create_resp = client.post(
         "/api/v1/loans",
-        json={"loan_name": "Personal Loan Offer A", "lender_name": "Apex Financial Bank"},
+        json={
+            "loan_name": "Personal Loan Offer A",
+            "lender_name": "Apex Financial Bank",
+        },
     )
     assert create_resp.status_code == 201
     loan_data = create_resp.json()
@@ -90,7 +97,9 @@ def test_loan_intake_and_manual_terms_pipeline():
     files = {"file": ("kfs_document.pdf", kfs_bytes, "application/pdf")}
     data = {"doc_type": "kfs"}
 
-    upload_resp = client.post(f"/api/v1/loans/{loan_id}/documents/upload", files=files, data=data)
+    upload_resp = client.post(
+        f"/api/v1/loans/{loan_id}/documents/upload", files=files, data=data
+    )
     assert upload_resp.status_code == 201
     upload_data = upload_resp.json()
     doc_id = upload_data["doc_id"]
@@ -106,3 +115,25 @@ def test_loan_intake_and_manual_terms_pipeline():
     assert "principal" in field_names
     assert "disclosed_rate" in field_names
     assert "tenure_months" in field_names
+
+    # 5. Verify Automatic Trigger of Phase 2 Recompute & Phase 3 Consistency Check (STATUS.md line 31, IMPLEMENTATION_PLAN.md line 89)
+    claims_res = (
+        supabase_admin.table("claims").select("*").eq("loan_id", loan_id).execute()
+    )
+    claim_sources = [c["source_module"] for c in claims_res.data]
+    assert (
+        "recompute" in claim_sources
+    ), "Expected automatic APR recompute claim upon KFS upload"
+    assert (
+        "consistency" in claim_sources
+    ), "Expected automatic consistency check claim upon KFS upload"
+
+    cc_res = (
+        supabase_admin.table("consistency_checks")
+        .select("*")
+        .eq("loan_id", loan_id)
+        .execute()
+    )
+    assert (
+        len(cc_res.data) >= 4
+    ), "Expected automatic consistency check rows upon KFS upload"

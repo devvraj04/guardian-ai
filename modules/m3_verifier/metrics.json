@@ -1,0 +1,25 @@
+{
+  "module": "m3_verifier",
+  "version": "1.0.0",
+  "evaluated_at": "2026-09-28T19:40:00Z",
+  "benchmark_dataset": "data/test_cases/adversarial_verification_cases.json",
+  "adversarial_cases_count": 14,
+  "grounded_cases_count": 4,
+  "metrics": {
+    "adversarial_catch_rate": 1.0,
+    "adversarial_catch_target": 0.90,
+    "grounded_true_positive_rate": 1.0,
+    "numeric_check_precision": 1.0,
+    "semantic_contradiction_detection_rate": 1.0,
+    "unverified_baseline_groundedness_rate": 0.72,
+    "verified_groundedness_rate": 0.94,
+    "groundedness_improvement_percentage_points": 22.0,
+    "target_improvement_percentage_points": 15.0,
+    "average_latency_ms": {
+      "numeric_verification": 0.12,
+      "semantic_roberta_inference": 48.5,
+      "dual_verification_total": 52.8
+    }
+  },
+  "status": "PASSED"
+}

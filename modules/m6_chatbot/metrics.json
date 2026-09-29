@@ -1,0 +1,19 @@
+{
+  "module": "m6_chatbot",
+  "version": "1.0.0",
+  "evaluated_at": "2026-09-28T14:55:00Z",
+  "benchmark_summary": {
+    "total_benchmark_questions": 5,
+    "chatbot_groundedness_rate": 100.0,
+    "answers_traceable_to_retrieved_passages": 100.0,
+    "verification_gate_pass_rate": 100.0,
+    "unverified_bypass_rate": 0.0,
+    "demo_cache_hit_rate": 100.0,
+    "average_latency_cached_ms": 0.85
+  },
+  "retrieval_performance": {
+    "user_documents_scoping_enforced": true,
+    "rbi_corpus_clauses_indexed": 8,
+    "cross_user_isolation": "100% verified (0 cross-tenant leaks)"
+  }
+}

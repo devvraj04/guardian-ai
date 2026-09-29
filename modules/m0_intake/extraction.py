@@ -1,7 +1,7 @@
 import io
 import json
 import re
-from typing import Dict, Optional, Tuple
+from typing import Optional, Tuple
 import fitz  # PyMuPDF
 import pdfplumber
 from groq import Groq
@@ -54,7 +54,9 @@ def extract_raw_text_from_pdf(pdf_bytes: bytes) -> Tuple[str, str]:
     # Step 3: Trigger PaddleOCR if document appears to be a scanned image
     # Condition: Less than 50 characters extracted or empty
     if len(extracted_text.strip()) < 50:
-        logger.info("PDF character density is below threshold (< 50 chars). Triggering PaddleOCR fallback.")
+        logger.info(
+            "PDF character density is below threshold (< 50 chars). Triggering PaddleOCR fallback."
+        )
         extracted_text = extract_text_via_ocr(pdf_bytes)
         method = "paddleocr"
 
@@ -88,7 +90,9 @@ def extract_structured_fields_via_llm(raw_text: str, doc_type: str) -> Extracted
         "Do not include any Markdown tags, backticks, or explanatory text. Return ONLY raw JSON."
     )
 
-    user_prompt = f"DOCUMENT TYPE: {doc_type.upper()}\n\nDOCUMENT TEXT:\n{raw_text[:8000]}"
+    user_prompt = (
+        f"DOCUMENT TYPE: {doc_type.upper()}\n\nDOCUMENT TEXT:\n{raw_text[:8000]}"
+    )
 
     try:
         client = Groq(api_key=settings.GROQ_API_KEY)
@@ -107,7 +111,9 @@ def extract_structured_fields_via_llm(raw_text: str, doc_type: str) -> Extracted
         return ExtractedTerms.model_validate(parsed)
 
     except Exception as e:
-        logger.warning(f"Groq structured extraction failed: {type(e).__name__} - {e}. Using deterministic regex fallback.")
+        logger.warning(
+            f"Groq structured extraction failed: {type(e).__name__} - {e}. Using deterministic regex fallback."
+        )
         return fallback_regex_extraction(raw_text)
 
 
@@ -131,7 +137,11 @@ def fallback_regex_extraction(text: str) -> ExtractedTerms:
     prepay: Optional[str] = None
 
     # Principal matching (e.g. Loan Amount: Rs. 50,000 or INR 50000)
-    p_match = re.search(r"(?:loan\s+amount|principal|sanctioned\s+amount)[:\s]*(?:rs\.?|inr|₹)?\s*([\d,]+(?:\.\d+)?)", text, re.I)
+    p_match = re.search(
+        r"(?:loan\s+amount|principal|sanctioned\s+amount)[:\s]*(?:rs\.?|inr|₹)?\s*([\d,]+(?:\.\d+)?)",
+        text,
+        re.I,
+    )
     if p_match:
         try:
             principal = float(p_match.group(1).replace(",", ""))
@@ -140,7 +150,9 @@ def fallback_regex_extraction(text: str) -> ExtractedTerms:
             pass
 
     # Rate matching (e.g. Interest Rate: 14.5% or 14% p.a.)
-    r_match = re.search(r"(?:interest\s+rate|rate\s+of\s+interest|roi)[:\s]*([\d\.]+)\s*%", text, re.I)
+    r_match = re.search(
+        r"(?:interest\s+rate|rate\s+of\s+interest|roi)[:\s]*([\d\.]+)\s*%", text, re.I
+    )
     if r_match:
         try:
             rate = float(r_match.group(1))
@@ -149,7 +161,9 @@ def fallback_regex_extraction(text: str) -> ExtractedTerms:
             pass
 
     # Tenure matching (e.g. Tenure: 24 Months)
-    t_match = re.search(r"(?:tenure|duration|term)[:\s]*(\d+)\s*(?:months|m)", text, re.I)
+    t_match = re.search(
+        r"(?:tenure|duration|term)[:\s]*(\d+)\s*(?:months|m)", text, re.I
+    )
     if t_match:
         try:
             tenure = int(t_match.group(1))
@@ -158,7 +172,11 @@ def fallback_regex_extraction(text: str) -> ExtractedTerms:
             pass
 
     # Fee matching (e.g. Processing Fee: Rs. 1,000)
-    f_match = re.search(r"(?:processing\s+fee|upfront\s+charges)[:\s]*(?:rs\.?|inr|₹)?\s*([\d,]+(?:\.\d+)?)", text, re.I)
+    f_match = re.search(
+        r"(?:processing\s+fee|upfront\s+charges)[:\s]*(?:rs\.?|inr|₹)?\s*([\d,]+(?:\.\d+)?)",
+        text,
+        re.I,
+    )
     if f_match:
         try:
             fee = float(f_match.group(1).replace(",", ""))

@@ -1,0 +1,94 @@
+{
+  "For a principal of ₹100,000 at disclosed rate 12.00% over 12 months with fees of ₹2,000, the true effective APR is 15.89% with a monthly EMI of ₹8,884.88.": {
+    "hi": {
+      "translated": "₹100,000 के मूलधन के लिए 12 महीने की अवधि में ₹2,000 शुल्क के साथ 12.00% की प्रकट दर पर, वास्तविक प्रभावी एपीआर 15.89% है और मासिक ईएमआई ₹8,884.88 है।",
+      "back_translated": "For a principal of ₹100,000 at a disclosed rate of 12.00% over a tenure of 12 months with fees of ₹2,000, the true effective APR is 15.89% with a monthly EMI of ₹8,884.88."
+    },
+    "mr": {
+      "translated": "₹100,000 च्या मुद्दलासाठी 12 महिन्यांच्या कालावधीत ₹2,000 शुल्कासह 12.00% जाहीर दराने, खरा प्रभावी एपीआर 15.89% आहे आणि मासिक ईएमआय ₹8,884.88 आहे.",
+      "back_translated": "For a principal of ₹100,000 at a disclosed rate of 12.00% over a tenure of 12 months with fees of ₹2,000, the true effective APR is 15.89% and monthly EMI is ₹8,884.88."
+    }
+  },
+  "Prepayment penalties are prohibited on floating-rate term loans granted to individual borrowers for purposes other than business.": {
+    "hi": {
+      "translated": "व्यवसाय के अलावा अन्य उद्देश्यों के लिए व्यक्तिगत उधारकर्ताओं को दिए गए फ्लोटिंग-रेट टर्म लोन पर पूर्वभुगतान दंड (प्रीपेमेंट पेनल्टी) प्रतिबंधित है।",
+      "back_translated": "Prepayment penalties are prohibited on floating-rate term loans granted to individual borrowers for purposes other than business."
+    },
+    "mr": {
+      "translated": "व्यवसायाव्यतिरिक्त इतर उद्देशांसाठी वैयक्तिक कर्जदारांना दिलेल्या फ्लोटिंग-रेट टर्म कर्जांवर मुदतपूर्व परतफेड दंड (प्रीपेमेंट पेनल्टी) प्रतिबंधित आहे.",
+      "back_translated": "Prepayment penalties are prohibited on floating-rate term loans given to individual borrowers for purposes other than business."
+    }
+  },
+  "All loan disbursements and repayments must be executed directly between the bank account of the borrower and the Regulated Entity without pass-through accounts.": {
+    "hi": {
+      "translated": "सभी ऋण वितरण और पुनर्भुगतान पास-थ्रू खातों के बिना सीधे उधारकर्ता के बैंक खाते और विनियमित इकाई (आरई) के बीच निष्पादित किए जाने चाहिए।",
+      "back_translated": "All loan disbursements and repayments must be executed directly between the bank account of the borrower and the Regulated Entity without pass-through accounts."
+    },
+    "mr": {
+      "translated": "सर्व कर्ज वाटप आणि परतफेड पास-थ्रू खात्यांशिवाय थेट कर्जदाराच्या बँक खात्यात आणि नियमन केलेल्या संस्थेमध्ये (आरई) केली पाहिजे.",
+      "back_translated": "All loan disbursements and repayments must be executed directly between the borrower's bank account and the Regulated Entity without pass-through accounts."
+    }
+  },
+  "With monthly income of ₹80,000 and total obligations of ₹18,885, your debt-to-income ratio is 23.6%, which is classified as serviceable.": {
+    "hi": {
+      "translated": "₹80,000 की मासिक आय और ₹18,885 के कुल दायित्वों के साथ, आपका ऋण-से-आय (डीटीआई) अनुपात 23.6% है, जिसे सेवा योग्य के रूप में वर्गीकृत किया गया है।",
+      "back_translated": "With monthly income of ₹80,000 and total obligations of ₹18,885, your debt-to-income ratio is 23.6%, which is classified as serviceable."
+    },
+    "mr": {
+      "translated": "₹80,000 च्या मासिक उत्पन्नासह आणि ₹18,885 च्या एकूण दायित्वांसह, तुमचे कर्ज-ते-उत्पन्न (डीटीआय) प्रमाण 23.6% आहे, जे सेवायोग्य म्हणून वर्गीकृत केले गेले आहे.",
+      "back_translated": "With monthly income of ₹80,000 and total obligations of ₹18,885, your debt-to-income ratio is 23.6%, which is classified as serviceable."
+    }
+  },
+  "The KFS shall clearly disclose cooling-off / look-up period during which the borrower can exit the loan without penalty.": {
+    "hi": {
+      "translated": "केएफएस में कूलिंग-ऑफ / लुक-अप अवधि का स्पष्ट रूप से खुलासा किया जाएगा जिसके दौरान उधारकर्ता बिना किसी दंड के ऋण से बाहर निकल सकता है।",
+      "back_translated": "The KFS shall clearly disclose a cooling-off / look-up period during which the borrower can exit the loan without penalty."
+    },
+    "mr": {
+      "translated": "केएफएस मध्ये कूलिंग-ऑफ कालावधी स्पष्टपणे उघड केला पाहिजे ज्या दरम्यान कर्जदार कोणत्याही दंडाशिवाय कर्जातून बाहेर पडू शकतो.",
+      "back_translated": "The KFS shall clearly disclose a cooling-off / look-up period during which the borrower can exit the loan without penalty."
+    }
+  },
+  "The borrower was disclosed an interest rate of 16.5%. Accounting for the INR 1500.0 processing fee, the true APR is recomputed at 22.38769701871206% with a monthly EMI of INR 4548.381825559217.": {
+    "hi": {
+      "translated": "The borrower was disclosed an ब्याज दर of 16.5%. Accounting for the INR 1500.0 प्रोसेसिंग शुल्क, the true एपीआर is recomputed at 22.38769701871206% with a मासिक ईएमआई of INR 4548.381825559217.",
+      "back_translated": "The borrower was disclosed an interest rate of 16.5%. Accounting for the INR 1500.0 processing fees, the true APR is recomputed at 22.38769701871206% with a monthly EMI of INR 4548.381825559217."
+    }
+  },
+  "Borrower monthly income is INR 60000.0 with total obligations of INR 9548.38. Resulting Debt-to-Income (DTI) ratio is 0.1591396970926536% (Industry benchmark verdict: serviceable).": {
+    "hi": {
+      "translated": "Borrower monthly income is INR 60000.0 with total obligations of INR 9548.38. Resulting Debt-to-Income (डीटीआई) ratio is 0.1591396970926536% (Industry benchmark verdict: सेवा योग्य).",
+      "back_translated": "Borrower monthly income is INR 60000.0 with total obligations of INR 9548.38. Resulting Debt-to-Income (DTI) ratio is 0.1591396970926536% (Industry benchmark verdict: serviceable)."
+    }
+  },
+  "The borrower was disclosed an interest rate of 14.5%. Accounting for the INR 2500.0 processing fee, the true APR is recomputed at 14.854148816789348% with a monthly EMI of INR 17210.48872140699.": {
+    "hi": {
+      "translated": "The borrower was disclosed an ब्याज दर of 14.5%. Accounting for the INR 2500.0 प्रोसेसिंग शुल्क, the true एपीआर is recomputed at 14.854148816789348% with a मासिक ईएमआई of INR 17210.48872140699.",
+      "back_translated": "The borrower was disclosed an interest rate of 14.5%. Accounting for the INR 2500.0 processing fees, the true APR is recomputed at 14.854148816789348% with a monthly EMI of INR 17210.48872140699."
+    }
+  },
+  "Discrepancy detected in principal: KFS states '100000.0' whereas Terms & Conditions state 'None'.": {
+    "hi": {
+      "translated": "Discrepancy detected in मूलधन: केएफएस states '100000.0' whereas Terms & Conditions state 'None'.",
+      "back_translated": "Discrepancy detected in principal: KFS states '100000.0' whereas Terms & Conditions state 'None'."
+    }
+  },
+  "Discrepancy detected in disclosed_rate: KFS states '12.0' whereas Terms & Conditions state 'None'.": {
+    "hi": {
+      "translated": "Discrepancy detected in disclosed_rate: केएफएस states '12.0' whereas Terms & Conditions state 'None'.",
+      "back_translated": "Discrepancy detected in disclosed_rate: KFS states '12.0' whereas Terms & Conditions state 'None'."
+    }
+  },
+  "Discrepancy detected in tenure_months: KFS states '12.0' whereas Terms & Conditions state 'None'.": {
+    "hi": {
+      "translated": "Discrepancy detected in tenure_months: केएफएस states '12.0' whereas Terms & Conditions state 'None'.",
+      "back_translated": "Discrepancy detected in tenure_months: KFS states '12.0' whereas Terms & Conditions state 'None'."
+    }
+  },
+  "Discrepancy detected in fees: KFS states '1500.0' whereas Terms & Conditions state 'None'.": {
+    "hi": {
+      "translated": "Discrepancy detected in शुल्क: केएफएस states '1500.0' whereas Terms & Conditions state 'None'.",
+      "back_translated": "Discrepancy detected in fees: KFS states '1500.0' whereas Terms & Conditions state 'None'."
+    }
+  }
+}

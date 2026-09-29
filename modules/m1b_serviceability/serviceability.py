@@ -50,7 +50,7 @@ def assess_serviceability(
     """
     The canonical serviceability assessment function (RULES.md §1.7).
     Computes DTI ratio and disposable income deterministically.
-    
+
     Classification Bands (Industry Heuristic):
     - serviceable: DTI <= 0.40 AND disposable_income > 0
     - marginal: 0.40 < DTI <= 0.50 AND disposable_income >= 0
@@ -106,7 +106,11 @@ def generate_serviceability_claim_text(result: ServiceabilityResult) -> str:
             f"This loan offer is categorized as marginal."
         )
     else:
-        reason = "DTI ratio exceeds 50%" if result.dti_ratio > 0.50 else "insufficient disposable income buffer"
+        reason = (
+            "DTI ratio exceeds 50%"
+            if result.dti_ratio > 0.50
+            else "insufficient disposable income buffer"
+        )
         return (
             f"With total obligations of ₹{result.total_emis:,.0f} against monthly income of ₹{result.monthly_income:,.0f}, "
             f"your debt-to-income ratio is {dti_pct:.1f}%. Due to {reason}, "

@@ -1,6 +1,5 @@
 import fitz
-import pytest
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw
 import io
 from modules.m0_intake.extraction import extract_raw_text_from_pdf
 

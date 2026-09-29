@@ -1,4 +1,3 @@
-import pytest
 from modules.m0_intake.chunker import chunk_document_text
 
 
@@ -8,7 +7,9 @@ def test_chunk_empty_text():
 
 
 def test_chunk_short_text():
-    text = "The borrower shall repay the loan principal in 24 equal monthly installments."
+    text = (
+        "The borrower shall repay the loan principal in 24 equal monthly installments."
+    )
     chunks = chunk_document_text(text, chunk_size=500)
     assert len(chunks) == 1
     assert chunks[0] == text

@@ -37,7 +37,9 @@ class APRRecomputeResult:
         }
 
 
-def calculate_reducing_balance_emi(principal: float, annual_rate: float, tenure_months: int) -> float:
+def calculate_reducing_balance_emi(
+    principal: float, annual_rate: float, tenure_months: int
+) -> float:
     """
     Standard reducing-balance EMI formula:
     EMI = P * r * (1 + r)^N / ((1 + r)^N - 1)
@@ -55,7 +57,9 @@ def calculate_reducing_balance_emi(principal: float, annual_rate: float, tenure_
     return emi
 
 
-def solve_monthly_irr(net_disbursed: float, monthly_emi: float, tenure_months: int, max_iter: int = 100) -> float:
+def solve_monthly_irr(
+    net_disbursed: float, monthly_emi: float, tenure_months: int, max_iter: int = 100
+) -> float:
     """
     Numerical solver for monthly Internal Rate of Return (IRR).
     Solves: net_disbursed = sum_{t=1..N} [ monthly_emi / (1 + r)^t ]
@@ -104,14 +108,20 @@ def recompute_apr(
     Calculates the true effective APR on the reducing balance taking all upfront fees into account.
     """
     if principal <= 0 or tenure_months <= 0 or disclosed_rate < 0:
-        raise ValueError("Principal and tenure must be positive, and disclosed rate non-negative.")
+        raise ValueError(
+            "Principal and tenure must be positive, and disclosed rate non-negative."
+        )
 
     fees = max(0.0, float(fees))
     disbursed = principal - fees
     if disbursed <= 0:
-        raise ValueError("Upfront fees cannot be greater than or equal to loan principal.")
+        raise ValueError(
+            "Upfront fees cannot be greater than or equal to loan principal."
+        )
 
-    monthly_emi = calculate_reducing_balance_emi(principal, disclosed_rate, tenure_months)
+    monthly_emi = calculate_reducing_balance_emi(
+        principal, disclosed_rate, tenure_months
+    )
     total_payment = monthly_emi * tenure_months
     total_interest = total_payment - principal
 

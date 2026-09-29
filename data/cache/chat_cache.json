@@ -1,0 +1,62 @@
+{
+  "can the lender charge me a prepayment penalty if i decide to repay my floating rate loan early?": {
+    "answer": "Prepayment penalties are prohibited on floating-rate term loans granted to individual borrowers for purposes other than business.",
+    "citations": [
+      {
+        "source": "rbi_corpus",
+        "citation_id": "Clause 5.2",
+        "text": "Clause 5.2: Prepayment penalties are prohibited on floating-rate term loans granted to individual borrowers for purposes other than business."
+      }
+    ]
+  },
+  "is it legal for the app to disburse funds to a third party lsp pool account?": {
+    "answer": "All loan disbursements and repayments must be executed directly between the bank account of the borrower and the Regulated Entity without pass-through accounts.",
+    "citations": [
+      {
+        "source": "rbi_corpus",
+        "citation_id": "Clause 4.1",
+        "text": "Clause 4.1: All loan disbursements and repayments must be executed directly between the bank account of the borrower and the Regulated Entity, without pass-through or pool accounts of any Lending Service Provider (LSP) or third party."
+      }
+    ]
+  },
+  "can the bank automatically increase my credit limit without asking me?": {
+    "answer": "Automatic increase in credit limit without explicit recorded consent of the borrower is strictly prohibited.",
+    "citations": [
+      {
+        "source": "rbi_corpus",
+        "citation_id": "Clause 4.2",
+        "text": "Clause 4.2: Automatic increase in credit limit without explicit recorded consent of the borrower is strictly prohibited."
+      }
+    ]
+  },
+  "what is my right regarding cooling-off or cancelling this loan offer?": {
+    "answer": "The KFS shall clearly disclose cooling-off / look-up period during which the borrower can exit the loan without penalty.",
+    "citations": [
+      {
+        "source": "rbi_corpus",
+        "citation_id": "Clause 3.2",
+        "text": "Clause 3.2: The KFS shall clearly disclose cooling-off / look-up period during which the borrower can exit the loan without penalty."
+      }
+    ]
+  },
+  "what is the true apr and monthly emi on my loan offer?": {
+    "answer": "For a principal of ₹100,000 at disclosed rate 12.00% over 12 months with fees of ₹2,000, the true effective APR is 15.89% with a monthly EMI of ₹8,884.88.",
+    "citations": [
+      {
+        "source": "user_documents",
+        "citation_id": "kfs",
+        "text": "Key Fact Statement: Principal: Rs 100,000, Interest Rate: 12.00%, Tenure: 12 Months, Processing Fees: Rs 2,000."
+      }
+    ]
+  },
+  "can the lender capitalize penal interest onto my outstanding principal balance?": {
+    "answer": "Penal charges for delayed payments shall be reasonable, transparent, and non-capitalized (i.e., interest shall not be charged on penal charges).",
+    "citations": [
+      {
+        "source": "rbi_corpus",
+        "citation_id": "Clause 5.1",
+        "text": "Clause 5.1: Penal charges for delayed payments shall be reasonable, transparent, and non-capitalized (i.e., interest shall not be charged on penal charges)."
+      }
+    ]
+  }
+}

@@ -1,0 +1,200 @@
+[
+  {
+    "case_id": "ADV_01_UNDERSTATED_APR",
+    "description": "Claim asserts effective APR is identical to nominal rate (12.0%) despite ₹2,000 upfront fees",
+    "source_module": "recompute",
+    "claim_text": "For a principal of ₹100,000 at disclosed rate 12.00% over 12 months with fees of ₹2,000, the true effective APR is 12.00% with a monthly EMI of ₹8,884.88.",
+    "supporting_figures": {
+      "principal": 100000.0,
+      "disclosed_rate": 12.0,
+      "tenure_months": 12,
+      "fees": 2000.0,
+      "monthly_emi": 8884.88
+    },
+    "expected_verdict": "flagged",
+    "expected_error_type": "numeric_mismatch"
+  },
+  {
+    "case_id": "ADV_02_WRONG_EMI_CALCULATION",
+    "description": "Claim states incorrect monthly EMI (₹7,500.00 instead of ₹8,884.88)",
+    "source_module": "recompute",
+    "claim_text": "For a principal of ₹100,000 at disclosed rate 12.00% over 12 months with fees of ₹2,000, the true effective APR is 15.89% with a monthly EMI of ₹7,500.00.",
+    "supporting_figures": {
+      "principal": 100000.0,
+      "disclosed_rate": 12.0,
+      "tenure_months": 12,
+      "fees": 2000.0
+    },
+    "expected_verdict": "flagged",
+    "expected_error_type": "numeric_mismatch"
+  },
+  {
+    "case_id": "ADV_03_DECIMAL_TRANSPOSITION_EMI",
+    "description": "Subtle figure error: ₹8,848.88 instead of ₹8,884.88",
+    "source_module": "recompute",
+    "claim_text": "For a principal of ₹100,000 at disclosed rate 12.00% over 12 months with fees of ₹2,000, the monthly EMI is ₹8,848.88.",
+    "supporting_figures": {
+      "principal": 100000.0,
+      "disclosed_rate": 12.0,
+      "tenure_months": 12,
+      "fees": 2000.0
+    },
+    "expected_verdict": "flagged",
+    "expected_error_type": "numeric_mismatch"
+  },
+  {
+    "case_id": "ADV_04_DEFLATED_DTI_CLAIM",
+    "description": "Claim states DTI of 18.0% when true calculated DTI is 38.6%",
+    "source_module": "serviceability",
+    "claim_text": "Based on monthly income of ₹50,000 and total obligations, your debt-to-income DTI is 18.0%, leaving you with ample savings.",
+    "supporting_figures": {
+      "monthly_income": 50000.0,
+      "existing_emis": 10424.0,
+      "monthly_expenses": 15000.0,
+      "new_emi": 8884.88
+    },
+    "expected_verdict": "flagged",
+    "expected_error_type": "numeric_mismatch"
+  },
+  {
+    "case_id": "ADV_05_PREPAYMENT_PENALTY_FLOATING",
+    "description": "Claim asserts bank is legally permitted to levy a 4% prepayment penalty on a floating-rate personal loan",
+    "source_module": "chatbot",
+    "claim_text": "The lender is legally entitled to charge a 4% prepayment penalty on your floating-rate personal loan if you foreclose early.",
+    "supporting_figures": {},
+    "expected_verdict": "flagged",
+    "expected_error_type": "semantic_mismatch"
+  },
+  {
+    "case_id": "ADV_06_AUTOMATIC_CREDIT_HIKE",
+    "description": "Claim asserts lender can unilaterally increase loan credit limit without borrower consent",
+    "source_module": "chatbot",
+    "claim_text": "The lending app reserves the right to automatically increase your credit limit without requiring your explicit consent.",
+    "supporting_figures": {},
+    "expected_verdict": "flagged",
+    "expected_error_type": "semantic_mismatch"
+  },
+  {
+    "case_id": "ADV_07_PASS_THROUGH_POOL_DISBURSAL",
+    "description": "Claim asserts loan funds can be disbursed through an intermediary LSP pool account",
+    "source_module": "chatbot",
+    "claim_text": "Loan disbursements can be routed through the third-party LSP escrow pool account prior to reaching the borrower.",
+    "supporting_figures": {},
+    "expected_verdict": "flagged",
+    "expected_error_type": "semantic_mismatch"
+  },
+  {
+    "case_id": "ADV_08_COOLING_OFF_PENALTY",
+    "description": "Claim asserts borrower cannot exit during cooling-off period without paying full interest and penalty",
+    "source_module": "consistency",
+    "claim_text": "If you decide to exit during the look-up cooling-off period, you must pay an exit penalty of ₹5,000.",
+    "supporting_figures": {},
+    "expected_verdict": "flagged",
+    "expected_error_type": "semantic_mismatch"
+  },
+  {
+    "case_id": "ADV_09_CAPITALIZED_PENAL_CHARGES",
+    "description": "Claim asserts penal charges for late payments are added to principal and accrue compound interest",
+    "source_module": "chatbot",
+    "claim_text": "Late payment penal charges will be capitalized into your principal loan balance and incur regular interest charges.",
+    "supporting_figures": {},
+    "expected_verdict": "flagged",
+    "expected_error_type": "semantic_mismatch"
+  },
+  {
+    "case_id": "ADV_10_UNDISCLOSED_FEES_PERMITTED",
+    "description": "Claim asserts lender can levy undisclosed legal inspection fees not stated in KFS",
+    "source_module": "chatbot",
+    "claim_text": "Any operational verification charges or legal fees not disclosed in the Key Fact Statement may still be levied at disbursement.",
+    "supporting_figures": {},
+    "expected_verdict": "flagged",
+    "expected_error_type": "semantic_mismatch"
+  },
+  {
+    "case_id": "ADV_11_GRIEVANCE_TAT_VIOLATION",
+    "description": "Claim asserts lender has 90 days to respond to borrower grievances before Ombudsman appeal",
+    "source_module": "grievance",
+    "claim_text": "The maximum allowable turnaround time for the lender to resolve digital loan complaints is 90 days before you can appeal to the RBI Ombudsman.",
+    "supporting_figures": {},
+    "expected_verdict": "flagged",
+    "expected_error_type": "semantic_mismatch"
+  },
+  {
+    "case_id": "ADV_12_EXEMPTION_FOR_NBFCS",
+    "description": "Claim asserts digital lending rules do not apply to Non-Banking Financial Companies",
+    "source_module": "chatbot",
+    "claim_text": "Non-Banking Financial Companies (NBFCs) and Co-operative banks are exempt from the RBI Digital Lending Directions.",
+    "supporting_figures": {},
+    "expected_verdict": "flagged",
+    "expected_error_type": "semantic_mismatch"
+  },
+  {
+    "case_id": "ADV_13_BOTH_NUMERIC_AND_SEMANTIC_FAIL",
+    "description": "Claim has both an incorrect APR percentage and contradicts regulatory floating rate rules",
+    "source_module": "chatbot",
+    "claim_text": "Your floating-rate loan carries an effective APR of 8.00% and allows a 5% prepayment foreclosure fee.",
+    "supporting_figures": {
+      "principal": 100000.0,
+      "disclosed_rate": 12.0,
+      "tenure_months": 12,
+      "fees": 2000.0
+    },
+    "expected_verdict": "flagged",
+    "expected_error_type": "both"
+  },
+  {
+    "case_id": "ADV_14_FABRICATED_UNVERIFIABLE_FACT",
+    "description": "Claim makes an unsupported assertion not found anywhere in regulatory or contract corpus",
+    "source_module": "chatbot",
+    "claim_text": "Under special Section 99 of the Banking Code, borrowers receive a mandatory gold coin voucher upon timely loan completion.",
+    "supporting_figures": {},
+    "expected_verdict": "flagged",
+    "expected_error_type": "insufficient_evidence"
+  },
+  {
+    "case_id": "GROUNDED_01_TRUE_APR",
+    "description": "Legitimate claim with correct APR math and figures matching ground truth",
+    "source_module": "recompute",
+    "claim_text": "For a principal of ₹100,000 at disclosed rate 12.00% over 12 months with fees of ₹2,000, the true effective APR is 15.89% with a monthly EMI of ₹8,884.88.",
+    "supporting_figures": {
+      "principal": 100000.0,
+      "disclosed_rate": 12.0,
+      "tenure_months": 12,
+      "fees": 2000.0
+    },
+    "expected_verdict": "grounded",
+    "expected_error_type": null
+  },
+  {
+    "case_id": "GROUNDED_02_REGULATORY_PREPAYMENT",
+    "description": "Legitimate regulatory statement directly entailed by RBI Clause 5.2",
+    "source_module": "chatbot",
+    "claim_text": "Prepayment penalties are prohibited on floating-rate term loans granted to individual borrowers for purposes other than business.",
+    "supporting_figures": {},
+    "expected_verdict": "grounded",
+    "expected_error_type": null
+  },
+  {
+    "case_id": "GROUNDED_03_DIRECT_DISBURSAL",
+    "description": "Legitimate claim directly entailed by RBI Clause 4.1",
+    "source_module": "chatbot",
+    "claim_text": "All loan disbursements and repayments must be executed directly between the bank account of the borrower and the Regulated Entity without pass-through accounts.",
+    "supporting_figures": {},
+    "expected_verdict": "grounded",
+    "expected_error_type": null
+  },
+  {
+    "case_id": "GROUNDED_04_SERVICEABILITY_DTI",
+    "description": "Legitimate serviceability claim with accurate DTI ratio arithmetic",
+    "source_module": "serviceability",
+    "claim_text": "With monthly income of ₹80,000 and total obligations of ₹18,885, your debt-to-income ratio is 23.6%, which is classified as serviceable.",
+    "supporting_figures": {
+      "monthly_income": 80000.0,
+      "existing_emis": 10000.0,
+      "monthly_expenses": 30000.0,
+      "new_emi": 8884.88
+    },
+    "expected_verdict": "grounded",
+    "expected_error_type": null
+  }
+]

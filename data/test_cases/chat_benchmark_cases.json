@@ -1,0 +1,37 @@
+[
+  {
+    "case_id": "CHAT_01_PREPAYMENT_PENALTY",
+    "query": "Can the lender charge me a prepayment penalty if I decide to repay my floating rate loan early?",
+    "target_corpus": "rbi_corpus",
+    "expected_citation": "Clause 5.2",
+    "expected_verdict": "grounded"
+  },
+  {
+    "case_id": "CHAT_02_LSP_DISBURSAL",
+    "query": "Is it legal for the app to disburse funds to a third party LSP pool account?",
+    "target_corpus": "rbi_corpus",
+    "expected_citation": "Clause 4.1",
+    "expected_verdict": "grounded"
+  },
+  {
+    "case_id": "CHAT_03_CREDIT_HIKE",
+    "query": "Can the bank automatically increase my credit limit without asking me?",
+    "target_corpus": "rbi_corpus",
+    "expected_citation": "Clause 4.2",
+    "expected_verdict": "grounded"
+  },
+  {
+    "case_id": "CHAT_04_COOLING_OFF",
+    "query": "What is my right regarding cooling-off or cancelling this loan offer?",
+    "target_corpus": "rbi_corpus",
+    "expected_citation": "Clause 3.2",
+    "expected_verdict": "grounded"
+  },
+  {
+    "case_id": "CHAT_05_PENAL_CHARGES",
+    "query": "Can the lender capitalize penal interest onto my outstanding principal balance?",
+    "target_corpus": "rbi_corpus",
+    "expected_citation": "Clause 5.1",
+    "expected_verdict": "grounded"
+  }
+]

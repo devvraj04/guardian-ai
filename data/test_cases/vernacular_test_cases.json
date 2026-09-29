@@ -1,0 +1,67 @@
+[
+  {
+    "case_id": "VERNACULAR_01_APR_RECOMPUTE_HI",
+    "language": "hi",
+    "original_claim": "For a principal of ₹100,000 at disclosed rate 12.00% over 12 months with fees of ₹2,000, the true effective APR is 15.89% with a monthly EMI of ₹8,884.88.",
+    "source_module": "recompute",
+    "supporting_figures": {
+      "principal": 100000.0,
+      "disclosed_rate": 12.0,
+      "tenure_months": 12,
+      "fees": 2000.0
+    },
+    "expected_verdict": "grounded",
+    "expected_min_numeric_preservation": 95.0,
+    "expected_max_clause_drop": 5.0
+  },
+  {
+    "case_id": "VERNACULAR_02_APR_RECOMPUTE_MR",
+    "language": "mr",
+    "original_claim": "For a principal of ₹100,000 at disclosed rate 12.00% over 12 months with fees of ₹2,000, the true effective APR is 15.89% with a monthly EMI of ₹8,884.88.",
+    "source_module": "recompute",
+    "supporting_figures": {
+      "principal": 100000.0,
+      "disclosed_rate": 12.0,
+      "tenure_months": 12,
+      "fees": 2000.0
+    },
+    "expected_verdict": "grounded",
+    "expected_min_numeric_preservation": 95.0,
+    "expected_max_clause_drop": 5.0
+  },
+  {
+    "case_id": "VERNACULAR_03_REGULATORY_PREPAYMENT_HI",
+    "language": "hi",
+    "original_claim": "Prepayment penalties are prohibited on floating-rate term loans granted to individual borrowers for purposes other than business.",
+    "source_module": "chatbot",
+    "supporting_figures": {},
+    "expected_verdict": "grounded",
+    "expected_min_numeric_preservation": 100.0,
+    "expected_max_clause_drop": 0.0
+  },
+  {
+    "case_id": "VERNACULAR_04_DIRECT_DISBURSAL_MR",
+    "language": "mr",
+    "original_claim": "All loan disbursements and repayments must be executed directly between the bank account of the borrower and the Regulated Entity without pass-through accounts.",
+    "source_module": "chatbot",
+    "supporting_figures": {},
+    "expected_verdict": "grounded",
+    "expected_min_numeric_preservation": 100.0,
+    "expected_max_clause_drop": 0.0
+  },
+  {
+    "case_id": "VERNACULAR_05_SERVICEABILITY_DTI_HI",
+    "language": "hi",
+    "original_claim": "With monthly income of ₹80,000 and total obligations of ₹18,885, your debt-to-income ratio is 23.6%, which is classified as serviceable.",
+    "source_module": "serviceability",
+    "supporting_figures": {
+      "monthly_income": 80000.0,
+      "existing_emis": 10000.0,
+      "monthly_expenses": 30000.0,
+      "new_emi": 8884.88
+    },
+    "expected_verdict": "grounded",
+    "expected_min_numeric_preservation": 95.0,
+    "expected_max_clause_drop": 5.0
+  }
+]

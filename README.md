@@ -6,7 +6,7 @@
 [![Supabase](https://img.shields.io/badge/Supabase-PostgreSQL%2015-green.svg)](https://supabase.com)
 [![License: Academic/Research](https://img.shields.io/badge/License-Academic%2FResearch-lightgrey.svg)](LICENSE)
 
-**GUARDIAN** is an audit-grade financial advocate designed to protect digital retail borrowers against predatory lending terms, undisclosed charges, miscalculated interest rates, and regulatory violations. 
+**GUARDIAN** is an audit-grade financial advocate designed to protect digital retail borrowers against predatory lending terms, undisclosed charges, miscalculated interest rates, and regulatory violations.
 
 Unlike traditional financial applications that rely on opaque language model responses, GUARDIAN enforces a **Sacred Verification Gate**: every financial claim, explanation, or verdict is deterministically recomputed or semantically grounded against regulatory mandates before reaching the borrower.
 

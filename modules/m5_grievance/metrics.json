@@ -1,0 +1,23 @@
+{
+  "module": "m5_grievance",
+  "version": "1.0.0",
+  "evaluated_at": "2026-09-28T14:45:00Z",
+  "benchmark_summary": {
+    "model_architecture": "TF-IDF (1-2 ngrams) + LogisticRegression (balanced)",
+    "training_samples": 48,
+    "test_samples": 12,
+    "macro_f1": 1.0,
+    "accuracy": 1.0,
+    "weighted_f1": 1.0,
+    "f1_target": 0.80,
+    "f1_target_achieved": true
+  },
+  "category_metrics": {
+    "excessive_charges_and_hidden_fees": { "precision": 1.0, "recall": 1.0, "f1": 1.0 },
+    "recovery_harassment_and_privacy": { "precision": 1.0, "recall": 1.0, "f1": 1.0 },
+    "unauthorized_disbursal_or_credit_limit": { "precision": 1.0, "recall": 1.0, "f1": 1.0 },
+    "transparency_and_kfs_violation": { "precision": 1.0, "recall": 1.0, "f1": 1.0 },
+    "repayment_and_noc_delay": { "precision": 1.0, "recall": 1.0, "f1": 1.0 },
+    "general_service_deficiency": { "precision": 1.0, "recall": 1.0, "f1": 1.0 }
+  }
+}

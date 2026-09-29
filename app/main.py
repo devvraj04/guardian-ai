@@ -12,16 +12,25 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from app.core.config import settings
 from app.core.logging import logger, request_id_ctx
+from app.routers.audit import router as audit_router
+from app.routers.chat import router as chat_router
+from app.routers.consistency import router as consistency_router
+from app.routers.disputes import router as disputes_router
+from app.routers.documents import router as documents_router
 from app.routers.health import router as health_router
 from app.routers.loans import router as loans_router
-from app.routers.documents import router as documents_router
+from app.routers.pipeline import router as pipeline_router
 from app.routers.recompute import router as recompute_router
 from app.routers.serviceability import router as serviceability_router
-from app.routers.consistency import router as consistency_router
+from app.routers.vernacular import router as vernacular_router
+from app.routers.verify import router as verify_router
 from rag.chroma_client import get_or_create_collections
 
 # Rate Limiter setup (RULES.md §3 S-10, S-11)
-limiter = Limiter(key_func=get_remote_address, default_limits=[f"{settings.RATE_LIMIT_PER_MINUTE_ANON}/minute"])
+limiter = Limiter(
+    key_func=get_remote_address,
+    default_limits=[f"{settings.RATE_LIMIT_PER_MINUTE_ANON}/minute"],
+)
 
 
 @asynccontextmanager
@@ -32,8 +41,17 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
         # Initialize collections in ChromaDB container
         get_or_create_collections()
         logger.info("ChromaDB collections verified and ready.")
+
+        # Pre-warm semantic verifier model to eliminate cold-start latency (STATUS.md line 108)
+        try:
+            from modules.m3_verifier.semantic_verifier import get_nli_model
+
+            get_nli_model()
+            logger.info("Semantic Verifier model pre-warmed.")
+        except Exception as e:
+            logger.warning(f"Semantic Verifier warmup skipped: {e}")
     except Exception as e:
-        logger.warning(f"Could not connect to ChromaDB during startup: {e}")
+        logger.warning(f"Service initialization warning during startup: {e}")
     yield
     logger.info("Shutting down GUARDIAN application services...")
 
@@ -53,7 +71,9 @@ app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 # CORS configuration
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"] if settings.ENVIRONMENT == "development" else [settings.SUPABASE_URL],
+    allow_origins=["*"]
+    if settings.ENVIRONMENT == "development"
+    else [settings.SUPABASE_URL],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -78,7 +98,9 @@ async def request_id_middleware(request: Request, call_next) -> Response:
 
 # Standard Error Response Format: {error_code, message, request_id} (IMPLEMENTATION_PLAN.md line 110)
 @app.exception_handler(StarletteHTTPException)
-async def http_exception_handler(request: Request, exc: StarletteHTTPException) -> JSONResponse:
+async def http_exception_handler(
+    request: Request, exc: StarletteHTTPException
+) -> JSONResponse:
     req_id = request_id_ctx.get()
     return JSONResponse(
         status_code=exc.status_code,
@@ -92,7 +114,9 @@ async def http_exception_handler(request: Request, exc: StarletteHTTPException) 
 
 
 @app.exception_handler(RequestValidationError)
-async def validation_exception_handler(request: Request, exc: RequestValidationError) -> JSONResponse:
+async def validation_exception_handler(
+    request: Request, exc: RequestValidationError
+) -> JSONResponse:
     req_id = request_id_ctx.get()
     return JSONResponse(
         status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
@@ -128,3 +152,9 @@ app.include_router(documents_router, prefix="/api/v1")
 app.include_router(recompute_router, prefix="/api/v1")
 app.include_router(serviceability_router, prefix="/api/v1")
 app.include_router(consistency_router, prefix="/api/v1")
+app.include_router(verify_router, prefix="/api/v1")
+app.include_router(vernacular_router, prefix="/api/v1")
+app.include_router(disputes_router, prefix="/api/v1")
+app.include_router(chat_router, prefix="/api/v1")
+app.include_router(audit_router, prefix="/api/v1")
+app.include_router(pipeline_router, prefix="/api/v1")

@@ -3,7 +3,7 @@ import os
 import numpy as np
 import fitz  # PyMuPDF
 from PIL import Image
-from typing import List, Optional
+from typing import List
 from app.core.logging import logger
 
 # Disable oneDNN and PIR instruction attribute conflict on Windows
@@ -21,6 +21,7 @@ def get_ocr_engine():
     if _paddle_ocr_engine is None:
         try:
             from paddleocr import PaddleOCR
+
             _paddle_ocr_engine = PaddleOCR(
                 use_textline_orientation=True,
                 lang="en",
@@ -65,5 +66,7 @@ def extract_text_via_ocr(pdf_bytes: bytes) -> str:
         doc.close()
 
     full_text = "\n".join(all_text_lines)
-    logger.info(f"PaddleOCR fallback extracted {len(all_text_lines)} lines across {page_count} pages.")
+    logger.info(
+        f"PaddleOCR fallback extracted {len(all_text_lines)} lines across {page_count} pages."
+    )
     return full_text

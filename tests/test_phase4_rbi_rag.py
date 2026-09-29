@@ -17,7 +17,12 @@ def test_rbi_retrieval_benchmark_accuracy():
     Evaluates top-3 retrieval accuracy on the 10 canonical RBI benchmark queries.
     Gate: Retrieval must return relevant regulatory passages for >= 90% of queries (STATUS.md Phase 4).
     """
-    benchmarks_path = Path(__file__).resolve().parents[1] / "data" / "test_cases" / "rbi_retrieval_benchmarks.json"
+    benchmarks_path = (
+        Path(__file__).resolve().parents[1]
+        / "data"
+        / "test_cases"
+        / "rbi_retrieval_benchmarks.json"
+    )
     with open(benchmarks_path, "r", encoding="utf-8") as f:
         benchmarks = json.load(f)
 
@@ -28,7 +33,9 @@ def test_rbi_retrieval_benchmark_accuracy():
 
     for item in benchmarks:
         query_text = item["query"]
-        acceptable_clauses = item.get("acceptable_clause_ids", [item["target_clause_id"]])
+        acceptable_clauses = item.get(
+            "acceptable_clause_ids", [item["target_clause_id"]]
+        )
         target_section = item["target_section"]
         expected_keywords = [kw.lower() for kw in item["expected_keywords"]]
 
@@ -38,8 +45,12 @@ def test_rbi_retrieval_benchmark_accuracy():
         retrieved_metas = results["metadatas"][0] if results.get("metadatas") else []
 
         # Check if any acceptable clause ID appears in metadatas OR target section + keywords in documents
-        clause_match = any(m.get("clause_id") in acceptable_clauses for m in retrieved_metas)
-        section_match = any(m.get("section_id") == target_section for m in retrieved_metas)
+        clause_match = any(
+            m.get("clause_id") in acceptable_clauses for m in retrieved_metas
+        )
+        section_match = any(
+            m.get("section_id") == target_section for m in retrieved_metas
+        )
 
         doc_text_combined = " ".join(retrieved_docs).lower()
         keyword_match = any(kw in doc_text_combined for kw in expected_keywords)
@@ -47,14 +58,18 @@ def test_rbi_retrieval_benchmark_accuracy():
         if clause_match or (section_match and keyword_match):
             passed_queries.append(item["query_id"])
         else:
-            failed_queries.append({
-                "query_id": item["query_id"],
-                "target_clause": target_clause_id,
-                "retrieved_clauses": [m.get("clause_id") for m in retrieved_metas],
-            })
+            failed_queries.append(
+                {
+                    "query_id": item["query_id"],
+                    "target_clause": item["target_clause_id"],
+                    "retrieved_clauses": [m.get("clause_id") for m in retrieved_metas],
+                }
+            )
 
     accuracy = len(passed_queries) / len(benchmarks)
-    print(f"\nRBI RAG Benchmark Accuracy: {accuracy*100:.1f}% ({len(passed_queries)}/10 queries passed)")
+    print(
+        f"\nRBI RAG Benchmark Accuracy: {accuracy*100:.1f}% ({len(passed_queries)}/10 queries passed)"
+    )
 
     assert accuracy >= 0.90, (
         f"Retrieval gate failed: Accuracy {accuracy*100:.1f}% < 90%. "

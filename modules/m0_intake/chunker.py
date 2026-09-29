@@ -2,7 +2,9 @@ import re
 from typing import List
 
 
-def chunk_document_text(text: str, chunk_size: int = 500, overlap: int = 100) -> List[str]:
+def chunk_document_text(
+    text: str, chunk_size: int = 500, overlap: int = 100
+) -> List[str]:
     """
     Splits extracted document text into overlapping clause-level chunks.
     Attempts to respect paragraph and clause boundaries (e.g. numbered clauses, periods).

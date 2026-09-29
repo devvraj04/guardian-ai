@@ -1,5 +1,5 @@
 from typing import Optional
-from fastapi import Depends, Header, HTTPException, status
+from fastapi import Header, HTTPException, status
 from jose import JWTError, jwt
 from pydantic import BaseModel, ConfigDict
 from app.core.config import settings
@@ -38,7 +38,9 @@ async def get_current_user(
             settings.SUPABASE_ANON_KEY,
             algorithms=["HS256"],
             audience=settings.JWT_AUDIENCE,
-            options={"verify_signature": False} if settings.ENVIRONMENT == "development" else {"verify_signature": True},
+            options={"verify_signature": False}
+            if settings.ENVIRONMENT == "development"
+            else {"verify_signature": True},
         )
         user_id: Optional[str] = payload.get("sub")
         if not user_id:
@@ -60,12 +62,17 @@ async def get_current_user(
         )
 
 
-def verify_user_ownership(requested_user_id: str, current_user: AuthenticatedUser) -> None:
+def verify_user_ownership(
+    requested_user_id: str, current_user: AuthenticatedUser
+) -> None:
     """
     Enforces S-3: Row-level authorization re-checked server-side on every request.
     Prevents cross-user access at the FastAPI routing layer.
     """
-    if current_user.user_id != requested_user_id and current_user.role != "service_role":
+    if (
+        current_user.user_id != requested_user_id
+        and current_user.role != "service_role"
+    ):
         logger.warning(
             f"Cross-user access attempt blocked: user {current_user.user_id} attempted access to resource of {requested_user_id}"
         )

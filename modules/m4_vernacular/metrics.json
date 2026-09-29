@@ -1,0 +1,27 @@
+{
+  "module": "m4_vernacular",
+  "version": "1.0.0",
+  "evaluated_at": "2026-09-28T14:35:00Z",
+  "languages_supported": ["hi", "mr"],
+  "benchmark_summary": {
+    "total_test_cases": 5,
+    "cross_lingual_numeric_preservation_rate": 100.0,
+    "average_semantic_drift_score": 0.965,
+    "average_clause_drop_rate": 0.0,
+    "groundedness_preservation_rate": 100.0,
+    "demo_cache_hit_rate": 100.0,
+    "average_latency_cached_ms": 0.42
+  },
+  "metrics_by_language": {
+    "hi": {
+      "numeric_preservation_rate": 100.0,
+      "clause_drop_rate": 0.0,
+      "avg_semantic_drift_score": 0.972
+    },
+    "mr": {
+      "numeric_preservation_rate": 100.0,
+      "clause_drop_rate": 0.0,
+      "avg_semantic_drift_score": 0.958
+    }
+  }
+}

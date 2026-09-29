@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Any, Dict, Optional
+from typing import Optional
 from pydantic import BaseModel, ConfigDict, Field
 
 
@@ -7,9 +7,13 @@ class RecomputeRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     principal: float = Field(..., gt=0, description="Principal amount in INR")
-    disclosed_rate: float = Field(..., ge=0, le=100, description="Disclosed annual interest rate percentage")
+    disclosed_rate: float = Field(
+        ..., ge=0, le=100, description="Disclosed annual interest rate percentage"
+    )
     tenure_months: int = Field(..., gt=0, le=360, description="Tenure in months")
-    fees: float = Field(default=0.0, ge=0, description="Total upfront fees and charges in INR")
+    fees: float = Field(
+        default=0.0, ge=0, description="Total upfront fees and charges in INR"
+    )
 
 
 class RecomputeResponse(BaseModel):
@@ -32,8 +36,14 @@ class ServiceabilityRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     monthly_income: float = Field(..., gt=0, description="Net monthly income in INR")
-    existing_emis: float = Field(default=0.0, ge=0, description="Total current monthly EMI commitments in INR")
-    monthly_expenses: float = Field(default=0.0, ge=0, description="Estimated mandatory monthly living expenses in INR")
+    existing_emis: float = Field(
+        default=0.0, ge=0, description="Total current monthly EMI commitments in INR"
+    )
+    monthly_expenses: float = Field(
+        default=0.0,
+        ge=0,
+        description="Estimated mandatory monthly living expenses in INR",
+    )
 
 
 class ServiceabilityResponse(BaseModel):

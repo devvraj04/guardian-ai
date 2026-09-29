@@ -4,9 +4,13 @@ from uuid import uuid4
 from fastapi import APIRouter, Depends, HTTPException, status
 from supabase import Client, create_client
 from app.core.config import settings
-from app.core.logging import logger
 from app.deps.auth import AuthenticatedUser, get_current_user, verify_user_ownership
-from app.schemas.loan import LoanCreate, LoanManualTermsCreate, LoanManualTermsResponse, LoanResponse
+from app.schemas.loan import (
+    LoanCreate,
+    LoanManualTermsCreate,
+    LoanManualTermsResponse,
+    LoanResponse,
+)
 
 router = APIRouter(prefix="/loans", tags=["Loans"])
 
@@ -44,13 +48,18 @@ async def create_loan(
         )
 
     # Append to audit_log (S-21)
-    supabase.table("audit_log").insert({
-        "user_id": current_user.user_id,
-        "action": "LOAN_CREATED",
-        "entity_type": "loans",
-        "entity_id": loan_id,
-        "metadata": {"loan_name": payload.loan_name, "lender_name": payload.lender_name},
-    }).execute()
+    supabase.table("audit_log").insert(
+        {
+            "user_id": current_user.user_id,
+            "action": "LOAN_CREATED",
+            "entity_type": "loans",
+            "entity_id": loan_id,
+            "metadata": {
+                "loan_name": payload.loan_name,
+                "lender_name": payload.lender_name,
+            },
+        }
+    ).execute()
 
     return LoanResponse(**res.data[0])
 
@@ -63,7 +72,13 @@ async def list_loans(
     Lists all loans belonging to the authenticated user.
     """
     supabase = get_db_client()
-    res = supabase.table("loans").select("*").eq("user_id", current_user.user_id).order("created_at", desc=True).execute()
+    res = (
+        supabase.table("loans")
+        .select("*")
+        .eq("user_id", current_user.user_id)
+        .order("created_at", desc=True)
+        .execute()
+    )
     return [LoanResponse(**item) for item in res.data]
 
 
@@ -75,14 +90,20 @@ async def get_loan(
     supabase = get_db_client()
     res = supabase.table("loans").select("*").eq("id", loan_id).execute()
     if not res.data:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Loan not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Loan not found"
+        )
 
     loan = res.data[0]
     verify_user_ownership(loan["user_id"], current_user)
     return LoanResponse(**loan)
 
 
-@router.post("/{loan_id}/terms", response_model=LoanManualTermsResponse, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/{loan_id}/terms",
+    response_model=LoanManualTermsResponse,
+    status_code=status.HTTP_201_CREATED,
+)
 async def create_manual_terms(
     loan_id: str,
     payload: LoanManualTermsCreate,
@@ -96,7 +117,9 @@ async def create_manual_terms(
     # Validate loan exists and belongs to current user
     loan_res = supabase.table("loans").select("user_id").eq("id", loan_id).execute()
     if not loan_res.data:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Loan not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Loan not found"
+        )
 
     verify_user_ownership(loan_res.data[0]["user_id"], current_user)
 
@@ -118,13 +141,15 @@ async def create_manual_terms(
         )
 
     # Append to audit_log (S-21)
-    supabase.table("audit_log").insert({
-        "user_id": current_user.user_id,
-        "action": "MANUAL_TERMS_ENTERED",
-        "entity_type": "loan_manual_terms",
-        "entity_id": terms_data["id"],
-        "metadata": {"loan_id": loan_id},
-    }).execute()
+    supabase.table("audit_log").insert(
+        {
+            "user_id": current_user.user_id,
+            "action": "MANUAL_TERMS_ENTERED",
+            "entity_type": "loan_manual_terms",
+            "entity_id": terms_data["id"],
+            "metadata": {"loan_id": loan_id},
+        }
+    ).execute()
 
     return LoanManualTermsResponse(**res.data[0])
 
@@ -137,11 +162,20 @@ async def get_manual_terms(
     supabase = get_db_client()
     loan_res = supabase.table("loans").select("user_id").eq("id", loan_id).execute()
     if not loan_res.data:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Loan not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Loan not found"
+        )
 
     verify_user_ownership(loan_res.data[0]["user_id"], current_user)
 
-    res = supabase.table("loan_manual_terms").select("*").eq("loan_id", loan_id).order("entered_at", desc=True).limit(1).execute()
+    res = (
+        supabase.table("loan_manual_terms")
+        .select("*")
+        .eq("loan_id", loan_id)
+        .order("entered_at", desc=True)
+        .limit(1)
+        .execute()
+    )
     if not res.data:
         return None
     return LoanManualTermsResponse(**res.data[0])

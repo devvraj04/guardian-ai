@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Any, Dict, List, Optional
+from typing import Any, List, Optional
 from pydantic import BaseModel, ConfigDict, Field
 
 
@@ -20,12 +20,26 @@ class ExtractedTerms(BaseModel):
 
     model_config = ConfigDict(extra="forbid")
 
-    principal: Optional[float] = Field(default=None, description="Disclosed loan amount in INR")
-    disclosed_rate: Optional[float] = Field(default=None, description="Disclosed annual interest rate percentage")
-    tenure_months: Optional[int] = Field(default=None, description="Loan tenure in months")
-    processing_fee: Optional[float] = Field(default=0.0, description="Processing fees or upfront charges in INR")
-    prepayment_clause: Optional[str] = Field(default=None, description="Exact text or clause discussing prepayment/foreclosure charges")
-    field_confidences: FieldConfidence = Field(default_factory=FieldConfidence, description="Confidence scores from 0.0 to 1.0 for each field")
+    principal: Optional[float] = Field(
+        default=None, description="Disclosed loan amount in INR"
+    )
+    disclosed_rate: Optional[float] = Field(
+        default=None, description="Disclosed annual interest rate percentage"
+    )
+    tenure_months: Optional[int] = Field(
+        default=None, description="Loan tenure in months"
+    )
+    processing_fee: Optional[float] = Field(
+        default=0.0, description="Processing fees or upfront charges in INR"
+    )
+    prepayment_clause: Optional[str] = Field(
+        default=None,
+        description="Exact text or clause discussing prepayment/foreclosure charges",
+    )
+    field_confidences: FieldConfidence = Field(
+        default_factory=FieldConfidence,
+        description="Confidence scores from 0.0 to 1.0 for each field",
+    )
 
 
 class ExtractedFieldItem(BaseModel):

@@ -31,6 +31,7 @@ hf_cache/
 # Raw/processed data directories (keep structure via .gitkeep)
 data/raw/*
 !data/raw/.gitkeep
+!data/raw/rbi_digital_lending_directions_2025.txt
 data/processed/*
 !data/processed/.gitkeep
 
@@ -45,4 +46,5 @@ chroma_data/
 *.swo
 .DS_Store
 Thumbs.db
+supabase/node_modules/
 supabase\node_modules

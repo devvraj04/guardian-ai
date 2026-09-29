@@ -20,7 +20,9 @@ def get_db_client() -> Client:
     return create_client(settings.SUPABASE_URL, settings.SUPABASE_SERVICE_ROLE_KEY)
 
 
-@router.post("", response_model=ServiceabilityResponse, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "", response_model=ServiceabilityResponse, status_code=status.HTTP_201_CREATED
+)
 async def evaluate_serviceability(
     loan_id: str,
     payload: ServiceabilityRequest,
@@ -36,7 +38,9 @@ async def evaluate_serviceability(
     # Step 1: Verify loan ownership (S-3)
     loan_res = supabase.table("loans").select("user_id").eq("id", loan_id).execute()
     if not loan_res.data:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Loan not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Loan not found"
+        )
 
     verify_user_ownership(loan_res.data[0]["user_id"], current_user)
 
@@ -65,14 +69,16 @@ async def evaluate_serviceability(
 
     # Step 3: Record income and expense inputs
     input_id = str(uuid4())
-    supabase.table("income_expense_inputs").insert({
-        "id": input_id,
-        "loan_id": loan_id,
-        "monthly_income": payload.monthly_income,
-        "existing_emis": payload.existing_emis,
-        "monthly_expenses": payload.monthly_expenses,
-        "entered_at": datetime.now(timezone.utc).isoformat(),
-    }).execute()
+    supabase.table("income_expense_inputs").insert(
+        {
+            "id": input_id,
+            "loan_id": loan_id,
+            "monthly_income": payload.monthly_income,
+            "existing_emis": payload.existing_emis,
+            "monthly_expenses": payload.monthly_expenses,
+            "entered_at": datetime.now(timezone.utc).isoformat(),
+        }
+    ).execute()
 
     # Step 4: Run deterministic serviceability assessment (RULES.md §1.7)
     serv_result = assess_serviceability(
@@ -84,14 +90,16 @@ async def evaluate_serviceability(
 
     # Step 5: Store serviceability result in database
     result_id = str(uuid4())
-    supabase.table("serviceability_results").insert({
-        "id": result_id,
-        "loan_id": loan_id,
-        "dti_ratio": serv_result.dti_ratio,
-        "disposable_income": serv_result.disposable_income,
-        "verdict": serv_result.verdict,
-        "computed_at": datetime.now(timezone.utc).isoformat(),
-    }).execute()
+    supabase.table("serviceability_results").insert(
+        {
+            "id": result_id,
+            "loan_id": loan_id,
+            "dti_ratio": serv_result.dti_ratio,
+            "disposable_income": serv_result.disposable_income,
+            "verdict": serv_result.verdict,
+            "computed_at": datetime.now(timezone.utc).isoformat(),
+        }
+    ).execute()
 
     # Step 6: Emit natural language Claim (RULES.md §1.8: must pass Module 3 before presentation)
     claim_id = str(uuid4())
@@ -118,30 +126,34 @@ async def evaluate_serviceability(
         verification_status="pending",
     )
 
-    supabase.table("claims").insert({
-        "claim_id": claim.claim_id,
-        "source_module": claim.source_module,
-        "user_id": claim.user_id,
-        "loan_id": claim.loan_id,
-        "claim_text": claim.claim_text,
-        "supporting_figures": claim.supporting_figures,
-        "source_record_id": claim.source_record_id,
-        "generated_at": claim.generated_at.isoformat(),
-        "verification_status": claim.verification_status,
-    }).execute()
+    supabase.table("claims").insert(
+        {
+            "claim_id": claim.claim_id,
+            "source_module": claim.source_module,
+            "user_id": claim.user_id,
+            "loan_id": claim.loan_id,
+            "claim_text": claim.claim_text,
+            "supporting_figures": claim.supporting_figures,
+            "source_record_id": claim.source_record_id,
+            "generated_at": claim.generated_at.isoformat(),
+            "verification_status": claim.verification_status,
+        }
+    ).execute()
 
     # Step 7: Log action to audit_log (S-21)
-    supabase.table("audit_log").insert({
-        "user_id": current_user.user_id,
-        "action": "SERVICEABILITY_ASSESSED",
-        "entity_type": "serviceability_results",
-        "entity_id": result_id,
-        "metadata": {
-            "loan_id": loan_id,
-            "verdict": serv_result.verdict,
-            "dti_ratio": serv_result.dti_ratio,
-        },
-    }).execute()
+    supabase.table("audit_log").insert(
+        {
+            "user_id": current_user.user_id,
+            "action": "SERVICEABILITY_ASSESSED",
+            "entity_type": "serviceability_results",
+            "entity_id": result_id,
+            "metadata": {
+                "loan_id": loan_id,
+                "verdict": serv_result.verdict,
+                "dti_ratio": serv_result.dti_ratio,
+            },
+        }
+    ).execute()
 
     return ServiceabilityResponse(
         loan_id=loan_id,
@@ -169,7 +181,9 @@ async def get_latest_serviceability(
     supabase = get_db_client()
     loan_res = supabase.table("loans").select("user_id").eq("id", loan_id).execute()
     if not loan_res.data:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Loan not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Loan not found"
+        )
 
     verify_user_ownership(loan_res.data[0]["user_id"], current_user)
 

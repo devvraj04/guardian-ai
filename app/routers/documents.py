@@ -1,13 +1,16 @@
 from datetime import datetime, timezone
-import os
-from typing import List, Literal
+from typing import List
 from uuid import uuid4
 from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile, status
 from supabase import Client, create_client
 from app.core.config import settings
 from app.core.logging import logger
 from app.deps.auth import AuthenticatedUser, get_current_user, verify_user_ownership
-from app.schemas.extraction import DocumentUploadResponse, ExtractedFieldItem, ExtractedTerms
+from app.schemas.extraction import (
+    DocumentUploadResponse,
+    ExtractedFieldItem,
+    ExtractedTerms,
+)
 from modules.m0_intake.extraction import (
     CONFIDENCE_CONFIRMATION_THRESHOLD,
     extract_raw_text_from_pdf,
@@ -36,7 +39,11 @@ def ensure_storage_bucket(supabase: Client):
             logger.info(f"Storage bucket verification note: {e}")
 
 
-@router.post("/upload", response_model=DocumentUploadResponse, status_code=status.HTTP_201_CREATED)
+@router.post(
+    "/upload",
+    response_model=DocumentUploadResponse,
+    status_code=status.HTTP_201_CREATED,
+)
 async def upload_loan_document(
     loan_id: str,
     doc_type: str = Form(..., description="Document type: 'tnc' or 'kfs'"),
@@ -59,7 +66,9 @@ async def upload_loan_document(
     # Step 1: Verify loan ownership (S-3)
     loan_res = supabase.table("loans").select("user_id").eq("id", loan_id).execute()
     if not loan_res.data:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Loan not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Loan not found"
+        )
 
     verify_user_ownership(loan_res.data[0]["user_id"], current_user)
 
@@ -123,13 +132,19 @@ async def upload_loan_document(
     supabase.table("loan_documents").insert(doc_record).execute()
 
     # Log document upload in audit_log (S-21)
-    supabase.table("audit_log").insert({
-        "user_id": current_user.user_id,
-        "action": "DOCUMENT_UPLOADED",
-        "entity_type": "loan_documents",
-        "entity_id": doc_id,
-        "metadata": {"doc_type": doc_type, "version": current_version, "loan_id": loan_id},
-    }).execute()
+    supabase.table("audit_log").insert(
+        {
+            "user_id": current_user.user_id,
+            "action": "DOCUMENT_UPLOADED",
+            "entity_type": "loan_documents",
+            "entity_id": doc_id,
+            "metadata": {
+                "doc_type": doc_type,
+                "version": current_version,
+                "loan_id": loan_id,
+            },
+        }
+    ).execute()
 
     # Step 6: Extract raw text with PaddleOCR fallback
     raw_text, extraction_method = extract_raw_text_from_pdf(file_bytes)
@@ -144,15 +159,37 @@ async def upload_loan_document(
     )
 
     # Step 8: Structured field extraction via Groq LLM (S-6, S-9)
-    extracted_terms: ExtractedTerms = extract_structured_fields_via_llm(raw_text, doc_type)
+    extracted_terms: ExtractedTerms = extract_structured_fields_via_llm(
+        raw_text, doc_type
+    )
 
     # Step 9: Persist extracted fields to database
     fields_to_persist = [
-        ("principal", extracted_terms.principal, extracted_terms.field_confidences.principal),
-        ("disclosed_rate", extracted_terms.disclosed_rate, extracted_terms.field_confidences.disclosed_rate),
-        ("tenure_months", extracted_terms.tenure_months, extracted_terms.field_confidences.tenure_months),
-        ("processing_fee", extracted_terms.processing_fee, extracted_terms.field_confidences.processing_fee),
-        ("prepayment_clause", extracted_terms.prepayment_clause, extracted_terms.field_confidences.prepayment_clause),
+        (
+            "principal",
+            extracted_terms.principal,
+            extracted_terms.field_confidences.principal,
+        ),
+        (
+            "disclosed_rate",
+            extracted_terms.disclosed_rate,
+            extracted_terms.field_confidences.disclosed_rate,
+        ),
+        (
+            "tenure_months",
+            extracted_terms.tenure_months,
+            extracted_terms.field_confidences.tenure_months,
+        ),
+        (
+            "processing_fee",
+            extracted_terms.processing_fee,
+            extracted_terms.field_confidences.processing_fee,
+        ),
+        (
+            "prepayment_clause",
+            extracted_terms.prepayment_clause,
+            extracted_terms.field_confidences.prepayment_clause,
+        ),
     ]
 
     saved_field_items: List[ExtractedFieldItem] = []
@@ -184,17 +221,35 @@ async def upload_loan_document(
         )
 
     # Log extraction completion in audit_log (S-21)
-    supabase.table("audit_log").insert({
-        "user_id": current_user.user_id,
-        "action": "FIELDS_EXTRACTED",
-        "entity_type": "extracted_fields",
-        "entity_id": doc_id,
-        "metadata": {
-            "doc_type": doc_type,
-            "extraction_method": extraction_method,
-            "fields_count": len(saved_field_items),
-        },
-    }).execute()
+    supabase.table("audit_log").insert(
+        {
+            "user_id": current_user.user_id,
+            "action": "FIELDS_EXTRACTED",
+            "entity_type": "extracted_fields",
+            "entity_id": doc_id,
+            "metadata": {
+                "doc_type": doc_type,
+                "extraction_method": extraction_method,
+                "fields_count": len(saved_field_items),
+            },
+        }
+    ).execute()
+
+    # Step 10: If KFS uploaded, trigger Phase 2 recompute & Phase 3 consistency check (STATUS.md line 31, IMPLEMENTATION_PLAN.md line 89)
+    if doc_type == "kfs":
+        try:
+            from app.routers.recompute import execute_apr_recompute
+
+            execute_apr_recompute(supabase, loan_id, current_user.user_id)
+        except Exception as e:
+            logger.warning(f"Auto-trigger APR recompute on KFS upload notice: {e}")
+
+        try:
+            from app.routers.consistency import execute_consistency_check
+
+            execute_consistency_check(supabase, loan_id, current_user.user_id)
+        except Exception as e:
+            logger.warning(f"Auto-trigger consistency check on KFS upload notice: {e}")
 
     return DocumentUploadResponse(
         doc_id=doc_id,
@@ -216,7 +271,9 @@ async def list_loan_documents(
     supabase = get_db_client()
     loan_res = supabase.table("loans").select("user_id").eq("id", loan_id).execute()
     if not loan_res.data:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Loan not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Loan not found"
+        )
 
     verify_user_ownership(loan_res.data[0]["user_id"], current_user)
 
@@ -239,14 +296,20 @@ async def get_document_fields(
     supabase = get_db_client()
     loan_res = supabase.table("loans").select("user_id").eq("id", loan_id).execute()
     if not loan_res.data:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Loan not found")
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Loan not found"
+        )
 
     verify_user_ownership(loan_res.data[0]["user_id"], current_user)
 
     res = supabase.table("extracted_fields").select("*").eq("doc_id", doc_id).execute()
     items = []
     for row in res.data:
-        val = row["extracted_value"].get("value") if isinstance(row["extracted_value"], dict) else row["extracted_value"]
+        val = (
+            row["extracted_value"].get("value")
+            if isinstance(row["extracted_value"], dict)
+            else row["extracted_value"]
+        )
         items.append(
             ExtractedFieldItem(
                 id=row["id"],
@@ -255,8 +318,11 @@ async def get_document_fields(
                 extracted_value=val,
                 confidence=float(row["confidence"]),
                 extraction_method=row["extraction_method"],
-                needs_manual_confirmation=float(row["confidence"]) < CONFIDENCE_CONFIRMATION_THRESHOLD,
-                created_at=datetime.fromisoformat(row["created_at"].replace("Z", "+00:00")),
+                needs_manual_confirmation=float(row["confidence"])
+                < CONFIDENCE_CONFIRMATION_THRESHOLD,
+                created_at=datetime.fromisoformat(
+                    row["created_at"].replace("Z", "+00:00")
+                ),
             )
         )
     return items

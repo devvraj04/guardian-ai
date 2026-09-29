@@ -1,14 +1,22 @@
-from datetime import datetime, timezone
-from typing import Optional
-from uuid import UUID, uuid4
+from datetime import datetime
 from pydantic import BaseModel, ConfigDict, Field
 
 
 class LoanCreate(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    loan_name: str = Field(..., min_length=2, max_length=100, description="Name or identifier of the loan offer")
-    lender_name: str = Field(..., min_length=2, max_length=100, description="Financial institution or bank name")
+    loan_name: str = Field(
+        ...,
+        min_length=2,
+        max_length=100,
+        description="Name or identifier of the loan offer",
+    )
+    lender_name: str = Field(
+        ...,
+        min_length=2,
+        max_length=100,
+        description="Financial institution or bank name",
+    )
 
 
 class LoanResponse(BaseModel):
@@ -26,9 +34,17 @@ class LoanManualTermsCreate(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     principal: float = Field(..., gt=0, description="Loan principal amount in INR")
-    disclosed_rate: float = Field(..., gt=0, le=100, description="Annual interest rate disclosed in percentage")
-    tenure_months: int = Field(..., gt=0, le=360, description="Loan tenure duration in months")
-    fees: float = Field(default=0.0, ge=0, description="Total upfront fees, charges or processing fee in INR")
+    disclosed_rate: float = Field(
+        ..., gt=0, le=100, description="Annual interest rate disclosed in percentage"
+    )
+    tenure_months: int = Field(
+        ..., gt=0, le=360, description="Loan tenure duration in months"
+    )
+    fees: float = Field(
+        default=0.0,
+        ge=0,
+        description="Total upfront fees, charges or processing fee in INR",
+    )
 
 
 class LoanManualTermsResponse(BaseModel):

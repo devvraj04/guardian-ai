@@ -1,4 +1,5 @@
 """Module 1b: Serviceability / Affordability Engine."""
+
 from modules.m1b_serviceability.serviceability import (
     ServiceabilityResult,
     ServiceabilityVerdict,

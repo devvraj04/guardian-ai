@@ -1,4 +1,3 @@
-import os
 import re
 from pathlib import Path
 from typing import Any, Dict, List, Optional
@@ -19,17 +18,25 @@ def parse_rbi_clauses(text: str) -> List[Dict[str, Any]]:
 
     def commit_clause():
         if current_clause_id and current_clause_lines:
-            clause_text = " ".join([l.strip() for l in current_clause_lines if l.strip()])
-            clauses.append({
-                "id": f"rbi_clause_{current_clause_id.replace('.', '_')}",
-                "document": f"[Section {current_section_id}: {current_section_title}] Clause {current_clause_id}: {clause_text}",
-                "metadata": {
-                    "source": "RBI_DIGITAL_LENDING_DIRECTIONS_2025",
-                    "section_id": current_section_id,
-                    "section_title": current_section_title,
-                    "clause_id": current_clause_id,
-                },
-            })
+            clause_text = " ".join(
+                [
+                    line_item.strip()
+                    for line_item in current_clause_lines
+                    if line_item.strip()
+                ]
+            )
+            clauses.append(
+                {
+                    "id": f"rbi_clause_{current_clause_id.replace('.', '_')}",
+                    "document": f"[Section {current_section_id}: {current_section_title}] Clause {current_clause_id}: {clause_text}",
+                    "metadata": {
+                        "source": "RBI_DIGITAL_LENDING_DIRECTIONS_2025",
+                        "section_id": current_section_id,
+                        "section_title": current_section_title,
+                        "clause_id": current_clause_id,
+                    },
+                }
+            )
 
     for line in lines:
         stripped = line.strip()

@@ -6,7 +6,12 @@ for downstream ingestion into ChromaDB rbi_corpus (Phase 4).
 
 from pathlib import Path
 
-OUTPUT_PATH = Path(__file__).resolve().parent.parent / "data" / "raw" / "rbi_digital_lending_directions_2025.txt"
+OUTPUT_PATH = (
+    Path(__file__).resolve().parent.parent
+    / "data"
+    / "raw"
+    / "rbi_digital_lending_directions_2025.txt"
+)
 
 RBI_DIRECTIONS_TEXT = """RESERVE BANK OF INDIA - DIGITAL LENDING DIRECTIONS, 2025
 

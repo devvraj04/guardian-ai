@@ -1,4 +1,3 @@
-import os
 import re
 from pathlib import Path
 from uuid import uuid4
@@ -54,10 +53,12 @@ def test_cross_user_vector_isolation():
         loan_id=loan_a,
         query_texts=["Apex Bank Alice income"],
     )
-    docs_tamper = res_tamper_loan["documents"][0] if res_tamper_loan.get("documents") else []
-    assert len(docs_tamper) == 0, (
-        f"Security violation: User B accessed User A's loan documents via loan_id spoofing! Leaked: {docs_tamper}"
+    docs_tamper = (
+        res_tamper_loan["documents"][0] if res_tamper_loan.get("documents") else []
     )
+    assert (
+        len(docs_tamper) == 0
+    ), f"Security violation: User B accessed User A's loan documents via loan_id spoofing! Leaked: {docs_tamper}"
 
     # Attack Scenario 2: User B queries their own loan but searches for User A's exact secrets
     res_semantic_leak = query_user_documents(
@@ -65,11 +66,17 @@ def test_cross_user_vector_isolation():
         loan_id=loan_b,
         query_texts=["Apex Bank Alice 120000"],
     )
-    docs_b = res_semantic_leak["documents"][0] if res_semantic_leak.get("documents") else []
+    docs_b = (
+        res_semantic_leak["documents"][0] if res_semantic_leak.get("documents") else []
+    )
     # Assert Bob's results NEVER contain Alice's text
     for d in docs_b:
-        assert "Alice" not in d, f"Security violation: Alice's text leaked to Bob! Leaked: {d}"
-        assert "Apex Bank" not in d, f"Security violation: Alice's bank details leaked to Bob! Leaked: {d}"
+        assert (
+            "Alice" not in d
+        ), f"Security violation: Alice's text leaked to Bob! Leaked: {d}"
+        assert (
+            "Apex Bank" not in d
+        ), f"Security violation: Alice's bank details leaked to Bob! Leaked: {d}"
 
     # Legitimate Scenario 3: User A queries their own document
     res_alice = query_user_documents(
@@ -78,7 +85,9 @@ def test_cross_user_vector_isolation():
         query_texts=["Apex Bank loan agreement"],
     )
     docs_a = res_alice["documents"][0] if res_alice.get("documents") else []
-    assert len(docs_a) > 0, "Legitimate query by User A failed to retrieve their own document."
+    assert (
+        len(docs_a) > 0
+    ), "Legitimate query by User A failed to retrieve their own document."
     assert "alice" in docs_a[0].lower()
 
 
@@ -119,17 +128,21 @@ def test_no_raw_user_documents_queries_outside_wrapper():
     root_dir = Path(__file__).resolve().parents[1]
     dirs_to_check = [root_dir / "app", root_dir / "modules"]
 
-    raw_query_pattern = re.compile(r'collection\.query\s*\(')
-    get_user_docs_pattern = re.compile(r'get_collection\s*\(\s*["\']user_documents["\']\s*\)')
+    raw_query_pattern = re.compile(r"collection\.query\s*\(")
+    get_user_docs_pattern = re.compile(
+        r'get_collection\s*\(\s*["\']user_documents["\']\s*\)'
+    )
 
     violations = []
     for d in dirs_to_check:
         for py_file in d.rglob("*.py"):
             with open(py_file, "r", encoding="utf-8") as f:
                 content = f.read()
-                if get_user_docs_pattern.search(content) or raw_query_pattern.search(content):
+                if get_user_docs_pattern.search(content) or raw_query_pattern.search(
+                    content
+                ):
                     violations.append(str(py_file.relative_to(root_dir)))
 
-    assert len(violations) == 0, (
-        f"Security violation (RULES.md §2.2): Raw ChromaDB queries detected outside wrapper in: {violations}"
-    )
+    assert (
+        len(violations) == 0
+    ), f"Security violation (RULES.md §2.2): Raw ChromaDB queries detected outside wrapper in: {violations}"

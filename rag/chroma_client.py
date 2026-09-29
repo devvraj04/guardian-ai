@@ -2,7 +2,6 @@ import chromadb
 from chromadb.config import Settings as ChromaSettings
 from typing import Any, Dict, List, Optional
 from app.core.config import settings
-from app.core.logging import logger
 
 _chroma_client: Optional[chromadb.HttpClient] = None
 
@@ -61,9 +60,13 @@ def query_user_documents(
     Direct calls to the raw collection from modules or routes are strictly forbidden.
     """
     if not user_id or not isinstance(user_id, str) or not user_id.strip():
-        raise ValueError("Security violation: user_id must be a non-empty string for querying user_documents")
+        raise ValueError(
+            "Security violation: user_id must be a non-empty string for querying user_documents"
+        )
     if not loan_id or not isinstance(loan_id, str) or not loan_id.strip():
-        raise ValueError("Security violation: loan_id must be a non-empty string for querying user_documents")
+        raise ValueError(
+            "Security violation: loan_id must be a non-empty string for querying user_documents"
+        )
 
     user_id = user_id.strip()
     loan_id = loan_id.strip()
@@ -110,11 +113,17 @@ def insert_user_document_chunks(
     Inserts chunks into user_documents, guaranteeing user_id and loan_id are always stamped.
     """
     if not user_id or not isinstance(user_id, str) or not user_id.strip():
-        raise ValueError("Security violation: user_id must be a non-empty string to stamp chunks")
+        raise ValueError(
+            "Security violation: user_id must be a non-empty string to stamp chunks"
+        )
     if not loan_id or not isinstance(loan_id, str) or not loan_id.strip():
-        raise ValueError("Security violation: loan_id must be a non-empty string to stamp chunks")
+        raise ValueError(
+            "Security violation: loan_id must be a non-empty string to stamp chunks"
+        )
     if not doc_id or not isinstance(doc_id, str) or not doc_id.strip():
-        raise ValueError("Security violation: doc_id must be a non-empty string to stamp chunks")
+        raise ValueError(
+            "Security violation: doc_id must be a non-empty string to stamp chunks"
+        )
 
     user_id = user_id.strip()
     loan_id = loan_id.strip()

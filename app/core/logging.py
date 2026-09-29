@@ -1,10 +1,11 @@
 import contextvars
 import logging
 import sys
-from typing import Any, Dict
 
 # Context variable holding the unique request_id for the current task/request
-request_id_ctx: contextvars.ContextVar[str] = contextvars.ContextVar("request_id", default="system")
+request_id_ctx: contextvars.ContextVar[str] = contextvars.ContextVar(
+    "request_id", default="system"
+)
 
 
 class SanitizedRequestFormatter(logging.Formatter):
