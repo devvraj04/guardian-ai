@@ -108,9 +108,12 @@ The platform is engineered as a multi-tier modular pipeline operating on a share
 ### 1. Prerequisites
 - **Operating System**: Windows, Linux, or macOS.
 - **Python**: Python 3.11.x (installed in `venv/`).
+- **Node.js**: Node.js v18 or newer (required for the Next.js frontend).
 - **Docker**: Docker Desktop running for local ChromaDB.
 
 ### 2. Environment Configuration
+
+#### Backend API (`.env` in root)
 Verify your `.env` file exists in the repository root. Ensure the following variables are configured:
 ```ini
 ENVIRONMENT=development
@@ -122,6 +125,14 @@ CHROMA_HOST=localhost
 CHROMA_PORT=8000
 GROQ_API_KEY=...
 GROQ_MODEL=llama-3.3-70b-versatile
+```
+
+#### Frontend UI (`frontend/.env.local`)
+Create a `.env.local` file inside the `frontend/` directory with the following variables for the Next.js UI:
+```ini
+NEXT_PUBLIC_API_URL="http://localhost:8080/api/v1"
+NEXT_PUBLIC_SUPABASE_URL="https://eqmpnwqtttfozawrlvyd.supabase.co"
+NEXT_PUBLIC_SUPABASE_ANON_KEY="..."
 ```
 
 ### 3. Launching ChromaDB Container
@@ -163,6 +174,15 @@ Start the local FastAPI development server:
 Interactive API documentation will be accessible at:
 - **Swagger UI**: [http://127.0.0.1:8080/docs](http://127.0.0.1:8080/docs)
 - **Health Check**: [http://127.0.0.1:8080/api/v1/health](http://127.0.0.1:8080/api/v1/health)
+
+### 7. Starting the Next.js Frontend
+Open a new terminal, navigate to the frontend directory, install dependencies, and start the development server:
+```powershell
+cd frontend
+npm install
+npm run dev
+```
+The Guardian AI web interface will be accessible at [http://localhost:3000](http://localhost:3000).
 
 ---
 
