@@ -58,6 +58,7 @@ class LoanAnalysisPipelineResponse(BaseModel):
     consistency_result: Optional[ConsistencyCheckResponse] = None
     verified_claims: List[VerifiedClaimResponse] = Field(default_factory=list)
     vernacular_translations: Optional[List[VernacularVerificationResponse]] = None
+    extracted_kfs: Optional[dict] = Field(default=None, description="All structured fields extracted from the Key Fact Statement")
     summary: str
     is_fully_compliant: bool
     warnings: List[str] = Field(default_factory=list)

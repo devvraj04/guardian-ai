@@ -238,19 +238,33 @@ def run_full_loan_pipeline(
                     "tenure_months": terms_obj.tenure_months,
                     "processing_fee": terms_obj.processing_fee,
                     "prepayment_clause": terms_obj.prepayment_clause,
+                    "monthly_emi": terms_obj.monthly_emi,
+                    "apr": terms_obj.apr,
+                    "penal_charges": terms_obj.penal_charges,
+                    "bounce_charges": terms_obj.bounce_charges,
+                    "bank_name": terms_obj.bank_name,
+                    "loan_type": terms_obj.loan_type,
+                    "interest_type": terms_obj.interest_type,
+                    "net_disbursed_amount": terms_obj.net_disbursed_amount,
+                    "total_interest_amount": terms_obj.total_interest_amount,
+                    "total_repayment_amount": terms_obj.total_repayment_amount,
+                    "cooling_off_period": terms_obj.cooling_off_period,
+                    "grievance_email": terms_obj.grievance_email,
+                    "grievance_phone": terms_obj.grievance_phone,
                 }
                 for f_name, f_val in rec_dict.items():
-                    supabase.table("extracted_fields").insert(
-                        {
-                            "id": str(uuid4()),
-                            "doc_id": doc_id,
-                            "field_name": f_name,
-                            "extracted_value": {"value": f_val},
-                            "confidence": 1.0,
-                            "extraction_method": "llm",
-                            "created_at": datetime.now(timezone.utc).isoformat(),
-                        }
-                    ).execute()
+                    if f_val is not None:
+                        supabase.table("extracted_fields").insert(
+                            {
+                                "id": str(uuid4()),
+                                "doc_id": doc_id,
+                                "field_name": f_name,
+                                "extracted_value": {"value": f_val},
+                                "confidence": 1.0,
+                                "extraction_method": "llm",
+                                "created_at": datetime.now(timezone.utc).isoformat(),
+                            }
+                        ).execute()
                 extracted_records_by_type[doc_type] = rec_dict
 
         timings.append(
@@ -268,7 +282,7 @@ def run_full_loan_pipeline(
 
         consistency_response: Optional[ConsistencyCheckResponse] = None
         kfs_fields = extracted_records_by_type.get("kfs")
-        tc_fields = extracted_records_by_type.get("terms_conditions")
+        tc_fields = extracted_records_by_type.get("terms_conditions") or extracted_records_by_type.get("tnc")
 
         if kfs_fields or tc_fields or manual_terms:
             checks, overall_status, summary_explanation, requires_human_review = (
@@ -648,6 +662,7 @@ def run_full_loan_pipeline(
             consistency_result=consistency_response,
             verified_claims=verified_claims,
             vernacular_translations=vernacular_results,
+            extracted_kfs=kfs_fields,
             summary=" ".join(summary_parts),
             is_fully_compliant=is_compliant,
             warnings=warnings,

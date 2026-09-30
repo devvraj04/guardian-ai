@@ -1,6 +1,6 @@
 import { supabase } from "./supabase";
 
-export const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api/v1";
+export const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8080/api/v1";
 
 // Valid JWT for test_borrower@guardian.local registered in Supabase
 const DEMO_JWT = process.env.NEXT_PUBLIC_DEMO_JWT || "";

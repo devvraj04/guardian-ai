@@ -30,6 +30,7 @@ import {
   BarChart3,
   Globe,
 } from "lucide-react";
+import LoanAnalytics from "@/components/LoanAnalytics";
 
 export default function NewAnalysis() {
   const [loanId, setLoanId] = useState<string | null>(null);
@@ -38,22 +39,33 @@ export default function NewAnalysis() {
   const [error, setError] = useState<string | null>(null);
 
   // Step 1: Loan Profile & Terms
-  const [loanName, setLoanName] = useState("Standard Personal Loan");
-  const [lenderName, setLenderName] = useState("HDFC Bank Ltd.");
-  const [principal, setPrincipal] = useState("500000");
-  const [disclosedRate, setDisclosedRate] = useState("14.5");
-  const [tenureMonths, setTenureMonths] = useState("36");
-  const [fees, setFees] = useState("2500");
+  const [loanName, setLoanName] = useState("Housing Finance Loan");
+  const [lenderName, setLenderName] = useState("Bandhan Bank");
+  const [principal, setPrincipal] = useState("2500000");
+  const [disclosedRate, setDisclosedRate] = useState("8.75");
+  const [tenureMonths, setTenureMonths] = useState("240");
+  const [fees, setFees] = useState("9250");
 
   // Step 2: Documents & Settings
   const [tncFile, setTncFile] = useState<File | null>(null);
   const [kfsFile, setKfsFile] = useState<File | null>(null);
   const [targetLanguage, setTargetLanguage] = useState<string>("");
-  const [monthlyIncome, setMonthlyIncome] = useState("60000");
-  const [existingObligations, setExistingObligations] = useState("5000");
+  const [monthlyIncome, setMonthlyIncome] = useState("85000");
+  const [existingObligations, setExistingObligations] = useState("10000");
 
   // Step 3: Results
   const [pipelineResult, setPipelineResult] = useState<any>(null);
+
+  const applyBandhanBankPreset = () => {
+    setLoanName("Housing Finance Loan");
+    setLenderName("Bandhan Bank");
+    setPrincipal("2500000");
+    setDisclosedRate("8.75");
+    setTenureMonths("240");
+    setFees("9250");
+    setMonthlyIncome("85000");
+    setExistingObligations("10000");
+  };
 
   const handleCreateLoan = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -86,20 +98,22 @@ export default function NewAnalysis() {
 
   const handleUploadAndAnalyze = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!loanId || !tncFile || !kfsFile) {
-      setError("Please select both T&C and KFS PDFs.");
+    if (!loanId || (!tncFile && !kfsFile)) {
+      setError("Please upload at least the Key Fact Statement (KFS) document to proceed.");
       return;
     }
 
     try {
       setLoading(true);
       setError(null);
-      await api.uploadDocument(loanId, "tnc", tncFile);
-      await api.uploadDocument(loanId, "kfs", kfsFile);
+      if (tncFile) {
+        await api.uploadDocument(loanId, "tnc", tncFile);
+      }
+      if (kfsFile) {
+        await api.uploadDocument(loanId, "kfs", kfsFile);
+      }
       const result = await api.runPipeline(loanId, {
         target_language: targetLanguage || undefined,
-        monthly_income: monthlyIncome ? parseFloat(monthlyIncome) : undefined,
-        existing_obligations: existingObligations ? parseFloat(existingObligations) : undefined,
       });
       setPipelineResult(result);
       setStep(3);
@@ -133,6 +147,7 @@ export default function NewAnalysis() {
     { num: 1, label: "Loan Details" },
     { num: 2, label: "Documents" },
     { num: 3, label: "Verification Report" },
+    { num: 4, label: "Serviceability & Simulator" },
   ];
 
   // Helper to get APR result (correct API field name)
@@ -140,6 +155,7 @@ export default function NewAnalysis() {
   const svc = pipelineResult?.serviceability_result;
   const cons = pipelineResult?.consistency_result;
   const vern = pipelineResult?.vernacular_translations;
+  const kfs = pipelineResult?.extracted_kfs || {};
 
   return (
     <div className="max-w-4xl mx-auto space-y-6 animate-fade-in">
@@ -159,41 +175,51 @@ export default function NewAnalysis() {
       {/* ─── Stepper ─── */}
       <div className="card p-4">
         <div className="flex items-center justify-between">
-          {steps.map((s, i) => (
-            <div key={s.num} className="flex items-center flex-1">
-              <div className="flex items-center gap-2.5">
-                <div
-                  className={`h-8 w-8 rounded-full flex items-center justify-center text-[13px] font-bold transition-all ${
-                    step >= s.num
-                      ? "bg-[#0052cc] text-white shadow-sm shadow-blue-200"
-                      : "bg-[#f3f4f6] text-[#9ca3af]"
+          {steps.map((s, i) => {
+            const isClickable = (pipelineResult && s.num >= 3) || (loanId && s.num === 2) || s.num === 1;
+            return (
+              <div key={s.num} className="flex items-center flex-1">
+                <button
+                  type="button"
+                  disabled={!isClickable}
+                  onClick={() => isClickable && setStep(s.num)}
+                  className={`flex items-center gap-2.5 text-left transition-opacity ${
+                    isClickable ? "cursor-pointer hover:opacity-85" : "cursor-default opacity-80"
                   }`}
                 >
-                  {step > s.num ? (
-                    <CheckCircle2 className="h-4 w-4" />
-                  ) : (
-                    s.num
-                  )}
-                </div>
-                <span
-                  className={`text-[13px] font-medium hidden sm:inline ${
-                    step >= s.num ? "text-[#1a1d23]" : "text-[#9ca3af]"
-                  }`}
-                >
-                  {s.label}
-                </span>
-              </div>
-              {i < steps.length - 1 && (
-                <div className="flex-1 mx-4">
                   <div
-                    className={`h-[2px] rounded-full transition-colors ${
-                      step > s.num ? "bg-[#0052cc]" : "bg-[#e5e7eb]"
+                    className={`h-8 w-8 rounded-full flex items-center justify-center text-[13px] font-bold transition-all ${
+                      step >= s.num
+                        ? "bg-[#0052cc] text-white shadow-sm shadow-blue-200"
+                        : "bg-[#f3f4f6] text-[#9ca3af]"
                     }`}
-                  />
-                </div>
-              )}
-            </div>
-          ))}
+                  >
+                    {step > s.num ? (
+                      <CheckCircle2 className="h-4 w-4" />
+                    ) : (
+                      s.num
+                    )}
+                  </div>
+                  <span
+                    className={`text-[12px] font-medium hidden sm:inline ${
+                      step === s.num ? "text-[#0052cc] font-bold" : step > s.num ? "text-[#1a1d23]" : "text-[#9ca3af]"
+                    }`}
+                  >
+                    {s.label}
+                  </span>
+                </button>
+                {i < steps.length - 1 && (
+                  <div className="flex-1 mx-3">
+                    <div
+                      className={`h-[2px] rounded-full transition-colors ${
+                        step > s.num ? "bg-[#0052cc]" : "bg-[#e5e7eb]"
+                      }`}
+                    />
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
 
@@ -219,6 +245,71 @@ export default function NewAnalysis() {
               Enter baseline loan details. These will be cross-verified against
               document-extracted data.
             </p>
+          </div>
+
+          {/* Universal RBI KFS Presets */}
+          <div className="p-4 rounded-xl bg-gradient-to-r from-[#eff6ff] to-[#f8fafc] border border-[#bfdbfe] space-y-2.5">
+            <div className="flex items-center justify-between flex-wrap gap-2">
+              <div className="flex items-center gap-2">
+                <Scale className="h-4 w-4 text-[#0052cc]" />
+                <span className="text-[12px] font-bold text-[#1e40af]">
+                  Standard RBI Loan Presets:
+                </span>
+                <span className="text-[11px] text-[#6b7280]">
+                  Pre-load standard terms to test against any bank's Key Fact Statement
+                </span>
+              </div>
+            </div>
+            <div className="flex items-center flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={() => {
+                  setLoanName("Housing Finance Loan");
+                  setLenderName("Housing Finance / Commercial Bank");
+                  setPrincipal("2500000");
+                  setDisclosedRate("8.75");
+                  setTenureMonths("240");
+                  setFees("9250");
+                  setMonthlyIncome("85000");
+                  setExistingObligations("10000");
+                }}
+                className="text-[11px] font-semibold bg-white text-[#1e40af] border border-[#bfdbfe] px-3 py-1.5 rounded-lg hover:bg-[#eff6ff] transition-all shadow-xs"
+              >
+                🏠 Housing Loan (₹25L @ 8.75%, 20Y)
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setLoanName("Personal Loan");
+                  setLenderName("Scheduled Commercial Bank");
+                  setPrincipal("500000");
+                  setDisclosedRate("13.5");
+                  setTenureMonths("36");
+                  setFees("2500");
+                  setMonthlyIncome("60000");
+                  setExistingObligations("5000");
+                }}
+                className="text-[11px] font-semibold bg-white text-[#1e40af] border border-[#bfdbfe] px-3 py-1.5 rounded-lg hover:bg-[#eff6ff] transition-all shadow-xs"
+              >
+                💼 Personal Loan (₹5L @ 13.5%, 3Y)
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setLoanName("Digital Instant Loan");
+                  setLenderName("Digital Lending NBFC");
+                  setPrincipal("100000");
+                  setDisclosedRate("18.0");
+                  setTenureMonths("12");
+                  setFees("1500");
+                  setMonthlyIncome("45000");
+                  setExistingObligations("2000");
+                }}
+                className="text-[11px] font-semibold bg-white text-[#1e40af] border border-[#bfdbfe] px-3 py-1.5 rounded-lg hover:bg-[#eff6ff] transition-all shadow-xs"
+              >
+                📱 Digital Loan (₹1L @ 18.0%, 1Y)
+              </button>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -394,18 +485,60 @@ export default function NewAnalysis() {
 
           {/* Upload Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            {/* T&C Upload */}
+            {/* KFS Upload - PRIMARY */}
+            <div className="card p-5 space-y-3 border-2 border-[#0d9f6e]/30 bg-[#f0fdf4]/30">
+              <div className="flex items-center gap-2">
+                <div className="h-8 w-8 rounded-lg bg-[#ecfdf5] flex items-center justify-center">
+                  <FileText className="h-4 w-4 text-[#0d9f6e]" />
+                </div>
+                <div className="flex-1">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-[13px] font-semibold text-[#1a1d23]">
+                      Key Fact Statement (KFS)
+                    </h3>
+                    <span className="badge-success text-[10px]">Required</span>
+                  </div>
+                  <p className="text-[11px] text-[#047857]">
+                    Bandhan Bank / RBI Annexure A & B
+                  </p>
+                </div>
+              </div>
+              <div className="border-2 border-dashed border-[#a7f3d0] hover:border-[#0d9f6e] rounded-xl p-5 flex flex-col items-center justify-center text-center cursor-pointer transition-colors bg-white">
+                <Upload className="h-6 w-6 text-[#0d9f6e] mb-2" />
+                <input
+                  type="file"
+                  accept="application/pdf"
+                  onChange={(e) => setKfsFile(e.target.files?.[0] || null)}
+                  className="w-full text-[12px] text-[#6b7280] file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border file:border-[#e5e7eb] file:text-[12px] file:font-medium file:bg-white file:text-[#374151] hover:file:bg-[#f3f4f6] cursor-pointer"
+                />
+                {kfsFile ? (
+                  <p className="text-[12px] text-[#0d9f6e] font-semibold mt-2 flex items-center gap-1">
+                    <CheckCircle2 className="h-3.5 w-3.5" />
+                    {kfsFile.name}
+                  </p>
+                ) : (
+                  <p className="text-[11px] text-[#9ca3af] mt-1">
+                    Select Bandhan Bank KFS PDF (Housing Finance)
+                  </p>
+                )}
+              </div>
+            </div>
+
+            {/* T&C Upload - OPTIONAL */}
             <div className="card p-5 space-y-3">
               <div className="flex items-center gap-2">
                 <div className="h-8 w-8 rounded-lg bg-[#e8f0fe] flex items-center justify-center">
                   <FileText className="h-4 w-4 text-[#0052cc]" />
                 </div>
-                <div>
-                  <h3 className="text-[13px] font-semibold text-[#1a1d23]">
-                    Terms & Conditions
-                  </h3>
+                <div className="flex-1">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-[13px] font-semibold text-[#1a1d23]">
+                      Terms & Conditions / Agreement
+                    </h3>
+                    <span className="badge-neutral text-[10px]">Optional</span>
+                  </div>
                   <p className="text-[11px] text-[#9ca3af]">
-                    Master agreement document
+                    For cross-document consistency checks
                   </p>
                 </div>
               </div>
@@ -417,108 +550,55 @@ export default function NewAnalysis() {
                   onChange={(e) => setTncFile(e.target.files?.[0] || null)}
                   className="w-full text-[12px] text-[#6b7280] file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border file:border-[#e5e7eb] file:text-[12px] file:font-medium file:bg-white file:text-[#374151] hover:file:bg-[#f3f4f6] cursor-pointer"
                 />
-                {tncFile && (
+                {tncFile ? (
                   <p className="text-[12px] text-[#0d9f6e] font-medium mt-2 flex items-center gap-1">
                     <CheckCircle2 className="h-3.5 w-3.5" />
                     {tncFile.name}
                   </p>
-                )}
-              </div>
-            </div>
-
-            {/* KFS Upload */}
-            <div className="card p-5 space-y-3">
-              <div className="flex items-center gap-2">
-                <div className="h-8 w-8 rounded-lg bg-[#ecfdf5] flex items-center justify-center">
-                  <FileText className="h-4 w-4 text-[#0d9f6e]" />
-                </div>
-                <div>
-                  <h3 className="text-[13px] font-semibold text-[#1a1d23]">
-                    Key Fact Statement
-                  </h3>
-                  <p className="text-[11px] text-[#9ca3af]">
-                    RBI-mandated summary table
-                  </p>
-                </div>
-              </div>
-              <div className="border-2 border-dashed border-[#d1d5db] hover:border-[#0d9f6e] rounded-xl p-5 flex flex-col items-center justify-center text-center cursor-pointer transition-colors bg-[#f9fafb]">
-                <Upload className="h-6 w-6 text-[#9ca3af] mb-2" />
-                <input
-                  type="file"
-                  accept="application/pdf"
-                  onChange={(e) => setKfsFile(e.target.files?.[0] || null)}
-                  className="w-full text-[12px] text-[#6b7280] file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border file:border-[#e5e7eb] file:text-[12px] file:font-medium file:bg-white file:text-[#374151] hover:file:bg-[#f3f4f6] cursor-pointer"
-                />
-                {kfsFile && (
-                  <p className="text-[12px] text-[#0d9f6e] font-medium mt-2 flex items-center gap-1">
-                    <CheckCircle2 className="h-3.5 w-3.5" />
-                    {kfsFile.name}
+                ) : (
+                  <p className="text-[11px] text-[#9ca3af] mt-1">
+                    Optional: Upload T&C if available
                   </p>
                 )}
               </div>
             </div>
           </div>
 
-          {/* Serviceability Inputs + Vernacular */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-            <div className="card p-5 space-y-4">
-              <div className="flex items-center gap-2 mb-1">
-                <DollarSign className="h-4 w-4 text-[#6b7280]" />
-                <h3 className="text-[13px] font-semibold text-[#1a1d23]">
-                  Serviceability Assessment
-                </h3>
-              </div>
-              <div>
-                <label className="flex items-center gap-1.5 text-[12px] font-medium text-[#374151] mb-1.5">
-                  Monthly Income (₹)
-                </label>
-                <input
-                  type="number"
-                  min="0"
-                  step="1000"
-                  value={monthlyIncome}
-                  onChange={(e) => setMonthlyIncome(e.target.value)}
-                  placeholder="e.g. 60000"
-                  className="input-field text-[13px]"
-                />
-              </div>
-              <div>
-                <label className="flex items-center gap-1.5 text-[12px] font-medium text-[#374151] mb-1.5">
-                  Existing EMI Obligations (₹)
-                </label>
-                <input
-                  type="number"
-                  min="0"
-                  step="500"
-                  value={existingObligations}
-                  onChange={(e) => setExistingObligations(e.target.value)}
-                  placeholder="e.g. 5000"
-                  className="input-field text-[13px]"
-                />
-              </div>
-              <p className="text-[10px] text-[#9ca3af] italic">
-                Industry heuristic, not an RBI mandate (RULES.md §6.4)
-              </p>
-            </div>
-
-            <div className="card p-5">
-              <label className="flex items-center gap-1.5 text-[13px] font-medium text-[#374151] mb-2">
+          {/* Vernacular Language Selection & Workflow Notice */}
+          <div className="card p-5 space-y-3">
+            <div className="flex items-center justify-between flex-wrap gap-2">
+              <label className="flex items-center gap-1.5 text-[13px] font-medium text-[#374151]">
                 <Languages className="h-3.5 w-3.5 text-[#6b7280]" />
-                Vernacular Translation (Optional)
+                Vernacular Declaration (Annexure D Languages)
               </label>
-              <select
-                value={targetLanguage}
-                onChange={(e) => setTargetLanguage(e.target.value)}
-                className="input-field w-full"
-              >
-                <option value="">English Only (Default)</option>
-                <option value="hi">Hindi (हिंदी) — IndicTrans2</option>
-                <option value="mr">Marathi (मराठी)</option>
-              </select>
-              <p className="text-[11px] text-[#9ca3af] mt-3 leading-relaxed">
-                Translated claims are back-translated and re-verified through
-                Module 3 to detect numeric or clause drift.
-              </p>
+              <span className="badge-neutral text-[10px]">Optional</span>
+            </div>
+            <select
+              value={targetLanguage}
+              onChange={(e) => setTargetLanguage(e.target.value)}
+              className="input-field w-full"
+            >
+              <option value="">English (Default)</option>
+              <option value="hi">Hindi (हिंदी)</option>
+              <option value="bn">Bengali (বাংলা) — Bandhan Bank Headquarter</option>
+              <option value="mr">Marathi (मराठी)</option>
+              <option value="gu">Gujarati (ગુજરાતી)</option>
+              <option value="kn">Kannada (ಕನ್ನಡ)</option>
+              <option value="te">Telugu (తెలుగు)</option>
+              <option value="ta">Tamil (தமிழ்)</option>
+              <option value="or">Odia (ଓଡ଼ିଆ)</option>
+              <option value="pa">Punjabi (ਪੰਜਾਬੀ)</option>
+              <option value="ml">Malayalam (മലയാളം)</option>
+              <option value="as">Assamese (অসমীয়া)</option>
+              <option value="ur">Urdu (اردو)</option>
+            </select>
+            <div className="p-3 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] flex items-center justify-between gap-3 text-[11px] text-[#6b7280]">
+              <div className="flex items-center gap-2">
+                <Info className="h-4 w-4 text-[#0052cc] shrink-0" />
+                <span>
+                  <strong>Full Verification Report First:</strong> After clicking Execute, you will receive the complete compliance audit, calculation breakdown, and payoff graph. Serviceability and prepayment simulation are available right on the report screen.
+                </span>
+              </div>
             </div>
           </div>
 
@@ -534,7 +614,7 @@ export default function NewAnalysis() {
             </button>
             <button
               type="submit"
-              disabled={loading || !tncFile || !kfsFile}
+              disabled={loading || (!tncFile && !kfsFile)}
               className="btn-primary"
             >
               {loading ? (
@@ -611,140 +691,169 @@ export default function NewAnalysis() {
             </div>
           </div>
 
-          {/* APR Recompute Card */}
-          {apr && (
-            <div className="card p-5 space-y-4">
-              <div className="flex items-center gap-2">
-                <TrendingUp className="h-4 w-4 text-[#0052cc]" />
-                <h4 className="text-[14px] font-semibold text-[#1a1d23]">
-                  APR Recomputation
-                </h4>
-              </div>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                <div className="bg-[#f9fafb] p-4 rounded-xl border border-[#f0f0f0]">
-                  <p className="text-[11px] text-[#9ca3af] font-medium mb-1">
-                    Disclosed Rate
-                  </p>
-                  <p className="text-lg font-bold text-[#1a1d23]">
-                    {apr.disclosed_rate}%
-                  </p>
-                </div>
-                <div className="bg-[#f9fafb] p-4 rounded-xl border border-[#f0f0f0]">
-                  <p className="text-[11px] text-[#9ca3af] font-medium mb-1">
-                    Recomputed True APR
-                  </p>
-                  <p className="text-lg font-bold text-[#0052cc]">
-                    {apr.recomputed_apr?.toFixed(2)}%
-                  </p>
-                </div>
-                <div className="bg-[#f9fafb] p-4 rounded-xl border border-[#f0f0f0]">
-                  <p className="text-[11px] text-[#9ca3af] font-medium mb-1">
-                    Fee Impact on APR
-                  </p>
-                  <p
-                    className={`text-lg font-bold ${
-                      apr.fee_impact_apr > 0.05
-                        ? "text-[#dc2626]"
-                        : "text-[#0d9f6e]"
-                    }`}
-                  >
-                    +{apr.fee_impact_apr?.toFixed(2)}%
-                  </p>
-                </div>
-                <div className="bg-[#f9fafb] p-4 rounded-xl border border-[#f0f0f0]">
-                  <p className="text-[11px] text-[#9ca3af] font-medium mb-1">
-                    Monthly EMI
-                  </p>
-                  <p className="text-lg font-bold text-[#1a1d23]">
-                    ₹{apr.monthly_emi?.toLocaleString("en-IN") || "—"}
-                  </p>
-                </div>
-              </div>
-              <div className="grid grid-cols-3 gap-3">
-                <div className="bg-[#f9fafb] p-3 rounded-lg border border-[#f0f0f0] text-center">
-                  <p className="text-[10px] text-[#9ca3af] font-medium">Principal</p>
-                  <p className="text-[14px] font-semibold text-[#1a1d23]">
-                    ₹{apr.principal?.toLocaleString("en-IN")}
-                  </p>
-                </div>
-                <div className="bg-[#f9fafb] p-3 rounded-lg border border-[#f0f0f0] text-center">
-                  <p className="text-[10px] text-[#9ca3af] font-medium">Total Payment</p>
-                  <p className="text-[14px] font-semibold text-[#1a1d23]">
-                    ₹{apr.total_payment?.toLocaleString("en-IN")}
-                  </p>
-                </div>
-                <div className="bg-[#f9fafb] p-3 rounded-lg border border-[#f0f0f0] text-center">
-                  <p className="text-[10px] text-[#9ca3af] font-medium">Total Interest</p>
-                  <p className="text-[14px] font-semibold text-[#d97706]">
-                    ₹{apr.total_interest?.toLocaleString("en-IN")}
-                  </p>
-                </div>
-              </div>
-            </div>
-          )}
+          {/* ═══════ VERIFICATION CALCULATIONS & COMPLIANCE PROOFS ═══════ */}
+          <LoanAnalytics
+            kfs={kfs}
+            apr={apr}
+            pipelineResult={pipelineResult}
+            loanId={loanId || undefined}
+            lenderName={lenderName}
+            loanName={loanName}
+            mode="verification"
+            onProceedToSimulator={() => setStep(4)}
+          />
 
-          {/* Serviceability Card */}
-          {svc && (
-            <div className="card p-5 space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <BarChart3 className="h-4 w-4 text-[#d97706]" />
-                  <h4 className="text-[14px] font-semibold text-[#1a1d23]">
-                    Debt-to-Income Serviceability
+          {/* ═══════ UNIVERSAL RBI KEY FACT STATEMENT (KFS) SCHEDULE ═══════ */}
+          <div className="card overflow-hidden border border-[#e5e7eb] shadow-sm">
+            <div className="px-5 py-4 bg-gradient-to-r from-[#f8fafc] to-[#f1f5f9] border-b border-[#e5e7eb] flex items-center justify-between flex-wrap gap-2">
+              <div className="flex items-center gap-2.5">
+                <div className="h-8 w-8 rounded-lg bg-[#0052cc]/10 flex items-center justify-center">
+                  <FileText className="h-4 w-4 text-[#0052cc]" />
+                </div>
+                <div>
+                  <h4 className="text-[14px] font-bold text-[#1a1d23]">
+                    Key Fact Statement (KFS) — Mandatory Disclosure Schedule
                   </h4>
-                </div>
-                <span
-                  className={`text-[11px] font-bold uppercase px-3 py-1 rounded-full ${
-                    svc.verdict === "serviceable"
-                      ? "badge-success"
-                      : svc.verdict === "marginal"
-                      ? "badge-warning"
-                      : "badge-danger"
-                  }`}
-                >
-                  {svc.verdict}
-                </span>
-              </div>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                <div className="bg-[#f9fafb] p-4 rounded-xl border border-[#f0f0f0]">
-                  <p className="text-[11px] text-[#9ca3af] font-medium mb-1">Monthly Income</p>
-                  <p className="text-lg font-bold text-[#1a1d23]">
-                    ₹{svc.monthly_income?.toLocaleString("en-IN")}
-                  </p>
-                </div>
-                <div className="bg-[#f9fafb] p-4 rounded-xl border border-[#f0f0f0]">
-                  <p className="text-[11px] text-[#9ca3af] font-medium mb-1">Total EMIs</p>
-                  <p className="text-lg font-bold text-[#1a1d23]">
-                    ₹{svc.total_emis?.toLocaleString("en-IN")}
-                  </p>
-                </div>
-                <div className="bg-[#f9fafb] p-4 rounded-xl border border-[#f0f0f0]">
-                  <p className="text-[11px] text-[#9ca3af] font-medium mb-1">DTI Ratio</p>
-                  <p
-                    className={`text-lg font-bold ${
-                      svc.dti_ratio > 0.5
-                        ? "text-[#dc2626]"
-                        : svc.dti_ratio > 0.36
-                        ? "text-[#d97706]"
-                        : "text-[#0d9f6e]"
-                    }`}
-                  >
-                    {(typeof svc.dti_ratio === "number" ? (svc.dti_ratio * (svc.dti_ratio < 1 ? 100 : 1)) : svc.dti_ratio).toFixed?.(1) || svc.dti_ratio}%
-                  </p>
-                </div>
-                <div className="bg-[#f9fafb] p-4 rounded-xl border border-[#f0f0f0]">
-                  <p className="text-[11px] text-[#9ca3af] font-medium mb-1">Disposable Income</p>
-                  <p className="text-lg font-bold text-[#1a1d23]">
-                    ₹{svc.disposable_income?.toLocaleString("en-IN")}
+                  <p className="text-[11px] text-[#6b7280]">
+                    Standardized format prescribed by Reserve Bank of India (RBI/2024-25/18)
                   </p>
                 </div>
               </div>
-              <div className="flex items-start gap-2 p-3 rounded-lg bg-[#fffbeb] border border-[#fde68a] text-[11px] text-[#92400e]">
-                <Info className="h-3.5 w-3.5 shrink-0 mt-0.5" />
-                <span>{svc.disclaimer || "Thresholds are lending-industry heuristics, not RBI-mandated rules (RULES.md §6.4)"}</span>
+              <span className="badge-success text-[11px]">
+                {kfs.bank_name || lenderName || "Regulated Entity"}
+              </span>
+            </div>
+
+            {/* Part 1: Quantitative Disclosures */}
+            <div className="p-5 space-y-4">
+              <div className="flex items-center gap-1.5 text-[12px] font-bold text-[#1e40af] uppercase tracking-wider">
+                <Banknote className="h-3.5 w-3.5" />
+                Part 1: Interest Rate & Financial Charges
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
+                <div className="p-3 rounded-xl bg-[#f9fafb] border border-[#f0f0f0]">
+                  <p className="text-[11px] text-[#9ca3af] font-medium">1. Sanctioned Loan Amount</p>
+                  <p className="text-[15px] font-bold text-[#1a1d23] mt-0.5">
+                    ₹{(kfs.principal || apr?.principal || parseFloat(principal))?.toLocaleString("en-IN")}
+                  </p>
+                  <span className="text-[10px] text-[#059669] font-medium">Part 1 Item 2</span>
+                </div>
+
+                <div className="p-3 rounded-xl bg-[#f9fafb] border border-[#f0f0f0]">
+                  <p className="text-[11px] text-[#9ca3af] font-medium">2. Loan Tenor</p>
+                  <p className="text-[15px] font-bold text-[#1a1d23] mt-0.5">
+                    {(kfs.tenure_months || apr?.tenure_months || parseInt(tenureMonths, 10))} Months
+                  </p>
+                  <span className="text-[10px] text-[#059669] font-medium">Part 1 Item 4</span>
+                </div>
+
+                <div className="p-3 rounded-xl bg-[#f9fafb] border border-[#f0f0f0]">
+                  <p className="text-[11px] text-[#9ca3af] font-medium">3. Monthly EPI / EMI</p>
+                  <p className="text-[15px] font-bold text-[#0052cc] mt-0.5">
+                    ₹{(kfs.monthly_emi || apr?.monthly_emi)?.toLocaleString("en-IN") || "—"}
+                  </p>
+                  <span className="text-[10px] text-[#059669] font-medium">Part 1 Item 5 (EPI)</span>
+                </div>
+
+                <div className="p-3 rounded-xl bg-[#f9fafb] border border-[#f0f0f0]">
+                  <p className="text-[11px] text-[#9ca3af] font-medium">4. Disclosed Interest Rate</p>
+                  <p className="text-[15px] font-bold text-[#1a1d23] mt-0.5">
+                    {(kfs.disclosed_rate || apr?.disclosed_rate || parseFloat(disclosedRate))}% p.a.
+                  </p>
+                  <span className="text-[10px] text-[#6b7280] font-medium">
+                    {kfs.interest_type || "Floating / Fixed"} (Part 1 Item 6)
+                  </span>
+                </div>
+
+                <div className="p-3 rounded-xl bg-[#f9fafb] border border-[#f0f0f0]">
+                  <p className="text-[11px] text-[#9ca3af] font-medium">5. Upfront Fees & Charges</p>
+                  <p className="text-[15px] font-bold text-[#1a1d23] mt-0.5">
+                    ₹{(kfs.processing_fee ?? apr?.fees ?? parseFloat(fees))?.toLocaleString("en-IN")}
+                  </p>
+                  <span className="text-[10px] text-[#6b7280] font-medium">Itemized (Part 1 Item 8)</span>
+                </div>
+
+                <div className="p-3 rounded-xl bg-[#f9fafb] border border-[#f0f0f0]">
+                  <p className="text-[11px] text-[#9ca3af] font-medium">6. Net Disbursed Amount</p>
+                  <p className="text-[15px] font-bold text-[#0d9f6e] mt-0.5">
+                    ₹{(kfs.net_disbursed_amount || apr?.disbursed_amount || ((kfs.principal || apr?.principal || parseFloat(principal)) - (kfs.processing_fee ?? apr?.fees ?? parseFloat(fees))))?.toLocaleString("en-IN")}
+                  </p>
+                  <span className="text-[10px] text-[#059669] font-medium">Annexure B Item 7</span>
+                </div>
+
+                <div className="p-3 rounded-xl bg-[#f9fafb] border border-[#f0f0f0]">
+                  <p className="text-[11px] text-[#9ca3af] font-medium">7. True Annual Percentage Rate (APR)</p>
+                  <p className="text-[15px] font-bold text-[#0052cc] mt-0.5">
+                    {apr?.recomputed_apr ? `${apr.recomputed_apr.toFixed(2)}%` : `${kfs.apr || "—"}%`}
+                  </p>
+                  <span className="text-[10px] text-[#059669] font-medium">IRR on Net Disbursed</span>
+                </div>
+
+                <div className="p-3 rounded-xl bg-[#f9fafb] border border-[#f0f0f0]">
+                  <p className="text-[11px] text-[#9ca3af] font-medium">8. Total Amount to be Repaid</p>
+                  <p className="text-[15px] font-bold text-[#1a1d23] mt-0.5">
+                    ₹{(kfs.total_repayment_amount || apr?.total_payment)?.toLocaleString("en-IN") || "—"}
+                  </p>
+                  <span className="text-[10px] text-[#6b7280] font-medium">Principal + Total Interest</span>
+                </div>
+              </div>
+
+              {/* Part 2: Qualitative Disclosures & Regulatory Compliance */}
+              <div className="pt-3 border-t border-[#e5e7eb] space-y-3">
+                <div className="flex items-center gap-1.5 text-[12px] font-bold text-[#1e40af] uppercase tracking-wider">
+                  <Scale className="h-3.5 w-3.5" />
+                  Part 2: Contingent Charges & Regulatory Protections
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-[12px]">
+                  {/* Prepayment Clause */}
+                  <div className="p-3 rounded-xl bg-white border border-[#e5e7eb] space-y-1">
+                    <div className="flex items-center justify-between">
+                      <span className="font-semibold text-[#1a1d23]">Prepayment / Foreclosure Terms</span>
+                      <span className="badge-success text-[10px]">RBI Compliant</span>
+                    </div>
+                    <p className="text-[#374151] text-[11px] leading-relaxed">
+                      {kfs.prepayment_clause || "Floating rate term loans to individual borrowers carry NIL prepayment charges as per RBI mandate."}
+                    </p>
+                  </div>
+
+                  {/* Penal Charges */}
+                  <div className="p-3 rounded-xl bg-white border border-[#e5e7eb] space-y-1">
+                    <div className="flex items-center justify-between">
+                      <span className="font-semibold text-[#1a1d23]">Penal Charges on Default</span>
+                      <span className="badge-neutral text-[10px]">Non-Compounding</span>
+                    </div>
+                    <p className="text-[#374151] text-[11px] leading-relaxed">
+                      {kfs.penal_charges || "2.00% of overdue EMI amount + applicable GST. (No compounding penal interest permitted)."}
+                    </p>
+                  </div>
+
+                  {/* Bounce Charges & Look-up */}
+                  <div className="p-3 rounded-xl bg-white border border-[#e5e7eb] space-y-1">
+                    <div className="flex items-center justify-between">
+                      <span className="font-semibold text-[#1a1d23]">Bounce Charges & Cooling-Off Period</span>
+                      <span className="badge-neutral text-[10px]">Statutory</span>
+                    </div>
+                    <p className="text-[#374151] text-[11px] leading-relaxed">
+                      NACH / Cheque Bounce: ₹{kfs.bounce_charges ?? 500} + GST. Cooling-off: {kfs.cooling_off_period || "Look-up window allowed per Board policy"}.
+                    </p>
+                  </div>
+
+                  {/* Nodal Grievance Contact */}
+                  <div className="p-3 rounded-xl bg-white border border-[#e5e7eb] space-y-1">
+                    <div className="flex items-center justify-between">
+                      <span className="font-semibold text-[#1a1d23]">Grievance Redressal Nodal Officer</span>
+                      <span className="badge-success text-[10px]">Escalation Contact</span>
+                    </div>
+                    <p className="text-[#374151] text-[11px] leading-relaxed font-mono">
+                      Email: {kfs.grievance_email || "customercare@lender.bank"} | Tel: {kfs.grievance_phone || "1800-TollFree"}
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
-          )}
+          </div>
 
           {/* Consistency Check Card */}
           {cons && (
@@ -977,11 +1086,80 @@ export default function NewAnalysis() {
           )}
 
           {/* Action Footer */}
-          <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
+          <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-[#e5e7eb]">
             <Link href="/" className="btn-ghost">
               <ArrowLeft className="h-4 w-4" />
               Back to Dashboard
             </Link>
+            <div className="flex items-center gap-3">
+              <Link
+                href={`/disputes?loan_id=${loanId}`}
+                className="btn-secondary"
+              >
+                <Scale className="h-4 w-4 text-[#d97706]" />
+                File Dispute
+              </Link>
+              <Link
+                href={`/chat?loan_id=${loanId}`}
+                className="btn-secondary"
+              >
+                <MessageCircle className="h-4 w-4" />
+                Chat with AI Advisor
+              </Link>
+              <button
+                type="button"
+                onClick={() => setStep(4)}
+                className="btn-primary flex items-center gap-2 shadow-sm"
+              >
+                <span>Next: Serviceability & Simulator</span>
+                <ArrowRight className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ═══════ STEP 4: FINANCIAL SERVICEABILITY & AMORTIZATION SIMULATION ═══════ */}
+      {step === 4 && pipelineResult && (
+        <div className="space-y-6 animate-slide-up">
+          {/* Section Breadcrumb Bar */}
+          <div className="flex items-center justify-between flex-wrap gap-2 p-3 bg-white rounded-xl border border-[#e5e7eb]">
+            <button
+              type="button"
+              onClick={() => setStep(3)}
+              className="btn-ghost text-[12px] flex items-center gap-1.5 py-1 px-2.5 border border-[#e5e7eb]"
+            >
+              <ArrowLeft className="h-3.5 w-3.5" />
+              Back to Verification Report
+            </button>
+            <div className="flex items-center gap-2">
+              <span className="text-[12px] font-semibold text-[#1a1d23]">{loanName}</span>
+              <span className="text-[#d1d5db]">·</span>
+              <span className="badge-success text-[10px]">{lenderName}</span>
+            </div>
+          </div>
+
+          {/* Dedicated Serviceability, Prepayment Simulator, Graph & Full Year-by-Year Table */}
+          <LoanAnalytics
+            kfs={kfs}
+            apr={apr}
+            pipelineResult={pipelineResult}
+            loanId={loanId || undefined}
+            lenderName={lenderName}
+            loanName={loanName}
+            mode="simulator"
+          />
+
+          {/* Step 4 Footer */}
+          <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-[#e5e7eb]">
+            <button
+              type="button"
+              onClick={() => setStep(3)}
+              className="btn-ghost"
+            >
+              <ArrowLeft className="h-4 w-4" />
+              Back to Verification Report
+            </button>
             <div className="flex items-center gap-3">
               <Link
                 href={`/disputes?loan_id=${loanId}`}

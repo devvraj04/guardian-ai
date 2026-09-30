@@ -105,6 +105,18 @@ def compare_numeric_field(
                     difference_notes=f"Mismatch detected between {sources[0]} ({v1}) and {sources[1]} ({v2}) [diff: {diff:.2f} > allowed tol {allowed_tol:.2f}].",
                     requires_human_review=False,
                 )
+            else:
+                missing_sources = [src for src, val in values.items() if val is None]
+                return FieldComparison(
+                    field_name=field_name,
+                    manual_value=values["manual"],
+                    tnc_value=values["tnc"],
+                    kfs_value=values["kfs"],
+                    match_status="match",
+                    tolerance_applied=tolerance_desc,
+                    difference_notes=f"Values match across available sources ({', '.join(sources)}). (Omitted: {', '.join(missing_sources)})",
+                    requires_human_review=False,
+                )
 
         missing_sources = [src for src, val in values.items() if val is None]
         return FieldComparison(
@@ -194,6 +206,22 @@ def compare_prepayment_clauses(
     """
     tnc_val = tnc_clause.strip() if tnc_clause and tnc_clause.strip() else None
     kfs_val = kfs_clause.strip() if kfs_clause and kfs_clause.strip() else None
+
+    if not tnc_val and kfs_val:
+        # Standalone KFS evaluation against RBI norms
+        kfs_nil = is_nil_prepayment(kfs_val)
+        return FieldComparison(
+            field_name="prepayment_clause",
+            manual_value=None,
+            tnc_value=None,
+            kfs_value=kfs_val,
+            match_status="match" if kfs_nil or "nil" in kfs_val.lower() else "missing",
+            tolerance_applied="RBI compliance evaluation",
+            difference_notes="KFS specifies prepayment terms complying with RBI guidelines (NIL charges for floating individual borrowers)."
+            if (kfs_nil or "nil" in kfs_val.lower())
+            else "Prepayment clause extracted from KFS (T&C document not provided).",
+            requires_human_review=False,
+        )
 
     if not tnc_val or not kfs_val:
         missing_srcs = []
