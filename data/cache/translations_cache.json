@@ -1,7 +1,7 @@
 {
   "For a principal of ₹100,000 at disclosed rate 12.00% over 12 months with fees of ₹2,000, the true effective APR is 15.89% with a monthly EMI of ₹8,884.88.": {
     "hi": {
-      "translated": "₹100,000 के मूलधन के लिए 12 महीने की अवधि में ₹2,000 शुल्क के साथ 12.00% की प्रकट दर पर, वास्तविक प्रभावी एपीआर 15.89% है और मासिक ईएमआई ₹8,884.88 है।",
+      "translated": "₹100,000 के मूलधन पर 12.00% की प्रकट दर से 12 महीने की अवधि में ₹2,000 के शुल्क के साथ, वास्तविक प्रभावी वार्षिक प्रतिशत दर (एपीआर) 15.89% है और मासिक समान मासिक किस्त (ईएमआई) ₹8,884.88 है।",
       "back_translated": "For a principal of ₹100,000 at a disclosed rate of 12.00% over a tenure of 12 months with fees of ₹2,000, the true effective APR is 15.89% with a monthly EMI of ₹8,884.88."
     },
     "mr": {
@@ -11,7 +11,7 @@
   },
   "Prepayment penalties are prohibited on floating-rate term loans granted to individual borrowers for purposes other than business.": {
     "hi": {
-      "translated": "व्यवसाय के अलावा अन्य उद्देश्यों के लिए व्यक्तिगत उधारकर्ताओं को दिए गए फ्लोटिंग-रेट टर्म लोन पर पूर्वभुगतान दंड (प्रीपेमेंट पेनल्टी) प्रतिबंधित है।",
+      "translated": "व्यवसाय के अलावा अन्य उद्देश्यों के लिए व्यक्तिगत उधारकर्ताओं को दिए गए फ्लोटिंग-रेट सावधि ऋणों पर पूर्वभुगतान दंड (प्रीपेमेंट पेनल्टी) प्रतिबंधित है।",
       "back_translated": "Prepayment penalties are prohibited on floating-rate term loans granted to individual borrowers for purposes other than business."
     },
     "mr": {
@@ -41,7 +41,7 @@
   },
   "The KFS shall clearly disclose cooling-off / look-up period during which the borrower can exit the loan without penalty.": {
     "hi": {
-      "translated": "केएफएस में कूलिंग-ऑफ / लुक-अप अवधि का स्पष्ट रूप से खुलासा किया जाएगा जिसके दौरान उधारकर्ता बिना किसी दंड के ऋण से बाहर निकल सकता है।",
+      "translated": "मुख्य तथ्य विवरण (केएफएस) में कूलिंग-ऑफ / लुक-अप अवधि का स्पष्ट रूप से खुलासा किया जाएगा जिसके दौरान उधारकर्ता बिना किसी दंड के ऋण से बाहर निकल सकता है।",
       "back_translated": "The KFS shall clearly disclose a cooling-off / look-up period during which the borrower can exit the loan without penalty."
     },
     "mr": {
@@ -51,44 +51,178 @@
   },
   "The borrower was disclosed an interest rate of 16.5%. Accounting for the INR 1500.0 processing fee, the true APR is recomputed at 22.38769701871206% with a monthly EMI of INR 4548.381825559217.": {
     "hi": {
-      "translated": "The borrower was disclosed an ब्याज दर of 16.5%. Accounting for the INR 1500.0 प्रोसेसिंग शुल्क, the true एपीआर is recomputed at 22.38769701871206% with a मासिक ईएमआई of INR 4548.381825559217.",
+      "translated": "उधारकर्ता को 16.5% की ब्याज दर प्रकट की गई थी। INR 1500.0 प्रोसेसिंग शुल्क को ध्यान में रखते हुए, वास्तविक प्रभावी वार्षिक प्रतिशत दर (एपीआर) 22.38769701871206% के रूप में पुनर्गणित की गई है और मासिक समान मासिक किस्त (ईएमआई) INR 4548.381825559217 है।",
       "back_translated": "The borrower was disclosed an interest rate of 16.5%. Accounting for the INR 1500.0 processing fees, the true APR is recomputed at 22.38769701871206% with a monthly EMI of INR 4548.381825559217."
     }
   },
   "Borrower monthly income is INR 60000.0 with total obligations of INR 9548.38. Resulting Debt-to-Income (DTI) ratio is 0.1591396970926536% (Industry benchmark verdict: serviceable).": {
     "hi": {
-      "translated": "Borrower monthly income is INR 60000.0 with total obligations of INR 9548.38. Resulting Debt-to-Income (डीटीआई) ratio is 0.1591396970926536% (Industry benchmark verdict: सेवा योग्य).",
+      "translated": "उधारकर्ता की मासिक आय INR 60000.0 है और कुल देनदारियां INR 9548.38 हैं। परिणामी ऋण-से-आय (डीटीआई) अनुपात 0.1591396970926536% है (उद्योग मानक निर्णय: सेवा योग्य)।",
       "back_translated": "Borrower monthly income is INR 60000.0 with total obligations of INR 9548.38. Resulting Debt-to-Income (DTI) ratio is 0.1591396970926536% (Industry benchmark verdict: serviceable)."
     }
   },
   "The borrower was disclosed an interest rate of 14.5%. Accounting for the INR 2500.0 processing fee, the true APR is recomputed at 14.854148816789348% with a monthly EMI of INR 17210.48872140699.": {
     "hi": {
-      "translated": "The borrower was disclosed an ब्याज दर of 14.5%. Accounting for the INR 2500.0 प्रोसेसिंग शुल्क, the true एपीआर is recomputed at 14.854148816789348% with a मासिक ईएमआई of INR 17210.48872140699.",
+      "translated": "उधारकर्ता को 14.5% की ब्याज दर प्रकट की गई थी। INR 2500.0 प्रोसेसिंग शुल्क को ध्यान में रखते हुए, वास्तविक प्रभावी वार्षिक प्रतिशत दर (एपीआर) 14.854148816789348% के रूप में पुनर्गणित की गई है और मासिक समान मासिक किस्त (ईएमआई) INR 17210.48872140699 है।",
       "back_translated": "The borrower was disclosed an interest rate of 14.5%. Accounting for the INR 2500.0 processing fees, the true APR is recomputed at 14.854148816789348% with a monthly EMI of INR 17210.48872140699."
     }
   },
   "Discrepancy detected in principal: KFS states '100000.0' whereas Terms & Conditions state 'None'.": {
     "hi": {
-      "translated": "Discrepancy detected in मूलधन: केएफएस states '100000.0' whereas Terms & Conditions state 'None'.",
+      "translated": "मूलधन में विसंगति पाई गई: मुख्य तथ्य विवरण (केएफएस) में '100000.0' दर्ज है जबकि नियम और शर्तों में 'कोई नहीं' दर्ज है।",
       "back_translated": "Discrepancy detected in principal: KFS states '100000.0' whereas Terms & Conditions state 'None'."
     }
   },
   "Discrepancy detected in disclosed_rate: KFS states '12.0' whereas Terms & Conditions state 'None'.": {
     "hi": {
-      "translated": "Discrepancy detected in disclosed_rate: केएफएस states '12.0' whereas Terms & Conditions state 'None'.",
+      "translated": "प्रकट ब्याज दर में विसंगति पाई गई: मुख्य तथ्य विवरण (केएफएस) में '12.0' दर्ज है जबकि नियम और शर्तों में 'कोई नहीं' दर्ज है।",
       "back_translated": "Discrepancy detected in disclosed_rate: KFS states '12.0' whereas Terms & Conditions state 'None'."
     }
   },
   "Discrepancy detected in tenure_months: KFS states '12.0' whereas Terms & Conditions state 'None'.": {
     "hi": {
-      "translated": "Discrepancy detected in tenure_months: केएफएस states '12.0' whereas Terms & Conditions state 'None'.",
+      "translated": "अवधि (महीनों) में विसंगति पाई गई: मुख्य तथ्य विवरण (केएफएस) में '12.0' दर्ज है जबकि नियम और शर्तों में 'कोई नहीं' दर्ज है।",
       "back_translated": "Discrepancy detected in tenure_months: KFS states '12.0' whereas Terms & Conditions state 'None'."
     }
   },
   "Discrepancy detected in fees: KFS states '1500.0' whereas Terms & Conditions state 'None'.": {
     "hi": {
-      "translated": "Discrepancy detected in शुल्क: केएफएस states '1500.0' whereas Terms & Conditions state 'None'.",
+      "translated": "शुल्क में विसंगति पाई गई: मुख्य तथ्य विवरण (केएफएस) में '1500.0' दर्ज है जबकि नियम और शर्तों में 'कोई नहीं' दर्ज है।",
       "back_translated": "Discrepancy detected in fees: KFS states '1500.0' whereas Terms & Conditions state 'None'."
+    }
+  },
+  "All loan terms match KFS and meet regulatory standards.": {
+    "hi": {
+      "translated": "सभी ऋण शर्तें मुख्य तथ्य विवरण (केएफएस) से मेल खाती हैं और नियामक मानकों को पूरा करती हैं।",
+      "back_translated": "All loan terms match KFS and meet regulatory standards."
+    },
+    "mr": {
+      "translated": "सर्व कर्जाच्या अटी केएफएसशी जुळतात आणि नियामक मानके पूर्ण करतात.",
+      "back_translated": "All loan terms match KFS and meet regulatory standards."
+    }
+  },
+  "All loan terms (principal, interest rate, tenure, fees, and prepayment clauses) agree consistently across manual entry, T&C, and KFS documents within acceptable tolerances.": {
+    "hi": {
+      "translated": "स्वीकार्य सहनशीलता सीमा के भीतर मैनुअल प्रविष्टि, नियम और शर्तें (टीएंडसी), और मुख्य तथ्य विवरण (केएफएस) दस्तावेजों में सभी ऋण शर्तें (मूलधन, ब्याज दर, अवधि, शुल्क और पूर्वभुगतान खंड) लगातार सुसंगत हैं।",
+      "back_translated": "All loan terms (principal, interest rate, tenure, fees, and prepayment clauses) agree consistently across manual entry, T&C, and KFS documents within acceptable tolerances."
+    },
+    "mr": {
+      "translated": "स्वीकार्य सहनशीलतेच्या आत मॅन्युअल नोंद, नियम आणि अटी, आणि केएफएस कागदपत्रांमध्ये सर्व कर्जाच्या अटी (मुद्दल, व्याज दर, कालावधी, शुल्क आणि मुदतपूर्व परतफेड खंड) सुसंगत आहेत.",
+      "back_translated": "All loan terms (principal, interest rate, tenure, fees, and prepayment clauses) agree consistently across manual entry, T&C, and KFS documents within acceptable tolerances."
+    }
+  },
+  "Loan analysis completed in 3064.61ms across 8 stages. 1 compliance concern(s) flagged.": {
+    "hi": {
+      "translated": "ऋण विश्लेषण 8 चरणों में 3064.61 मिलीसेकंड में पूरा हुआ। 1 अनुपालन चिंता चिह्नित की गई।",
+      "back_translated": "Loan analysis completed in 3064.61ms across 8 stages. 1 compliance concern(s) flagged."
+    }
+  },
+  "Understated APR: True APR is 22.38769701871206% vs disclosed 16.5%.": {
+    "hi": {
+      "translated": "कम दर्शाई गई वार्षिक प्रतिशत दर (एपीआर): वास्तविक एपीआर 22.38769701871206% है जबकि प्रकट दर 16.5% है।",
+      "back_translated": "Understated APR: True APR is 22.38769701871206% vs disclosed 16.5%."
+    }
+  },
+  "Consistency check incomplete due to missing documents or unextracted fields: principal, disclosed_rate, tenure_months, fees, prepayment_clause.": {
+    "hi": {
+      "translated": "गायब दस्तावेजों या अनिष्कर्षित क्षेत्रों के कारण संगतता जांच अपूर्ण है: मूलधन, प्रकट दर, अवधि (महीने), शुल्क, पूर्वभुगतान खंड।",
+      "back_translated": "Consistency check incomplete due to missing documents or unextracted fields: principal, disclosed_rate, tenure_months, fees, prepayment_clause."
+    }
+  },
+  "Loan analysis completed in 2487.18ms across 8 stages. 1 compliance concern(s) flagged.": {
+    "hi": {
+      "translated": "ऋण विश्लेषण 8 चरणों में 2487.18 मिलीसेकंड में पूरा हुआ। 1 अनुपालन चिंता चिह्नित की गई।",
+      "back_translated": "Loan analysis completed in 2487.18ms across 8 stages. 1 compliance concern(s) flagged."
+    }
+  },
+  "The borrower was disclosed an interest rate of 8.75%. Accounting for the INR 9200.0 processing fee, the true APR is recomputed at 8.801113615812994% with a monthly EMI of INR 22092.767722735836.": {
+    "hi": {
+      "translated": "उधारकर्ता को 8.75% की ब्याज दर प्रकट की गई थी। INR 9200.0 प्रोसेसिंग शुल्क को ध्यान में रखते हुए, वास्तविक वार्षिक प्रतिशत दर (एपीआर) 8.801113615812994% के रूप में पुनर्गणित की गई है और मासिक समान मासिक किस्त (ईएमआई) INR 22092.767722735836 है।",
+      "back_translated": "The borrower was disclosed an interest rate of 8.75%. Accounting for the INR 9200.0 processing fees, the true APR is recomputed at 8.801113615812994% with a monthly EMI of INR 22092.767722735836."
+    }
+  },
+  "Discrepancy detected in principal: KFS states 'None' whereas Terms & Conditions state '100000.0'.": {
+    "hi": {
+      "translated": "मूलधन में विसंगति पाई गई: मुख्य तथ्य विवरण (केएफएस) में 'कोई नहीं' दर्ज है जबकि नियम और शर्तों में '100000.0' दर्ज है।",
+      "back_translated": "Discrepancy detected in principal: KFS states 'None' whereas Terms & Conditions state '100000.0'."
+    }
+  },
+  "Discrepancy detected in disclosed_rate: KFS states 'None' whereas Terms & Conditions state '12.0'.": {
+    "hi": {
+      "translated": "प्रकट ब्याज दर में विसंगति पाई गई: मुख्य तथ्य विवरण (केएफएस) में 'कोई नहीं' दर्ज है जबकि नियम और शर्तों में '12.0' दर्ज है।",
+      "back_translated": "Discrepancy detected in disclosed_rate: KFS states 'None' whereas Terms & Conditions state '12.0'."
+    }
+  },
+  "Discrepancy detected in tenure_months: KFS states 'None' whereas Terms & Conditions state '12.0'.": {
+    "hi": {
+      "translated": "अवधि (महीनों) में विसंगति पाई गई: मुख्य तथ्य विवरण (केएफएस) में 'कोई नहीं' दर्ज है जबकि नियम और शर्तों में '12.0' दर्ज है।",
+      "back_translated": "Discrepancy detected in tenure_months: KFS states 'None' whereas Terms & Conditions state '12.0'."
+    }
+  },
+  "Discrepancy detected in fees: KFS states '0.0' whereas Terms & Conditions state '1500.0'.": {
+    "hi": {
+      "translated": "शुल्क में विसंगति पाई गई: मुख्य तथ्य विवरण (केएफएस) में '0.0' दर्ज है जबकि नियम और शर्तों में '1500.0' दर्ज है।",
+      "back_translated": "Discrepancy detected in fees: KFS states '0.0' whereas Terms & Conditions state '1500.0'."
+    }
+  },
+  "Discrepancy detected in prepayment_clause: KFS states 'The overdraft can be closed any time without penalty on prepayment of loan' whereas Terms & Conditions state 'No foreclosure charges or prepayment penalty applicable on floating rate personal loan facility as per RBI guidelines. The borrower may prepay part or full outstanding balance at any time without punitive levy.'.": {
+    "hi": {
+      "translated": "पूर्वभुगतान खंड में विसंगति पाई गई: मुख्य तथ्य विवरण (केएफएस) में दर्ज है 'ओवरड्राफ्ट को ऋण के पूर्वभुगतान पर बिना किसी दंड के किसी भी समय बंद किया जा सकता है' जबकि नियम और शर्तों में दर्ज है 'आरबीआई दिशानिर्देशों के अनुसार फ्लोटिंग दर व्यक्तिगत ऋण सुविधा पर कोई फोरक्लोज़र शुल्क या पूर्वभुगतान दंड लागू नहीं है। उधारकर्ता बिना किसी दंडात्मक शुल्क के किसी भी समय आंशिक या पूर्ण बकाया राशि का पूर्वभुगतान कर सकता है।'",
+      "back_translated": "Discrepancy detected in prepayment_clause: KFS states 'The overdraft can be closed any time without penalty on prepayment of loan' whereas Terms & Conditions state 'No foreclosure charges or prepayment penalty applicable on floating rate personal loan facility as per RBI guidelines. The borrower may prepay part or full outstanding balance at any time without punitive levy.'."
+    }
+  },
+  "Loan analysis completed in 8379.34ms across 8 stages. 2 compliance concern(s) flagged.": {
+    "hi": {
+      "translated": "ऋण विश्लेषण 8 चरणों में 8379.34 मिलीसेकंड में पूरा हुआ। 2 अनुपालन चिंताएं चिह्नित की गईं।",
+      "back_translated": "Loan analysis completed in 8379.34ms across 8 stages. 2 compliance concern(s) flagged."
+    }
+  },
+  "Consistency check detected 5 discrepancy(ies) across loan sources.": {
+    "hi": {
+      "translated": "संगतता जांच में ऋण स्रोतों में 5 विसंगतियां पाई गईं।",
+      "back_translated": "Consistency check detected 5 discrepancy(ies) across loan sources."
+    }
+  },
+  "Understated APR: True APR is 8.801113615812994% vs disclosed 8.75%.": {
+    "hi": {
+      "translated": "कम दर्शाई गई वार्षिक प्रतिशत दर (एपीआर): वास्तविक एपीआर 8.801113615812994% है जबकि प्रकट दर 8.75% है।",
+      "back_translated": "Understated APR: True APR is 8.801113615812994% vs disclosed 8.75%."
+    }
+  },
+  "Critical consistency mismatch detected across loan sources for: principal, disclosed_rate, tenure_months, fees, prepayment_clause. Manual human review is required due to contradictory or divergent contractual terms.": {
+    "hi": {
+      "translated": "ऋण स्रोतों में गंभीर संगतता विसंगति पाई गई: मूलधन, प्रकट दर, अवधि (महीने), शुल्क, पूर्वभुगतान खंड। विरोधाभासी या भिन्न अनुबंध शर्तों के कारण मैनुअल मानव समीक्षा आवश्यक है।",
+      "back_translated": "Critical consistency mismatch detected across loan sources for: principal, disclosed_rate, tenure_months, fees, prepayment_clause. Manual human review is required due to contradictory or divergent contractual terms."
+    }
+  },
+  "The borrower was disclosed an interest rate of 8.75%. Accounting for the INR 9250.0 processing fee, the true APR is recomputed at 8.85% with a monthly EMI of INR 22093.": {
+    "hi": {
+      "translated": "उधारकर्ता को 8.75% की ब्याज दर प्रकट की गई थी। INR 9250.0 प्रोसेसिंग शुल्क को ध्यान में रखते हुए, वास्तविक वार्षिक प्रतिशत दर (एपीआर) 8.85% के रूप में पुनर्गणित की गई है और मासिक समान मासिक किस्त (ईएमआई) INR 22093 है।",
+      "back_translated": "The borrower was disclosed an interest rate of 8.75%. Accounting for the INR 9250.0 processing fees, the true APR is recomputed at 8.85% with a monthly EMI of INR 22093."
+    }
+  },
+  "Borrower monthly income is INR 85000.0 with total obligations of INR 32093.": {
+    "hi": {
+      "translated": "उधारकर्ता की मासिक आय INR 85000.0 है और कुल देनदारियां INR 32093 हैं।",
+      "back_translated": "Borrower monthly income is INR 85000.0 with total obligations of INR 32093."
+    }
+  },
+  "Loan analysis completed in 3383.39ms across 8 stages. 1 compliance concern(s) flagged.": {
+    "hi": {
+      "translated": "ऋण विश्लेषण 8 चरणों में 3383.39 मिलीसेकंड में पूरा हुआ। 1 अनुपालन चिंता(एं) चिह्नित की गईं।",
+      "back_translated": "ऋण विश्लेषण 8 चरणों में 3383.39 मिलीसेकंड में पूरा हुआ। 1 अनुपालन चिंता(एं) चिह्नित की गईं।"
+    }
+  },
+  "Loan analysis completed in 9242.85ms across 8 stages. 2 compliance concern(s) flagged.": {
+    "hi": {
+      "translated": "ऋण विश्लेषण 8 चरणों में 9242.85 मिलीसेकंड में पूरा हुआ। 2 अनुपालन चिंता(एं) चिह्नित की गईं।",
+      "back_translated": "ऋण विश्लेषण 8 चरणों में 9242.85 मिलीसेकंड में पूरा हुआ। 2 अनुपालन चिंता(एं) चिह्नित की गईं।"
+    }
+  },
+  "Loan analysis completed in 9727.73ms across 8 stages. 2 compliance concern(s) flagged.": {
+    "hi": {
+      "translated": "ऋण विश्लेषण 8 चरणों में 9727.73 मिलीसेकंड में पूरा हुआ। 2 अनुपालन चिंता(एं) चिह्नित की गईं।",
+      "back_translated": "ऋण विश्लेषण 8 चरणों में 9727.73 मिलीसेकंड में पूरा हुआ। 2 अनुपालन चिंता(एं) चिह्नित की गईं।"
     }
   }
 }

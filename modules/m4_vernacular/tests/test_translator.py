@@ -31,3 +31,23 @@ def test_translate_claim_marathi_cached():
 def test_translate_unsupported_language_raises():
     with pytest.raises(ValueError, match="Unsupported vernacular language"):
         translate_claim("Some loan text", "fr")
+
+
+def test_translate_text_summary_preserves_numbers():
+    from modules.m4_vernacular.translator import translate_text
+
+    text = "All loan terms match KFS and meet regulatory standards."
+    res = translate_text(text, "hi")
+    assert res.target_language == "hi"
+    assert "केएफएस" in res.translated_text
+    assert "KFS" in res.back_translated_text
+
+
+def test_verify_vernacular_explanation():
+    from modules.m4_vernacular.vernacular_verifier import verify_vernacular_explanation
+
+    text = "All loan terms match KFS and meet regulatory standards."
+    resp = verify_vernacular_explanation(text, "hi")
+    assert resp.target_language == "hi"
+    assert resp.metrics.numeric_preservation_rate == 100.0
+    assert resp.is_safe_to_present is True

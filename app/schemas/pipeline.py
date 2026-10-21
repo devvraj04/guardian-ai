@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import List, Optional
+from typing import List, Literal, Optional
 from pydantic import BaseModel, ConfigDict, Field
 
 from app.schemas.consistency import ConsistencyCheckResponse
@@ -34,9 +34,9 @@ class StageTiming(BaseModel):
 class RunPipelineRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
-    target_language: Optional[str] = Field(
+    target_language: Optional[Literal["hi"]] = Field(
         None,
-        description="Optional ISO 639-1 vernacular code (e.g. 'hi' for Hindi, 'mr' for Marathi)",
+        description="Optional vernacular language code. Only 'hi' (Hindi) is supported. Omit or set to None for English (default).",
     )
     monthly_income: Optional[float] = Field(
         None, gt=0, description="Monthly income for serviceability assessment"
@@ -58,7 +58,18 @@ class LoanAnalysisPipelineResponse(BaseModel):
     consistency_result: Optional[ConsistencyCheckResponse] = None
     verified_claims: List[VerifiedClaimResponse] = Field(default_factory=list)
     vernacular_translations: Optional[List[VernacularVerificationResponse]] = None
-    extracted_kfs: Optional[dict] = Field(default=None, description="All structured fields extracted from the Key Fact Statement")
+    extracted_kfs: Optional[dict] = Field(
+        default=None,
+        description="All structured fields extracted from the Key Fact Statement",
+    )
     summary: str
+    summary_hi: Optional[str] = Field(
+        default=None,
+        description="Verified vernacular (Hindi) summary of loan analysis for presentation.",
+    )
     is_fully_compliant: bool
     warnings: List[str] = Field(default_factory=list)
+    warnings_hi: Optional[List[str]] = Field(
+        default=None,
+        description="Verified vernacular (Hindi) warnings for presentation.",
+    )

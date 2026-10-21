@@ -110,7 +110,7 @@ export const api = {
 
   // Vernacular
   translateClaim: (loanId: string, claimId: string, targetLanguage: string) =>
-    fetchApi(`/loans/${loanId}/claims/${claimId}/vernacular`, {
+    fetchApi(`/loans/${loanId}/claims/${claimId}/translate`, {
       method: "POST",
       body: JSON.stringify({ target_language: targetLanguage }),
     }),

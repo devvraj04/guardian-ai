@@ -8,7 +8,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from app.schemas.verification import VerificationResult
 
-VernacularLanguage = Literal["hi", "mr"]
+VernacularLanguage = Literal["hi"]
 
 
 class VernacularTranslationRequest(BaseModel):
@@ -16,7 +16,7 @@ class VernacularTranslationRequest(BaseModel):
 
     target_language: VernacularLanguage = Field(
         ...,
-        description="Target vernacular language code: 'hi' (Hindi) or 'mr' (Marathi).",
+        description="Target vernacular language code: 'hi' (Hindi).",
     )
     use_cache_only: bool = Field(
         default=False,
@@ -62,7 +62,7 @@ class VernacularVerificationResponse(BaseModel):
     claim_id: str = Field(..., description="UUID of the verified claim.")
     original_text: str = Field(..., description="Original English claim text.")
     target_language: VernacularLanguage = Field(
-        ..., description="Vernacular language code ('hi' or 'mr')."
+        ..., description="Vernacular language code ('hi')."
     )
     translated_text: str = Field(
         ..., description="Forward-translated claim in target vernacular language."
@@ -80,6 +80,31 @@ class VernacularVerificationResponse(BaseModel):
     verification_details: Optional[VerificationResult] = Field(
         default=None,
         description="Detailed Module 3 verification result for the back-translation.",
+    )
+    is_cached: bool = Field(
+        ..., description="True if returned from pre-computed demo cache."
+    )
+
+
+class VernacularExplanationResponse(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    original_text: str = Field(..., description="Original English explanation text.")
+    target_language: VernacularLanguage = Field(
+        ..., description="Vernacular language code ('hi')."
+    )
+    translated_text: str = Field(
+        ..., description="Forward-translated explanation in target vernacular language."
+    )
+    back_translated_text: str = Field(
+        ..., description="Back-translated English text for verification."
+    )
+    metrics: VernacularMetricReport = Field(
+        ..., description="Cross-lingual evaluation metrics."
+    )
+    is_safe_to_present: bool = Field(
+        ...,
+        description="True if numeric preservation and semantic drift thresholds pass.",
     )
     is_cached: bool = Field(
         ..., description="True if returned from pre-computed demo cache."

@@ -38,7 +38,10 @@ from modules.m1_recompute.apr_recompute import recompute_apr
 from modules.m1b_serviceability.serviceability import assess_serviceability
 from modules.m2_consistency.consistency import run_consistency_check
 from modules.m3_verifier.verifier import verify_claim
-from modules.m4_vernacular.vernacular_verifier import verify_vernacular_claim
+from modules.m4_vernacular.vernacular_verifier import (
+    verify_vernacular_claim,
+    verify_vernacular_explanation,
+)
 from rag.chroma_client import query_rbi_corpus, query_user_documents
 
 
@@ -282,7 +285,9 @@ def run_full_loan_pipeline(
 
         consistency_response: Optional[ConsistencyCheckResponse] = None
         kfs_fields = extracted_records_by_type.get("kfs")
-        tc_fields = extracted_records_by_type.get("terms_conditions") or extracted_records_by_type.get("tnc")
+        tc_fields = extracted_records_by_type.get(
+            "terms_conditions"
+        ) or extracted_records_by_type.get("tnc")
 
         if kfs_fields or tc_fields or manual_terms:
             checks, overall_status, summary_explanation, requires_human_review = (
@@ -588,8 +593,9 @@ def run_full_loan_pipeline(
         # -------------------------------------------------------------
         t0 = time.perf_counter()
         vernacular_results: Optional[List[VernacularVerificationResponse]] = None
+        updated_verified_claims: List[VerifiedClaimResponse] = []
 
-        if req.target_language in ["hi", "mr"]:
+        if req.target_language == "hi":
             current_stage = PipelineStage.TRANSLATING_VERNACULAR
             vernacular_results = []
             for v_claim in verified_claims:
@@ -609,6 +615,26 @@ def run_full_loan_pipeline(
                     target_language=req.target_language,  # type: ignore
                 )
                 vernacular_results.append(v_audit)
+
+                # Attach verified vernacular presentation to claim object
+                is_v_verified = (
+                    v_audit.verification_verdict == "grounded"
+                    and v_audit.metrics.numeric_preservation_rate >= 95.0
+                )
+                updated_claim = VerifiedClaimResponse(
+                    claim_id=v_claim.claim_id,
+                    source_module=v_claim.source_module,
+                    loan_id=v_claim.loan_id,
+                    claim_text=v_claim.claim_text,
+                    verification_status=v_claim.verification_status,
+                    is_safe_to_present=v_claim.is_safe_to_present,
+                    warning_message=v_claim.warning_message,
+                    verification_result=v_claim.verification_result,
+                    claim_text_hi=v_audit.translated_text,
+                    is_vernacular_verified=is_v_verified,
+                )
+                updated_verified_claims.append(updated_claim)
+            verified_claims = updated_verified_claims
 
         timings.append(
             StageTiming(
@@ -635,6 +661,48 @@ def run_full_loan_pipeline(
         else:
             summary_parts.append(f"{len(warnings)} compliance concern(s) flagged.")
 
+        summary_en = " ".join(summary_parts)
+        summary_hi: Optional[str] = None
+        warnings_hi: Optional[List[str]] = None
+
+        if req.target_language == "hi":
+            try:
+                sum_resp = verify_vernacular_explanation(
+                    explanation_text=summary_en,
+                    target_language=req.target_language,  # type: ignore
+                )
+                summary_hi = sum_resp.translated_text
+            except Exception as e:
+                logger.warning(
+                    f"Failed to translate pipeline summary to vernacular: {e}"
+                )
+
+            if warnings:
+                warnings_hi = []
+                for w in warnings:
+                    try:
+                        w_resp = verify_vernacular_explanation(
+                            explanation_text=w,
+                            target_language=req.target_language,  # type: ignore
+                        )
+                        warnings_hi.append(w_resp.translated_text)
+                    except Exception:
+                        warnings_hi.append(w)
+
+            if consistency_response and consistency_response.summary_explanation:
+                try:
+                    cons_resp = verify_vernacular_explanation(
+                        explanation_text=consistency_response.summary_explanation,
+                        target_language=req.target_language,  # type: ignore
+                    )
+                    consistency_response.summary_explanation_hi = (
+                        cons_resp.translated_text
+                    )
+                except Exception as e:
+                    logger.warning(
+                        f"Failed to translate consistency explanation to vernacular: {e}"
+                    )
+
         # Log pipeline execution to audit_log (S-21)
         supabase.table("audit_log").insert(
             {
@@ -647,6 +715,7 @@ def run_full_loan_pipeline(
                     "verified_claims_count": len(verified_claims),
                     "is_fully_compliant": is_compliant,
                     "stages": [t.stage.value for t in timings],
+                    "target_language": req.target_language,
                 },
                 "timestamp": datetime.now(timezone.utc).isoformat(),
             }
@@ -663,9 +732,11 @@ def run_full_loan_pipeline(
             verified_claims=verified_claims,
             vernacular_translations=vernacular_results,
             extracted_kfs=kfs_fields,
-            summary=" ".join(summary_parts),
+            summary=summary_en,
+            summary_hi=summary_hi,
             is_fully_compliant=is_compliant,
             warnings=warnings,
+            warnings_hi=warnings_hi,
         )
 
     except HTTPException:

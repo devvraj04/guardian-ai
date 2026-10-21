@@ -58,6 +58,10 @@ class ConsistencyCheckResponse(BaseModel):
         description="UUID of the generated unverified Claim in claims table",
     )
     summary_explanation: str = Field(..., description="Summary explanation of findings")
+    summary_explanation_hi: Optional[str] = Field(
+        default=None,
+        description="Verified vernacular (Hindi) summary explanation of findings for presentation.",
+    )
     requires_human_review: bool = Field(
         default=False,
         description="True if any clause or check requires manual confirmation",

@@ -12,6 +12,7 @@ from typing import List, Optional
 
 from app.schemas.claim import Claim
 from app.schemas.vernacular import (
+    VernacularExplanationResponse,
     VernacularLanguage,
     VernacularMetricReport,
     VernacularVerificationResponse,
@@ -166,5 +167,43 @@ def verify_vernacular_claim(
         metrics=metrics,
         verification_verdict=verification_result.final_verdict,
         verification_details=verification_result,
+        is_cached=translation_output.is_cached,
+    )
+
+
+def verify_vernacular_explanation(
+    explanation_text: str,
+    target_language: VernacularLanguage,
+    use_cache_only: bool = False,
+) -> VernacularExplanationResponse:
+    """
+    Translates and verifies non-claim prose (such as consistency explanations,
+    pipeline summaries, and regulatory notices) into Hindi or Marathi.
+    Computes cross-lingual numeric and semantic metrics to guarantee fidelity.
+    """
+    translation_output = translate_claim(
+        claim_text=explanation_text,
+        target_language=target_language,
+        use_cache_only=use_cache_only,
+    )
+
+    metrics = compute_cross_lingual_metrics(
+        original_text=explanation_text,
+        back_translated_text=translation_output.back_translated_text,
+    )
+
+    is_safe = (
+        metrics.numeric_preservation_rate >= 95.0
+        and metrics.semantic_drift_score >= 0.40
+        and metrics.clause_drop_rate <= 20.0
+    )
+
+    return VernacularExplanationResponse(
+        original_text=explanation_text,
+        target_language=target_language,
+        translated_text=translation_output.translated_text,
+        back_translated_text=translation_output.back_translated_text,
+        metrics=metrics,
+        is_safe_to_present=is_safe,
         is_cached=translation_output.is_cached,
     )

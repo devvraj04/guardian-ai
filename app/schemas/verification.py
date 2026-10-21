@@ -80,3 +80,11 @@ class VerifiedClaimResponse(BaseModel):
     )
     warning_message: Optional[str] = None
     verification_result: VerificationResult
+    claim_text_hi: Optional[str] = Field(
+        default=None,
+        description="Verified vernacular (Hindi) translation of the claim for presentation.",
+    )
+    is_vernacular_verified: Optional[bool] = Field(
+        default=None,
+        description="True if claim_text_hi passed cross-lingual numeric and semantic fidelity verification.",
+    )

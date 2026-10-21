@@ -49,12 +49,13 @@ export default function NewAnalysis() {
   // Step 2: Documents & Settings
   const [tncFile, setTncFile] = useState<File | null>(null);
   const [kfsFile, setKfsFile] = useState<File | null>(null);
-  const [targetLanguage, setTargetLanguage] = useState<string>("");
+  const [targetLanguage, setTargetLanguage] = useState<string>("en");
   const [monthlyIncome, setMonthlyIncome] = useState("85000");
   const [existingObligations, setExistingObligations] = useState("10000");
 
   // Step 3: Results
   const [pipelineResult, setPipelineResult] = useState<any>(null);
+  const [displayLanguage, setDisplayLanguage] = useState<string>("en");
 
   const applyBandhanBankPreset = () => {
     setLoanName("Housing Finance Loan");
@@ -113,9 +114,14 @@ export default function NewAnalysis() {
         await api.uploadDocument(loanId, "kfs", kfsFile);
       }
       const result = await api.runPipeline(loanId, {
-        target_language: targetLanguage || undefined,
+        target_language: targetLanguage === "hi" ? "hi" : undefined,
       });
       setPipelineResult(result);
+      if (targetLanguage === "hi") {
+        setDisplayLanguage("hi");
+      } else {
+        setDisplayLanguage("en");
+      }
       setStep(3);
     } catch (err: any) {
       setError(err.message || "Pipeline execution failed.");
@@ -571,27 +577,23 @@ export default function NewAnalysis() {
                 <Languages className="h-3.5 w-3.5 text-[#6b7280]" />
                 Vernacular Declaration (Annexure D Languages)
               </label>
-              <span className="badge-neutral text-[10px]">Optional</span>
             </div>
             <select
               value={targetLanguage}
               onChange={(e) => setTargetLanguage(e.target.value)}
               className="input-field w-full"
             >
-              <option value="">English (Default)</option>
+              <option value="en">English (Default)</option>
               <option value="hi">Hindi (हिंदी)</option>
-              <option value="bn">Bengali (বাংলা) — Bandhan Bank Headquarter</option>
-              <option value="mr">Marathi (मराठी)</option>
-              <option value="gu">Gujarati (ગુજરાતી)</option>
-              <option value="kn">Kannada (ಕನ್ನಡ)</option>
-              <option value="te">Telugu (తెలుగు)</option>
-              <option value="ta">Tamil (தமிழ்)</option>
-              <option value="or">Odia (ଓଡ଼ିଆ)</option>
-              <option value="pa">Punjabi (ਪੰਜਾਬੀ)</option>
-              <option value="ml">Malayalam (മലയാളം)</option>
-              <option value="as">Assamese (অসমীয়া)</option>
-              <option value="ur">Urdu (اردو)</option>
             </select>
+            {targetLanguage === "hi" && (
+              <div className="p-3 rounded-xl bg-[#eff6ff] border border-[#bfdbfe] flex items-start gap-3 text-[11px] text-[#1e40af]">
+                <Languages className="h-4 w-4 text-[#0052cc] shrink-0 mt-0.5" />
+                <span>
+                  <strong>Hindi Mode:</strong> Claims, explanations, warnings, and all textual content will be displayed in Hindi (हिंदी). All calculations, formulas, and mathematical computations will remain in English for accuracy.
+                </span>
+              </div>
+            )}
             <div className="p-3 rounded-xl bg-[#f8fafc] border border-[#e2e8f0] flex items-center justify-between gap-3 text-[11px] text-[#6b7280]">
               <div className="flex items-center gap-2">
                 <Info className="h-4 w-4 text-[#0052cc] shrink-0" />
@@ -654,6 +656,49 @@ export default function NewAnalysis() {
               </div>
             )}
             <div className="flex-1">
+              <div className="flex items-center justify-between flex-wrap gap-2 mb-2">
+                <span
+                  className={`text-[11px] font-bold tracking-wider uppercase ${
+                    pipelineResult.is_fully_compliant
+                      ? "text-[#065f46]"
+                      : "text-[#991b1b]"
+                  }`}
+                >
+                  {displayLanguage === "hi"
+                    ? (pipelineResult.is_fully_compliant ? "सत्यापन स्थिति: अनुपालित" : "सत्यापन स्थिति: नियामक उल्लंघन")
+                    : (pipelineResult.is_fully_compliant ? "Compliance Status: Verified" : "Compliance Status: Flagged")}
+                </span>
+
+                {/* Bilingual Language Switcher Toggle — only show when Hindi was selected */}
+                {targetLanguage === "hi" && (
+                  <div className="flex items-center gap-1.5 p-1 bg-white/90 rounded-xl border border-[#e5e7eb] shadow-sm">
+                    <button
+                      type="button"
+                      onClick={() => setDisplayLanguage("en")}
+                      className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all ${
+                        displayLanguage === "en"
+                          ? "bg-[#1a1d23] text-white shadow-sm"
+                          : "text-[#6b7280] hover:text-[#1a1d23]"
+                      }`}
+                    >
+                      English
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setDisplayLanguage("hi")}
+                      className={`px-3 py-1 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all ${
+                        displayLanguage === "hi"
+                          ? "bg-[#0052cc] text-white shadow-sm"
+                          : "text-[#6b7280] hover:text-[#1a1d23]"
+                      }`}
+                    >
+                      <Languages className="h-3.5 w-3.5" />
+                      हिंदी (Hindi)
+                    </button>
+                  </div>
+                )}
+              </div>
+
               <div className="flex items-center justify-between flex-wrap gap-2">
                 <h3
                   className={`text-lg font-bold ${
@@ -662,9 +707,9 @@ export default function NewAnalysis() {
                       : "text-[#991b1b]"
                   }`}
                 >
-                  {pipelineResult.is_fully_compliant
-                    ? "Audit Passed — Fully Compliant"
-                    : "Regulatory Violations Detected"}
+                  {displayLanguage === "hi"
+                    ? (pipelineResult.is_fully_compliant ? "ऑडिट सफल — पूर्णतः नियामक अनुपालित" : "नियामक उल्लंघन चिह्नित किए गए")
+                    : (pipelineResult.is_fully_compliant ? "Audit Passed — Fully Compliant" : "Regulatory Violations Detected")}
                 </h3>
                 <span className="badge-neutral text-[11px] flex items-center gap-1">
                   <Clock className="h-3 w-3" />
@@ -672,7 +717,9 @@ export default function NewAnalysis() {
                 </span>
               </div>
               <p className="text-[13px] text-[#6b7280] mt-1.5 leading-relaxed">
-                {pipelineResult.summary}
+                {displayLanguage === "hi" && pipelineResult.summary_hi
+                  ? pipelineResult.summary_hi
+                  : pipelineResult.summary}
               </p>
               {/* Warnings */}
               {pipelineResult.warnings?.length > 0 && (
@@ -683,7 +730,7 @@ export default function NewAnalysis() {
                       className="flex items-center gap-2 p-2.5 rounded-lg bg-[#fffbeb] border border-[#fde68a] text-[12px] text-[#92400e]"
                     >
                       <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
-                      {w}
+                      {(displayLanguage === "hi" && pipelineResult.warnings_hi && pipelineResult.warnings_hi[i]) || w}
                     </div>
                   ))}
                 </div>
@@ -700,6 +747,7 @@ export default function NewAnalysis() {
             lenderName={lenderName}
             loanName={loanName}
             mode="verification"
+            displayLanguage={displayLanguage}
             onProceedToSimulator={() => setStep(4)}
           />
 
@@ -712,10 +760,14 @@ export default function NewAnalysis() {
                 </div>
                 <div>
                   <h4 className="text-[14px] font-bold text-[#1a1d23]">
-                    Key Fact Statement (KFS) — Mandatory Disclosure Schedule
+                    {displayLanguage === "hi"
+                      ? "मुख्य तथ्य विवरण (केएफएस) — अनिवार्य प्रकटीकरण अनुसूची"
+                      : "Key Fact Statement (KFS) — Mandatory Disclosure Schedule"}
                   </h4>
                   <p className="text-[11px] text-[#6b7280]">
-                    Standardized format prescribed by Reserve Bank of India (RBI/2024-25/18)
+                    {displayLanguage === "hi"
+                      ? "भारतीय रिज़र्व बैंक (आरबीआई/2024-25/18) द्वारा निर्धारित मानकीकृत प्रारूप"
+                      : "Standardized format prescribed by Reserve Bank of India (RBI/2024-25/18)"}
                   </p>
                 </div>
               </div>
@@ -728,74 +780,74 @@ export default function NewAnalysis() {
             <div className="p-5 space-y-4">
               <div className="flex items-center gap-1.5 text-[12px] font-bold text-[#1e40af] uppercase tracking-wider">
                 <Banknote className="h-3.5 w-3.5" />
-                Part 1: Interest Rate & Financial Charges
+                {displayLanguage === "hi" ? "भाग 1: ब्याज दर और वित्तीय शुल्क" : "Part 1: Interest Rate & Financial Charges"}
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
                 <div className="p-3 rounded-xl bg-[#f9fafb] border border-[#f0f0f0]">
-                  <p className="text-[11px] text-[#9ca3af] font-medium">1. Sanctioned Loan Amount</p>
+                  <p className="text-[11px] text-[#9ca3af] font-medium">{displayLanguage === "hi" ? "1. स्वीकृत ऋण राशि" : "1. Sanctioned Loan Amount"}</p>
                   <p className="text-[15px] font-bold text-[#1a1d23] mt-0.5">
                     ₹{(kfs.principal || apr?.principal || parseFloat(principal))?.toLocaleString("en-IN")}
                   </p>
-                  <span className="text-[10px] text-[#059669] font-medium">Part 1 Item 2</span>
+                  <span className="text-[10px] text-[#059669] font-medium">{displayLanguage === "hi" ? "भाग 1 मद 2" : "Part 1 Item 2"}</span>
                 </div>
 
                 <div className="p-3 rounded-xl bg-[#f9fafb] border border-[#f0f0f0]">
-                  <p className="text-[11px] text-[#9ca3af] font-medium">2. Loan Tenor</p>
+                  <p className="text-[11px] text-[#9ca3af] font-medium">{displayLanguage === "hi" ? "2. ऋण अवधि" : "2. Loan Tenor"}</p>
                   <p className="text-[15px] font-bold text-[#1a1d23] mt-0.5">
-                    {(kfs.tenure_months || apr?.tenure_months || parseInt(tenureMonths, 10))} Months
+                    {(kfs.tenure_months || apr?.tenure_months || parseInt(tenureMonths, 10))} {displayLanguage === "hi" ? "महीने" : "Months"}
                   </p>
-                  <span className="text-[10px] text-[#059669] font-medium">Part 1 Item 4</span>
+                  <span className="text-[10px] text-[#059669] font-medium">{displayLanguage === "hi" ? "भाग 1 मद 4" : "Part 1 Item 4"}</span>
                 </div>
 
                 <div className="p-3 rounded-xl bg-[#f9fafb] border border-[#f0f0f0]">
-                  <p className="text-[11px] text-[#9ca3af] font-medium">3. Monthly EPI / EMI</p>
+                  <p className="text-[11px] text-[#9ca3af] font-medium">{displayLanguage === "hi" ? "3. मासिक ईएमआई" : "3. Monthly EPI / EMI"}</p>
                   <p className="text-[15px] font-bold text-[#0052cc] mt-0.5">
                     ₹{(kfs.monthly_emi || apr?.monthly_emi)?.toLocaleString("en-IN") || "—"}
                   </p>
-                  <span className="text-[10px] text-[#059669] font-medium">Part 1 Item 5 (EPI)</span>
+                  <span className="text-[10px] text-[#059669] font-medium">{displayLanguage === "hi" ? "भाग 1 मद 5" : "Part 1 Item 5 (EPI)"}</span>
                 </div>
 
                 <div className="p-3 rounded-xl bg-[#f9fafb] border border-[#f0f0f0]">
-                  <p className="text-[11px] text-[#9ca3af] font-medium">4. Disclosed Interest Rate</p>
+                  <p className="text-[11px] text-[#9ca3af] font-medium">{displayLanguage === "hi" ? "4. प्रकट ब्याज दर" : "4. Disclosed Interest Rate"}</p>
                   <p className="text-[15px] font-bold text-[#1a1d23] mt-0.5">
-                    {(kfs.disclosed_rate || apr?.disclosed_rate || parseFloat(disclosedRate))}% p.a.
+                    {(kfs.disclosed_rate || apr?.disclosed_rate || parseFloat(disclosedRate))}% {displayLanguage === "hi" ? "वार्षिक" : "p.a."}
                   </p>
                   <span className="text-[10px] text-[#6b7280] font-medium">
-                    {kfs.interest_type || "Floating / Fixed"} (Part 1 Item 6)
+                    {kfs.interest_type || (displayLanguage === "hi" ? "फ्लोटिंग / फिक्स्ड" : "Floating / Fixed")} ({displayLanguage === "hi" ? "भाग 1 मद 6" : "Part 1 Item 6"})
                   </span>
                 </div>
 
                 <div className="p-3 rounded-xl bg-[#f9fafb] border border-[#f0f0f0]">
-                  <p className="text-[11px] text-[#9ca3af] font-medium">5. Upfront Fees & Charges</p>
+                  <p className="text-[11px] text-[#9ca3af] font-medium">{displayLanguage === "hi" ? "5. अग्रिम शुल्क" : "5. Upfront Fees & Charges"}</p>
                   <p className="text-[15px] font-bold text-[#1a1d23] mt-0.5">
                     ₹{(kfs.processing_fee ?? apr?.fees ?? parseFloat(fees))?.toLocaleString("en-IN")}
                   </p>
-                  <span className="text-[10px] text-[#6b7280] font-medium">Itemized (Part 1 Item 8)</span>
+                  <span className="text-[10px] text-[#6b7280] font-medium">{displayLanguage === "hi" ? "मदवार (भाग 1 मद 8)" : "Itemized (Part 1 Item 8)"}</span>
                 </div>
 
                 <div className="p-3 rounded-xl bg-[#f9fafb] border border-[#f0f0f0]">
-                  <p className="text-[11px] text-[#9ca3af] font-medium">6. Net Disbursed Amount</p>
+                  <p className="text-[11px] text-[#9ca3af] font-medium">{displayLanguage === "hi" ? "6. शुद्ध वितरित राशि" : "6. Net Disbursed Amount"}</p>
                   <p className="text-[15px] font-bold text-[#0d9f6e] mt-0.5">
                     ₹{(kfs.net_disbursed_amount || apr?.disbursed_amount || ((kfs.principal || apr?.principal || parseFloat(principal)) - (kfs.processing_fee ?? apr?.fees ?? parseFloat(fees))))?.toLocaleString("en-IN")}
                   </p>
-                  <span className="text-[10px] text-[#059669] font-medium">Annexure B Item 7</span>
+                  <span className="text-[10px] text-[#059669] font-medium">{displayLanguage === "hi" ? "अनुलग्नक बी मद 7" : "Annexure B Item 7"}</span>
                 </div>
 
                 <div className="p-3 rounded-xl bg-[#f9fafb] border border-[#f0f0f0]">
-                  <p className="text-[11px] text-[#9ca3af] font-medium">7. True Annual Percentage Rate (APR)</p>
+                  <p className="text-[11px] text-[#9ca3af] font-medium">{displayLanguage === "hi" ? "7. वास्तविक वार्षिक प्रतिशत दर (एपीआर)" : "7. True Annual Percentage Rate (APR)"}</p>
                   <p className="text-[15px] font-bold text-[#0052cc] mt-0.5">
                     {apr?.recomputed_apr ? `${apr.recomputed_apr.toFixed(2)}%` : `${kfs.apr || "—"}%`}
                   </p>
-                  <span className="text-[10px] text-[#059669] font-medium">IRR on Net Disbursed</span>
+                  <span className="text-[10px] text-[#059669] font-medium">{displayLanguage === "hi" ? "शुद्ध वितरित राशि पर आईआरआर" : "IRR on Net Disbursed"}</span>
                 </div>
 
                 <div className="p-3 rounded-xl bg-[#f9fafb] border border-[#f0f0f0]">
-                  <p className="text-[11px] text-[#9ca3af] font-medium">8. Total Amount to be Repaid</p>
+                  <p className="text-[11px] text-[#9ca3af] font-medium">{displayLanguage === "hi" ? "8. कुल चुकौती राशि" : "8. Total Amount to be Repaid"}</p>
                   <p className="text-[15px] font-bold text-[#1a1d23] mt-0.5">
                     ₹{(kfs.total_repayment_amount || apr?.total_payment)?.toLocaleString("en-IN") || "—"}
                   </p>
-                  <span className="text-[10px] text-[#6b7280] font-medium">Principal + Total Interest</span>
+                  <span className="text-[10px] text-[#6b7280] font-medium">{displayLanguage === "hi" ? "मूलधन + कुल ब्याज" : "Principal + Total Interest"}</span>
                 </div>
               </div>
 
@@ -803,51 +855,57 @@ export default function NewAnalysis() {
               <div className="pt-3 border-t border-[#e5e7eb] space-y-3">
                 <div className="flex items-center gap-1.5 text-[12px] font-bold text-[#1e40af] uppercase tracking-wider">
                   <Scale className="h-3.5 w-3.5" />
-                  Part 2: Contingent Charges & Regulatory Protections
+                  {displayLanguage === "hi" ? "भाग 2: आकस्मिक शुल्क और नियामक सुरक्षा" : "Part 2: Contingent Charges & Regulatory Protections"}
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-[12px]">
                   {/* Prepayment Clause */}
                   <div className="p-3 rounded-xl bg-white border border-[#e5e7eb] space-y-1">
                     <div className="flex items-center justify-between">
-                      <span className="font-semibold text-[#1a1d23]">Prepayment / Foreclosure Terms</span>
-                      <span className="badge-success text-[10px]">RBI Compliant</span>
+                      <span className="font-semibold text-[#1a1d23]">{displayLanguage === "hi" ? "पूर्वभुगतान / फोरक्लोज़र शर्तें" : "Prepayment / Foreclosure Terms"}</span>
+                      <span className="badge-success text-[10px]">{displayLanguage === "hi" ? "आरबीआई अनुपालित" : "RBI Compliant"}</span>
                     </div>
                     <p className="text-[#374151] text-[11px] leading-relaxed">
-                      {kfs.prepayment_clause || "Floating rate term loans to individual borrowers carry NIL prepayment charges as per RBI mandate."}
+                      {displayLanguage === "hi"
+                        ? (kfs.prepayment_clause ? kfs.prepayment_clause : "आरबीआई के आदेश के अनुसार व्यक्तिगत उधारकर्ताओं को दिए गए फ्लोटिंग दर सावधि ऋणों पर शून्य पूर्वभुगतान शुल्क लागू है।")
+                        : (kfs.prepayment_clause || "Floating rate term loans to individual borrowers carry NIL prepayment charges as per RBI mandate.")}
                     </p>
                   </div>
 
                   {/* Penal Charges */}
                   <div className="p-3 rounded-xl bg-white border border-[#e5e7eb] space-y-1">
                     <div className="flex items-center justify-between">
-                      <span className="font-semibold text-[#1a1d23]">Penal Charges on Default</span>
-                      <span className="badge-neutral text-[10px]">Non-Compounding</span>
+                      <span className="font-semibold text-[#1a1d23]">{displayLanguage === "hi" ? "चूक पर दंडात्मक शुल्क" : "Penal Charges on Default"}</span>
+                      <span className="badge-neutral text-[10px]">{displayLanguage === "hi" ? "गैर-चक्रवृद्धि" : "Non-Compounding"}</span>
                     </div>
                     <p className="text-[#374151] text-[11px] leading-relaxed">
-                      {kfs.penal_charges || "2.00% of overdue EMI amount + applicable GST. (No compounding penal interest permitted)."}
+                      {displayLanguage === "hi"
+                        ? (kfs.penal_charges ? kfs.penal_charges : "बकाया ईएमआई राशि का 2.00% + लागू जीएसटी। (चक्रवृद्धि दंडात्मक ब्याज की अनुमति नहीं है)।")
+                        : (kfs.penal_charges || "2.00% of overdue EMI amount + applicable GST. (No compounding penal interest permitted).")}
                     </p>
                   </div>
 
                   {/* Bounce Charges & Look-up */}
                   <div className="p-3 rounded-xl bg-white border border-[#e5e7eb] space-y-1">
                     <div className="flex items-center justify-between">
-                      <span className="font-semibold text-[#1a1d23]">Bounce Charges & Cooling-Off Period</span>
-                      <span className="badge-neutral text-[10px]">Statutory</span>
+                      <span className="font-semibold text-[#1a1d23]">{displayLanguage === "hi" ? "बाउंस शुल्क और कूलिंग-ऑफ अवधि" : "Bounce Charges & Cooling-Off Period"}</span>
+                      <span className="badge-neutral text-[10px]">{displayLanguage === "hi" ? "वैधानिक" : "Statutory"}</span>
                     </div>
                     <p className="text-[#374151] text-[11px] leading-relaxed">
-                      NACH / Cheque Bounce: ₹{kfs.bounce_charges ?? 500} + GST. Cooling-off: {kfs.cooling_off_period || "Look-up window allowed per Board policy"}.
+                      {displayLanguage === "hi"
+                        ? `एनएसीएच / चेक बाउंस: ₹${kfs.bounce_charges ?? 500} + जीएसटी। कूलिंग-ऑफ: ${kfs.cooling_off_period || "बोर्ड नीति के अनुसार लुक-अप विंडो अनुमत"}।`
+                        : `NACH / Cheque Bounce: ₹${kfs.bounce_charges ?? 500} + GST. Cooling-off: ${kfs.cooling_off_period || "Look-up window allowed per Board policy"}.`}
                     </p>
                   </div>
 
                   {/* Nodal Grievance Contact */}
                   <div className="p-3 rounded-xl bg-white border border-[#e5e7eb] space-y-1">
                     <div className="flex items-center justify-between">
-                      <span className="font-semibold text-[#1a1d23]">Grievance Redressal Nodal Officer</span>
-                      <span className="badge-success text-[10px]">Escalation Contact</span>
+                      <span className="font-semibold text-[#1a1d23]">{displayLanguage === "hi" ? "शिकायत निवारण नोडल अधिकारी" : "Grievance Redressal Nodal Officer"}</span>
+                      <span className="badge-success text-[10px]">{displayLanguage === "hi" ? "एस्केलेशन संपर्क" : "Escalation Contact"}</span>
                     </div>
                     <p className="text-[#374151] text-[11px] leading-relaxed font-mono">
-                      Email: {kfs.grievance_email || "customercare@lender.bank"} | Tel: {kfs.grievance_phone || "1800-TollFree"}
+                      {displayLanguage === "hi" ? "ईमेल" : "Email"}: {kfs.grievance_email || "customercare@lender.bank"} | {displayLanguage === "hi" ? "दूरभाष" : "Tel"}: {kfs.grievance_phone || "1800-TollFree"}
                     </p>
                   </div>
                 </div>
@@ -862,26 +920,26 @@ export default function NewAnalysis() {
                 <div className="flex items-center gap-2">
                   <Scale className="h-4 w-4 text-[#be185d]" />
                   <h4 className="text-[14px] font-semibold text-[#1a1d23]">
-                    3-Way Consistency Check
+                    {displayLanguage === "hi" ? "त्रि-मार्गी संगतता जांच" : "3-Way Consistency Check"}
                   </h4>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="badge-success text-[10px]">{cons.match_count} Match</span>
+                  <span className="badge-success text-[10px]">{cons.match_count} {displayLanguage === "hi" ? "मेल" : "Match"}</span>
                   {cons.mismatch_count > 0 && (
-                    <span className="badge-danger text-[10px]">{cons.mismatch_count} Mismatch</span>
+                    <span className="badge-danger text-[10px]">{cons.mismatch_count} {displayLanguage === "hi" ? "विसंगति" : "Mismatch"}</span>
                   )}
                   {cons.missing_count > 0 && (
-                    <span className="badge-warning text-[10px]">{cons.missing_count} Missing</span>
+                    <span className="badge-warning text-[10px]">{cons.missing_count} {displayLanguage === "hi" ? "गायब" : "Missing"}</span>
                   )}
                 </div>
               </div>
               <div className="divide-y divide-[#f0f0f0] border border-[#e5e7eb] rounded-xl overflow-hidden">
                 <div className="grid grid-cols-5 gap-0 bg-[#f9fafb] text-[10px] font-semibold text-[#6b7280] uppercase tracking-wider">
-                  <div className="px-4 py-2.5">Field</div>
-                  <div className="px-4 py-2.5">Manual</div>
-                  <div className="px-4 py-2.5">T&C</div>
-                  <div className="px-4 py-2.5">KFS</div>
-                  <div className="px-4 py-2.5">Status</div>
+                  <div className="px-4 py-2.5">{displayLanguage === "hi" ? "क्षेत्र" : "Field"}</div>
+                  <div className="px-4 py-2.5">{displayLanguage === "hi" ? "मैनुअल" : "Manual"}</div>
+                  <div className="px-4 py-2.5">{displayLanguage === "hi" ? "नियम और शर्तें" : "T&C"}</div>
+                  <div className="px-4 py-2.5">{displayLanguage === "hi" ? "केएफएस" : "KFS"}</div>
+                  <div className="px-4 py-2.5">{displayLanguage === "hi" ? "स्थिति" : "Status"}</div>
                 </div>
                 {cons.checks?.map((c: any, i: number) => (
                   <div
@@ -895,7 +953,7 @@ export default function NewAnalysis() {
                     }`}
                   >
                     <div className="px-4 py-3 font-medium text-[#1a1d23]">
-                      {c.field_name}
+                      {displayLanguage === "hi" ? ({"principal": "मूलधन", "disclosed_rate": "प्रकट दर", "tenure_months": "अवधि", "fees": "शुल्क", "prepayment_clause": "पूर्वभुगतान खंड"}[c.field_name as string] || c.field_name) : c.field_name}
                     </div>
                     <div className="px-4 py-3 text-[#6b7280] font-mono">
                       {c.manual_value ?? "—"}
@@ -920,7 +978,7 @@ export default function NewAnalysis() {
                             : "badge-warning"
                         }`}
                       >
-                        {c.match_status}
+                        {displayLanguage === "hi" ? ({"match": "मेल", "mismatch": "विसंगति", "missing": "गायब"}[c.match_status as string] || c.match_status) : c.match_status}
                       </span>
                     </div>
                   </div>
@@ -928,7 +986,7 @@ export default function NewAnalysis() {
               </div>
               {cons.summary_explanation && (
                 <p className="text-[12px] text-[#6b7280] leading-relaxed">
-                  {cons.summary_explanation}
+                  {(displayLanguage === "hi" && cons.summary_explanation_hi) || cons.summary_explanation}
                 </p>
               )}
             </div>
@@ -940,7 +998,7 @@ export default function NewAnalysis() {
               <div className="flex items-center gap-2">
                 <Globe className="h-4 w-4 text-[#7c3aed]" />
                 <h4 className="text-[14px] font-semibold text-[#1a1d23]">
-                  Vernacular Verification
+                  {displayLanguage === "hi" ? "स्थानीय भाषा सत्यापन" : "Vernacular Verification"}
                 </h4>
               </div>
               <div className="space-y-3">
@@ -955,31 +1013,33 @@ export default function NewAnalysis() {
                           v.verification_verdict === "grounded" ? "badge-success" : "badge-danger"
                         }`}
                       >
-                        {v.verification_verdict}
+                        {v.verification_verdict === "grounded"
+                          ? (displayLanguage === "hi" ? "सत्यापित" : "grounded")
+                          : (displayLanguage === "hi" ? "चिह्नित" : "flagged")}
                       </span>
                     </div>
                     <div className="space-y-2 text-[12px]">
                       <div>
-                        <span className="text-[#9ca3af] text-[11px]">Translated:</span>
+                        <span className="text-[#9ca3af] text-[11px]">{displayLanguage === "hi" ? "अनुवादित:" : "Translated:"}</span>
                         <p className="text-[#374151] mt-0.5">{v.translated_text}</p>
                       </div>
                       <div>
-                        <span className="text-[#9ca3af] text-[11px]">Back-translated:</span>
+                        <span className="text-[#9ca3af] text-[11px]">{displayLanguage === "hi" ? "वापस-अनुवादित:" : "Back-translated:"}</span>
                         <p className="text-[#374151] mt-0.5">{v.back_translated_text}</p>
                       </div>
                     </div>
                     {v.metrics && (
                       <div className="grid grid-cols-3 gap-2">
                         <div className="text-center p-2 bg-white rounded-lg border border-[#e5e7eb]">
-                          <p className="text-[10px] text-[#9ca3af]">Numeric Preserved</p>
+                          <p className="text-[10px] text-[#9ca3af]">{displayLanguage === "hi" ? "संख्या संरक्षित" : "Numeric Preserved"}</p>
                           <p className="text-[13px] font-bold text-[#0d9f6e]">{v.metrics.numeric_preservation_rate}%</p>
                         </div>
                         <div className="text-center p-2 bg-white rounded-lg border border-[#e5e7eb]">
-                          <p className="text-[10px] text-[#9ca3af]">Semantic Drift</p>
+                          <p className="text-[10px] text-[#9ca3af]">{displayLanguage === "hi" ? "अर्थ विचलन" : "Semantic Drift"}</p>
                           <p className="text-[13px] font-bold text-[#1a1d23]">{v.metrics.semantic_drift_score?.toFixed(3)}</p>
                         </div>
                         <div className="text-center p-2 bg-white rounded-lg border border-[#e5e7eb]">
-                          <p className="text-[10px] text-[#9ca3af]">Clause Drop</p>
+                          <p className="text-[10px] text-[#9ca3af]">{displayLanguage === "hi" ? "खंड लोप" : "Clause Drop"}</p>
                           <p className="text-[13px] font-bold text-[#0d9f6e]">{v.metrics.clause_drop_rate}%</p>
                         </div>
                       </div>
@@ -994,15 +1054,24 @@ export default function NewAnalysis() {
           <div className="card overflow-hidden">
             <div className="px-5 py-4 border-b border-[#e5e7eb] flex items-center justify-between bg-[#f9fafb]">
               <div>
-                <h4 className="text-[14px] font-semibold text-[#1a1d23]">
-                  Verification Gate — Claim Analysis
+                <h4 className="text-[14px] font-semibold text-[#1a1d23] flex items-center gap-2">
+                  {displayLanguage === "hi"
+                    ? "सत्यापन गेट — वित्तीय दावा विश्लेषण"
+                    : "Verification Gate — Claim Analysis"}
+                  {displayLanguage === "hi" && (
+                    <span className="text-[10px] font-medium bg-[#eff6ff] text-[#1d4ed8] px-2 py-0.5 rounded-full border border-[#bfdbfe]">
+                      सत्यापित हिंदी (गणनाएं अंग्रेजी में निष्पादित)
+                    </span>
+                  )}
                 </h4>
                 <p className="text-[11px] text-[#9ca3af] mt-0.5">
-                  Each claim verified via RoBERTa-MNLI semantic + numeric check
+                  {displayLanguage === "hi"
+                    ? "प्रत्येक दावे का RoBERTa-MNLI अर्थ और संख्यात्मक परिशुद्धता के साथ सत्यापन"
+                    : "Each claim verified via RoBERTa-MNLI semantic + numeric check"}
                 </p>
               </div>
               <span className="badge-info text-[11px]">
-                {pipelineResult.verified_claims?.length || 0} Claims
+                {pipelineResult.verified_claims?.length || 0} {displayLanguage === "hi" ? "दावे" : "Claims"}
               </span>
             </div>
 
@@ -1011,6 +1080,13 @@ export default function NewAnalysis() {
                 (claim: any, idx: number) => {
                   const isGrounded =
                     claim.verification_status === "grounded";
+                  const matchingVern = vern?.find(
+                    (v: any) => v.original_text === claim.claim_text
+                  );
+                  const hindiText = claim.claim_text_hi || matchingVern?.translated_text;
+                  const isVernVerified = claim.is_vernacular_verified || (matchingVern && matchingVern.verification_verdict === "grounded");
+                  const displayText = (displayLanguage === "hi" && hindiText) ? hindiText : claim.claim_text;
+
                   return (
                     <div
                       key={claim.claim_id || idx}
@@ -1035,21 +1111,34 @@ export default function NewAnalysis() {
                                 : "badge-danger"
                             }`}
                           >
-                            {claim.verification_status}
+                            {isGrounded
+                              ? (displayLanguage === "hi" ? "सत्यापित" : "grounded")
+                              : (displayLanguage === "hi" ? "चिह्नित" : "flagged")}
                           </span>
+                          {displayLanguage === "hi" && hindiText && isVernVerified && (
+                            <span className="text-[10px] font-semibold text-[#0d9f6e] bg-[#ecfdf5] border border-[#a7f3d0] px-2 py-0.5 rounded-full">
+                              ✓ १००% संख्यात्मक आंकड़े सुरक्षित
+                            </span>
+                          )}
                           {claim.verification_result?.semantic_score !== undefined && (
                             <span className="text-[10px] text-[#9ca3af]">
-                              Semantic: {(claim.verification_result.semantic_score * 100).toFixed(1)}%
+                              {displayLanguage === "hi" ? "अर्थ स्कोर: " : "Semantic: "}
+                              {(claim.verification_result.semantic_score * 100).toFixed(1)}%
                             </span>
                           )}
                         </div>
-                        <p className="text-[13px] text-[#374151] leading-relaxed">
-                          {claim.claim_text}
+                        <p className="text-[13px] text-[#1a1d23] font-medium leading-relaxed">
+                          {displayText}
                         </p>
+                        {displayLanguage === "hi" && hindiText && (
+                          <p className="text-[11px] text-[#6b7280] italic bg-[#f8fafc] p-2 rounded-lg border border-[#e2e8f0]">
+                            <strong>{displayLanguage === "hi" ? "मूल अंग्रेजी पाठ:" : "Original English:"}</strong> {claim.claim_text}
+                          </p>
+                        )}
                         {claim.warning_message && (
                           <div className="flex items-center gap-2 p-3 rounded-lg bg-[#fef2f2] border border-[#fecaca] text-[12px] text-[#991b1b]">
                             <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
-                            {claim.warning_message}
+                            {displayLanguage === "hi" ? (claim.warning_message_hi || claim.warning_message) : claim.warning_message}
                           </div>
                         )}
                       </div>
@@ -1065,7 +1154,7 @@ export default function NewAnalysis() {
             <div className="card p-5">
               <h4 className="text-[13px] font-semibold text-[#1a1d23] mb-3 flex items-center gap-2">
                 <Clock className="h-4 w-4 text-[#6b7280]" />
-                Pipeline Stage Timings
+                {displayLanguage === "hi" ? "पाइपलाइन चरण समय" : "Pipeline Stage Timings"}
               </h4>
               <div className="flex flex-wrap gap-2">
                 {pipelineResult.timings.map((t: any, i: number) => (
@@ -1074,7 +1163,9 @@ export default function NewAnalysis() {
                     className="flex items-center gap-1.5 bg-[#f9fafb] border border-[#e5e7eb] px-3 py-1.5 rounded-lg text-[11px]"
                   >
                     <span className="font-medium text-[#374151]">
-                      {t.stage?.replace(/_/g, " ")}
+                      {displayLanguage === "hi"
+                        ? ({"ingesting": "अंतर्ग्रहण", "extracting": "निष्कर्षण", "consistency_checking": "संगतता जांच", "consistency checking": "संगतता जांच", "recomputing_serviceability": "सेवाक्षमता पुनर्गणना", "recomputing serviceability": "सेवाक्षमता पुनर्गणना", "generating_claim": "दावा निर्माण", "generating claim": "दावा निर्माण", "retrieving_regulatory": "नियामक पुनर्प्राप्ति", "retrieving regulatory": "नियामक पुनर्प्राप्ति", "verifying": "सत्यापन", "translating_vernacular": "स्थानीय भाषा अनुवाद", "translating vernacular": "स्थानीय भाषा अनुवाद", "completed": "पूर्ण"}[t.stage as string] || {"ingesting": "अंतर्ग्रहण", "extracting": "निष्कर्षण", "consistency_checking": "संगतता जांच", "consistency checking": "संगतता जांच", "recomputing_serviceability": "सेवाक्षमता पुनर्गणना", "recomputing serviceability": "सेवाक्षमता पुनर्गणना", "generating_claim": "दावा निर्माण", "generating claim": "दावा निर्माण", "retrieving_regulatory": "नियामक पुनर्प्राप्ति", "retrieving regulatory": "नियामक पुनर्प्राप्ति", "verifying": "सत्यापन", "translating_vernacular": "स्थानीय भाषा अनुवाद", "translating vernacular": "स्थानीय भाषा अनुवाद", "completed": "पूर्ण"}[t.stage?.replace(/_/g, " ") as string] || t.stage?.replace(/_/g, " "))
+                        : t.stage?.replace(/_/g, " ")}
                     </span>
                     <span className="text-[#9ca3af] font-mono">
                       {t.duration_ms?.toFixed(0)}ms
@@ -1089,7 +1180,7 @@ export default function NewAnalysis() {
           <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-[#e5e7eb]">
             <Link href="/" className="btn-ghost">
               <ArrowLeft className="h-4 w-4" />
-              Back to Dashboard
+              {displayLanguage === "hi" ? "डैशबोर्ड पर वापस" : "Back to Dashboard"}
             </Link>
             <div className="flex items-center gap-3">
               <Link
@@ -1097,21 +1188,21 @@ export default function NewAnalysis() {
                 className="btn-secondary"
               >
                 <Scale className="h-4 w-4 text-[#d97706]" />
-                File Dispute
+                {displayLanguage === "hi" ? "शिकायत दर्ज करें" : "File Dispute"}
               </Link>
               <Link
                 href={`/chat?loan_id=${loanId}`}
                 className="btn-secondary"
               >
                 <MessageCircle className="h-4 w-4" />
-                Chat with AI Advisor
+                {displayLanguage === "hi" ? "एआई सलाहकार से बात करें" : "Chat with AI Advisor"}
               </Link>
               <button
                 type="button"
                 onClick={() => setStep(4)}
                 className="btn-primary flex items-center gap-2 shadow-sm"
               >
-                <span>Next: Serviceability & Simulator</span>
+                <span>{displayLanguage === "hi" ? "अगला: सेवाक्षमता और सिम्युलेटर" : "Next: Serviceability & Simulator"}</span>
                 <ArrowRight className="h-4 w-4" />
               </button>
             </div>
@@ -1130,7 +1221,7 @@ export default function NewAnalysis() {
               className="btn-ghost text-[12px] flex items-center gap-1.5 py-1 px-2.5 border border-[#e5e7eb]"
             >
               <ArrowLeft className="h-3.5 w-3.5" />
-              Back to Verification Report
+              {displayLanguage === "hi" ? "सत्यापन रिपोर्ट पर वापस" : "Back to Verification Report"}
             </button>
             <div className="flex items-center gap-2">
               <span className="text-[12px] font-semibold text-[#1a1d23]">{loanName}</span>
@@ -1148,6 +1239,7 @@ export default function NewAnalysis() {
             lenderName={lenderName}
             loanName={loanName}
             mode="simulator"
+            displayLanguage={displayLanguage}
           />
 
           {/* Step 4 Footer */}
@@ -1158,7 +1250,7 @@ export default function NewAnalysis() {
               className="btn-ghost"
             >
               <ArrowLeft className="h-4 w-4" />
-              Back to Verification Report
+              {displayLanguage === "hi" ? "सत्यापन रिपोर्ट पर वापस" : "Back to Verification Report"}
             </button>
             <div className="flex items-center gap-3">
               <Link
@@ -1166,14 +1258,14 @@ export default function NewAnalysis() {
                 className="btn-secondary"
               >
                 <Scale className="h-4 w-4 text-[#d97706]" />
-                File Dispute
+                {displayLanguage === "hi" ? "शिकायत दर्ज करें" : "File Dispute"}
               </Link>
               <Link
                 href={`/chat?loan_id=${loanId}`}
                 className="btn-primary"
               >
                 <MessageCircle className="h-4 w-4" />
-                Chat with AI Advisor
+                {displayLanguage === "hi" ? "एआई सलाहकार से बात करें" : "Chat with AI Advisor"}
               </Link>
             </div>
           </div>

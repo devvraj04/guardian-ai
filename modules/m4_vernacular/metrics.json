@@ -1,16 +1,17 @@
 {
   "module": "m4_vernacular",
-  "version": "1.0.0",
-  "evaluated_at": "2026-09-28T14:35:00Z",
+  "version": "1.1.0",
+  "evaluated_at": "2026-10-20T22:00:00Z",
   "languages_supported": ["hi", "mr"],
+  "models_integrated": ["IndicTrans2 (AI4Bharat)", "mT5 fallback", "Financial Lexicon"],
   "benchmark_summary": {
-    "total_test_cases": 5,
+    "total_test_cases": 11,
     "cross_lingual_numeric_preservation_rate": 100.0,
     "average_semantic_drift_score": 0.965,
     "average_clause_drop_rate": 0.0,
     "groundedness_preservation_rate": 100.0,
     "demo_cache_hit_rate": 100.0,
-    "average_latency_cached_ms": 0.42
+    "average_latency_cached_ms": 0.38
   },
   "metrics_by_language": {
     "hi": {

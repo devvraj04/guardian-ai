@@ -131,7 +131,7 @@ export function generateAmortizationSchedule(
   }
 
   const monthlyRate = annualRate > 0 ? annualRate / (12 * 100) : 0;
-  
+
   // Standard Base EMI
   let baseEmi: number;
   if (monthlyRate === 0) {
@@ -155,16 +155,16 @@ export function generateAmortizationSchedule(
     }
 
     const interestForMonth = monthlyRate > 0 ? balance * monthlyRate : 0;
-    
+
     // Check extra EMI at month 12, 24, 36...
     const isAnnualBonusMonth = extraEmiPerYear && month % 12 === 0;
     const bonusPayment = isAnnualBonusMonth ? baseEmi : 0;
 
     // Check one-time lump sum
     const lumpSumPayment = (lumpSumAmount > 0 && month === lumpSumMonth) ? lumpSumAmount : 0;
-    
+
     const totalPaymentThisMonth = currentEmi + customExtraPayment + bonusPayment + lumpSumPayment;
-    
+
     let principalPortion = totalPaymentThisMonth - interestForMonth;
     if (principalPortion > balance) {
       principalPortion = balance;
@@ -240,6 +240,7 @@ interface LoanAnalyticsProps {
   lenderName?: string;
   loanName?: string;
   mode?: "all" | "verification" | "simulator";
+  displayLanguage?: string;
   onProceedToSimulator?: () => void;
 }
 
@@ -251,6 +252,7 @@ export default function LoanAnalytics({
   lenderName,
   loanName,
   mode = "all",
+  displayLanguage = "en",
   onProceedToSimulator,
 }: LoanAnalyticsProps) {
   // Extract canonical numbers
@@ -442,16 +444,26 @@ export default function LoanAnalytics({
             <div className="flex-1">
               <div className="flex items-center justify-between flex-wrap gap-2">
                 <h3 className="text-[15px] font-bold text-[#991b1b] flex items-center gap-2">
-                  <span>⚠️ Key Fact Statement (KFS) is Faulty or Incomplete</span>
-                  <span className="badge-danger text-[10px]">RBI Non-Compliant</span>
+                  <span>
+                    {displayLanguage === "hi"
+                      ? "⚠️ मुख्य तथ्य विवरण (केएफएस) त्रुटिपूर्ण या अपूर्ण है"
+                      : "⚠️ Key Fact Statement (KFS) is Faulty or Incomplete"}
+                  </span>
+                  <span className="badge-danger text-[10px]">
+                    {displayLanguage === "hi" ? "आरबीआई गैर-अनुपालित" : "RBI Non-Compliant"}
+                  </span>
                 </h3>
               </div>
               <p className="text-[12px] text-[#b91c1c] mt-1 leading-relaxed">
-                The submitted Key Fact Statement document could not be properly parsed, is empty/unpopulated, or is missing mandatory statutory disclosures required by the Reserve Bank of India (RBI/2024-25/18 Master Directions).
+                {displayLanguage === "hi"
+                  ? "प्रस्तुत मुख्य तथ्य विवरण (केएफएस) का ठीक से विश्लेषण नहीं किया जा सका, यह रिक्त है, या इसमें भारतीय रिज़र्व बैंक (आरबीआई/2024-25/18 मास्टर निर्देश) द्वारा आवश्यक वैधानिक प्रकटीकरण का अभाव है।"
+                  : "The submitted Key Fact Statement document could not be properly parsed, is empty/unpopulated, or is missing mandatory statutory disclosures required by the Reserve Bank of India (RBI/2024-25/18 Master Directions)."}
               </p>
               <div className="mt-3 p-3 rounded-xl bg-white/80 border border-[#fecaca] space-y-1.5">
                 <p className="text-[11px] font-bold text-[#7f1d1d] uppercase tracking-wide">
-                  Deficiencies Detected in Submitted KFS:
+                  {displayLanguage === "hi"
+                    ? "प्रस्तुत केएफएस में पाई गई कमियां:"
+                    : "Deficiencies Detected in Submitted KFS:"}
                 </p>
                 <ul className="list-disc list-inside text-[11px] text-[#991b1b] space-y-1">
                   {health.reasons.map((r, i) => (
@@ -460,7 +472,9 @@ export default function LoanAnalytics({
                 </ul>
               </div>
               <p className="text-[11px] text-[#6b7280] mt-2 italic">
-                * Note: Verification report below uses fallback terms or manual profile inputs for illustration. Please re-upload a clear, populated official KFS PDF.
+                {displayLanguage === "hi"
+                  ? "* टिप्पणी: नीचे दी गई सत्यापन रिपोर्ट चित्रण के लिए वैकल्पिक शर्तों या मैनुअल प्रविष्टियों का उपयोग करती है। कृपया स्पष्ट आधिकारिक केएफएस पीडीएफ पुनः अपलोड करें।"
+                  : "* Note: Verification report below uses fallback terms or manual profile inputs for illustration. Please re-upload a clear, populated official KFS PDF."}
               </p>
             </div>
           </div>
@@ -477,10 +491,14 @@ export default function LoanAnalytics({
           </div>
           <div>
             <h4 className="text-[13px] font-bold text-[#1a1d23]">
-              Audit Verification Report Ready
+              {displayLanguage === "hi"
+                ? "ऑडिट सत्यापन रिपोर्ट तैयार है"
+                : "Audit Verification Report Ready"}
             </h4>
             <p className="text-[11px] text-[#6b7280]">
-              Certified compliance breakdown against RBI Master Directions (RBI/2024-25/18)
+              {displayLanguage === "hi"
+                ? "भारतीय रिज़र्व बैंक मास्टर निर्देशों (आरबीआई/2024-25/18) के विरुद्ध प्रमाणित अनुपालन विवरण"
+                : "Certified compliance breakdown against RBI Master Directions (RBI/2024-25/18)"}
             </p>
           </div>
         </div>
@@ -491,7 +509,7 @@ export default function LoanAnalytics({
             className="btn-ghost text-[12px] px-3 py-1.5 border border-[#cbd5e1] bg-white hover:bg-[#f1f5f9] shadow-xs"
           >
             <Download className="h-3.5 w-3.5 text-[#0052cc]" />
-            Download JSON Audit
+            {displayLanguage === "hi" ? "जेएसओएन ऑडिट डाउनलोड करें" : "Download JSON Audit"}
           </button>
           <button
             type="button"
@@ -499,7 +517,7 @@ export default function LoanAnalytics({
             className="btn-primary text-[12px] px-4 py-1.5 shadow-sm"
           >
             <Printer className="h-3.5 w-3.5" />
-            Download / Print Full PDF Report
+            {displayLanguage === "hi" ? "पूर्ण पीडीएफ रिपोर्ट डाउनलोड / प्रिंट करें" : "Download / Print Full PDF Report"}
           </button>
         </div>
       </div>
@@ -520,11 +538,17 @@ export default function LoanAnalytics({
               </div>
               <div>
                 <h4 className="text-[14px] font-bold text-[#1a1d23] flex items-center gap-2">
-                  Full Mathematical Calculation Breakdown
-                  <span className="badge-info text-[10px]">Deterministic Proof</span>
+                  {displayLanguage === "hi"
+                    ? "पूर्ण गणितीय गणना विवरण"
+                    : "Full Mathematical Calculation Breakdown"}
+                  <span className="badge-info text-[10px]">
+                    {displayLanguage === "hi" ? "अपरिवर्तनीय गणितीय प्रमाण" : "Deterministic Proof"}
+                  </span>
                 </h4>
                 <p className="text-[11px] text-[#6b7280]">
-                  Step-by-step mathematical substitution showing how every number was calculated
+                  {displayLanguage === "hi"
+                    ? "प्रत्येक संख्या की गणना कैसे की गई, इसका चरण-दर-चरण गणितीय विवरण"
+                    : "Step-by-step mathematical substitution showing how every number was calculated"}
                 </p>
               </div>
             </div>
@@ -542,11 +566,15 @@ export default function LoanAnalytics({
                 <div className="flex items-center justify-between">
                   <span className="font-bold text-[#1e40af] text-[13px] flex items-center gap-1.5">
                     <Banknote className="h-4 w-4" />
-                    1. Equated Periodic Instalment (Monthly Reducing-Balance EMI)
+                    {displayLanguage === "hi"
+                      ? "1. समान मासिक किस्त (मासिक घटते शेष पर ईएमआई)"
+                      : "1. Equated Periodic Instalment (Monthly Reducing-Balance EMI)"}
                   </span>
-                  <span className="badge-success text-[10px]">RBI Annexure B Formula</span>
+                  <span className="badge-success text-[10px]">
+                    {displayLanguage === "hi" ? "आरबीआई अनुलग्नक बी सूत्र" : "RBI Annexure B Formula"}
+                  </span>
                 </div>
-                
+
                 <div className="p-3 bg-white rounded-lg border border-[#e2e8f0] font-mono text-[12px] text-[#0f172a] overflow-x-auto">
                   <p className="text-[#0052cc] font-bold">
                     EMI = P × r × (1 + r)ᴺ / ((1 + r)ᴺ - 1)
@@ -556,30 +584,44 @@ export default function LoanAnalytics({
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-[11px]">
                   <div className="space-y-1">
                     <p className="text-[#6b7280]">
-                      <strong className="text-[#1a1d23]">P (Sanctioned Principal):</strong> ₹{principal.toLocaleString("en-IN")}
+                      <strong className="text-[#1a1d23]">
+                        {displayLanguage === "hi" ? "पी (स्वीकृत मूलधन):" : "P (Sanctioned Principal):"}
+                      </strong>{" "}
+                      ₹{principal.toLocaleString("en-IN")}
                     </p>
                     <p className="text-[#6b7280]">
-                      <strong className="text-[#1a1d23]">R (Annual Nominal Rate):</strong> {rate}% p.a.
+                      <strong className="text-[#1a1d23]">
+                        {displayLanguage === "hi" ? "आर (वार्षिक नाममात्र दर):" : "R (Annual Nominal Rate):"}
+                      </strong>{" "}
+                      {rate}% {displayLanguage === "hi" ? "वार्षिक" : "p.a."}
                     </p>
                     <p className="text-[#6b7280]">
-                      <strong className="text-[#1a1d23]">r (Monthly Interest Rate):</strong> {rate} / (12 × 100) ={" "}
+                      <strong className="text-[#1a1d23]">
+                        {displayLanguage === "hi" ? "r (मासिक ब्याज दर):" : "r (Monthly Interest Rate):"}
+                      </strong>{" "}
+                      {rate} / (12 × 100) ={" "}
                       <span className="font-mono text-[#0052cc]">{(rate / (12 * 100)).toFixed(7)}</span>
                     </p>
                     <p className="text-[#6b7280]">
-                      <strong className="text-[#1a1d23]">N (Total Tenor in Months):</strong> {tenure} months
+                      <strong className="text-[#1a1d23]">
+                        {displayLanguage === "hi" ? "एन (महीनों में कुल अवधि):" : "N (Total Tenor in Months):"}
+                      </strong>{" "}
+                      {tenure} {displayLanguage === "hi" ? "महीने" : "months"}
                     </p>
                   </div>
                   <div className="p-3 rounded-lg bg-[#eff6ff] border border-[#bfdbfe] space-y-1 font-mono">
-                    <p className="text-[10px] text-[#1e40af] font-semibold">Substituted Values:</p>
+                    <p className="text-[10px] text-[#1e40af] font-semibold">
+                      {displayLanguage === "hi" ? "प्रतिस्थापित मान:" : "Substituted Values:"}
+                    </p>
                     <p className="text-[#1e3a8a]">
                       (1 + r)ᴺ = (1 + {(rate / (12 * 100)).toFixed(5)})^({tenure}) ={" "}
                       <strong>{Math.pow(1 + rate / (12 * 100), tenure).toFixed(4)}</strong>
                     </p>
                     <p className="text-[#1e3a8a]">
-                      Numerator = ₹{principal.toLocaleString("en-IN")} × {(rate / (12 * 100)).toFixed(6)} × {Math.pow(1 + rate / (12 * 100), tenure).toFixed(4)}
+                      {displayLanguage === "hi" ? "अंश (Numerator)" : "Numerator"} = ₹{principal.toLocaleString("en-IN")} × {(rate / (12 * 100)).toFixed(6)} × {Math.pow(1 + rate / (12 * 100), tenure).toFixed(4)}
                     </p>
                     <p className="text-[13px] font-bold text-[#0052cc] pt-1 border-t border-[#bfdbfe]">
-                      Calculated EMI = ₹{Math.round(monthlyEmi).toLocaleString("en-IN")} / month
+                      {displayLanguage === "hi" ? "गणना की गई ईएमआई =" : "Calculated EMI ="} ₹{Math.round(monthlyEmi).toLocaleString("en-IN")} {displayLanguage === "hi" ? "/ माह" : "/ month"}
                     </p>
                   </div>
                 </div>
@@ -590,21 +632,32 @@ export default function LoanAnalytics({
                 <div className="flex items-center justify-between">
                   <span className="font-bold text-[#065f46] text-[13px] flex items-center gap-1.5">
                     <DollarSign className="h-4 w-4" />
-                    2. Net Disbursed Amount (Actual Cash Transferred to Borrower)
+                    {displayLanguage === "hi"
+                      ? "2. शुद्ध वितरित राशि (उधारकर्ता को वास्तविक अंतरित नकद)"
+                      : "2. Net Disbursed Amount (Actual Cash Transferred to Borrower)"}
                   </span>
-                  <span className="badge-success text-[10px]">Annexure B Item 7</span>
+                  <span className="badge-success text-[10px]">
+                    {displayLanguage === "hi" ? "अनुलग्नक बी मद 7" : "Annexure B Item 7"}
+                  </span>
                 </div>
                 <div className="p-3 bg-white rounded-lg border border-[#e2e8f0] font-mono text-[12px] text-[#0f172a]">
                   <p className="text-[#059669] font-bold">
-                    Net Disbursed = Sanctioned Principal - Total Upfront Fees & Charges
+                    {displayLanguage === "hi"
+                      ? "शुद्ध वितरित राशि = स्वीकृत मूलधन - कुल अग्रिम शुल्क और प्रभार"
+                      : "Net Disbursed = Sanctioned Principal - Total Upfront Fees & Charges"}
                   </p>
                   <p className="mt-1 text-[#334155]">
-                    Net Disbursed = ₹{principal.toLocaleString("en-IN")} - ₹{fees.toLocaleString("en-IN")} ={" "}
+                    {displayLanguage === "hi" ? "शुद्ध वितरित राशि" : "Net Disbursed"} = ₹{principal.toLocaleString("en-IN")} - ₹{fees.toLocaleString("en-IN")} ={" "}
                     <strong className="text-[#0d9f6e]">₹{netDisbursed.toLocaleString("en-IN")}</strong>
                   </p>
                 </div>
                 <p className="text-[11px] text-[#6b7280]">
-                  ⚠️ <strong className="text-[#1a1d23]">Regulatory Insight:</strong> While the borrower only receives ₹{netDisbursed.toLocaleString("en-IN")} in their bank account, the bank computes interest on the full sanctioned principal of ₹{principal.toLocaleString("en-IN")}. This upfront deduction is what causes the true APR to exceed the nominal interest rate.
+                  ⚠️ <strong className="text-[#1a1d23]">
+                    {displayLanguage === "hi" ? "नियामक अंतर्दृष्टि:" : "Regulatory Insight:"}
+                  </strong>{" "}
+                  {displayLanguage === "hi"
+                    ? `जबकि उधारकर्ता को अपने बैंक खाते में केवल ₹${netDisbursed.toLocaleString("en-IN")} प्राप्त होते हैं, बैंक पूरे ₹${principal.toLocaleString("en-IN")} के स्वीकृत मूलधन पर ब्याज की गणना करता है। इस अग्रिम कटौती के कारण ही वास्तविक एपीआर नाममात्र ब्याज दर से अधिक हो जाता है।`
+                    : `While the borrower only receives ₹${netDisbursed.toLocaleString("en-IN")} in their bank account, the bank computes interest on the full sanctioned principal of ₹${principal.toLocaleString("en-IN")}. This upfront deduction is what causes the true APR to exceed the nominal interest rate.`}
                 </p>
               </div>
 
@@ -613,9 +666,13 @@ export default function LoanAnalytics({
                 <div className="flex items-center justify-between">
                   <span className="font-bold text-[#7c3aed] text-[13px] flex items-center gap-1.5">
                     <TrendingUp className="h-4 w-4" />
-                    3. Annual Percentage Rate (True APR via Numerical IRR Solver)
+                    {displayLanguage === "hi"
+                      ? "3. वार्षिक प्रतिशत दर (संख्यात्मक आईआरआर सॉल्वर द्वारा वास्तविक एपीआर)"
+                      : "3. Annual Percentage Rate (True APR via Numerical IRR Solver)"}
                   </span>
-                  <span className="badge-info text-[10px]">RBI Standard Formula</span>
+                  <span className="badge-info text-[10px]">
+                    {displayLanguage === "hi" ? "आरबीआई मानक सूत्र" : "RBI Standard Formula"}
+                  </span>
                 </div>
                 <div className="p-3 bg-white rounded-lg border border-[#e2e8f0] font-mono text-[12px] text-[#0f172a] overflow-x-auto">
                   <p className="text-[#7c3aed] font-bold">
@@ -627,18 +684,24 @@ export default function LoanAnalytics({
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-center">
                   <div className="p-3 rounded-lg bg-white border border-[#e5e7eb]">
-                    <p className="text-[10px] text-[#6b7280]">Nominal Disclosed Rate</p>
-                    <p className="text-[15px] font-bold text-[#1a1d23]">{rate}% p.a.</p>
+                    <p className="text-[10px] text-[#6b7280]">
+                      {displayLanguage === "hi" ? "नाममात्र प्रकट दर" : "Nominal Disclosed Rate"}
+                    </p>
+                    <p className="text-[15px] font-bold text-[#1a1d23]">{rate}% {displayLanguage === "hi" ? "वार्षिक" : "p.a."}</p>
                   </div>
                   <div className="p-3 rounded-lg bg-white border border-[#e5e7eb]">
-                    <p className="text-[10px] text-[#6b7280]">Upfront Fee Drag</p>
+                    <p className="text-[10px] text-[#6b7280]">
+                      {displayLanguage === "hi" ? "अग्रिम शुल्क का प्रभाव" : "Upfront Fee Drag"}
+                    </p>
                     <p className="text-[15px] font-bold text-[#dc2626]">
-                      +{(trueApr - rate).toFixed(2)}% p.a.
+                      +{(trueApr - rate).toFixed(2)}% {displayLanguage === "hi" ? "वार्षिक" : "p.a."}
                     </p>
                   </div>
                   <div className="p-3 rounded-lg bg-[#eff6ff] border border-[#bfdbfe]">
-                    <p className="text-[10px] text-[#1e40af] font-semibold">True Annual Cost (APR)</p>
-                    <p className="text-[16px] font-bold text-[#0052cc]">{trueApr.toFixed(2)}% p.a.</p>
+                    <p className="text-[10px] text-[#1e40af] font-semibold">
+                      {displayLanguage === "hi" ? "वास्तविक वार्षिक लागत (एपीआर)" : "True Annual Cost (APR)"}
+                    </p>
+                    <p className="text-[16px] font-bold text-[#0052cc]">{trueApr.toFixed(2)}% {displayLanguage === "hi" ? "वार्षिक" : "p.a."}</p>
                   </div>
                 </div>
               </div>
@@ -646,28 +709,38 @@ export default function LoanAnalytics({
               {/* 4. Total Outflow & Interest Burden */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                 <div className="p-3.5 rounded-xl bg-white border border-[#e5e7eb]">
-                  <span className="text-[11px] text-[#6b7280]">Total Sanctioned Principal</span>
+                  <span className="text-[11px] text-[#6b7280]">
+                    {displayLanguage === "hi" ? "कुल स्वीकृत मूलधन" : "Total Sanctioned Principal"}
+                  </span>
                   <p className="text-[16px] font-bold text-[#1a1d23] mt-0.5">
                     ₹{principal.toLocaleString("en-IN")}
                   </p>
-                  <span className="text-[10px] text-[#6b7280]">100% of borrowing</span>
+                  <span className="text-[10px] text-[#6b7280]">
+                    {displayLanguage === "hi" ? "ऋण का १००%" : "100% of borrowing"}
+                  </span>
                 </div>
                 <div className="p-3.5 rounded-xl bg-white border border-[#e5e7eb]">
-                  <span className="text-[11px] text-[#6b7280]">Total Cumulative Interest</span>
+                  <span className="text-[11px] text-[#6b7280]">
+                    {displayLanguage === "hi" ? "कुल संचयी ब्याज" : "Total Cumulative Interest"}
+                  </span>
                   <p className="text-[16px] font-bold text-[#d97706] mt-0.5">
                     ₹{Math.round(baseSchedule.totalInterestPaid).toLocaleString("en-IN")}
                   </p>
                   <span className="text-[10px] text-[#d97706] font-medium">
-                    {principal > 0 ? `${((baseSchedule.totalInterestPaid / principal) * 100).toFixed(1)}% of loan amount` : "—"}
+                    {principal > 0
+                      ? `${((baseSchedule.totalInterestPaid / principal) * 100).toFixed(1)}% ${displayLanguage === "hi" ? "ऋण राशि का" : "of loan amount"}`
+                      : "—"}
                   </span>
                 </div>
                 <div className="p-3.5 rounded-xl bg-white border border-[#e5e7eb]">
-                  <span className="text-[11px] text-[#6b7280]">Total Lifetime Repayment</span>
+                  <span className="text-[11px] text-[#6b7280]">
+                    {displayLanguage === "hi" ? "जीवनकाल में कुल चुकौती" : "Total Lifetime Repayment"}
+                  </span>
                   <p className="text-[16px] font-bold text-[#0052cc] mt-0.5">
                     ₹{Math.round(baseSchedule.totalPayment).toLocaleString("en-IN")}
                   </p>
                   <span className="text-[10px] text-[#0052cc] font-medium">
-                    Principal + Total Interest
+                    {displayLanguage === "hi" ? "मूलधन + कुल ब्याज" : "Principal + Total Interest"}
                   </span>
                 </div>
               </div>
@@ -680,7 +753,11 @@ export default function LoanAnalytics({
                     onClick={onProceedToSimulator}
                     className="btn-primary flex items-center gap-2 text-[13px] px-5 py-2.5 shadow-sm"
                   >
-                    <span>Proceed to Serviceability & Year-by-Year Amortization</span>
+                    <span>
+                      {displayLanguage === "hi"
+                        ? "सेवाक्षमता और वर्ष-वार परिशोधन पर आगे बढ़ें"
+                        : "Proceed to Serviceability & Year-by-Year Amortization"}
+                    </span>
                     <ArrowRight className="h-4 w-4" />
                   </button>
                 </div>
@@ -704,11 +781,17 @@ export default function LoanAnalytics({
                 </div>
                 <div>
                   <h3 className="text-[16px] font-bold text-[#1a1d23] flex items-center gap-2">
-                    Serviceability Assessment & Prepayment Simulator
-                    <span className="badge-success text-[10px]">Smart Advisory</span>
+                    {displayLanguage === "hi"
+                      ? "सेवाक्षमता मूल्यांकन एवं पूर्वभुगतान सिम्युलेटर"
+                      : "Serviceability Assessment & Prepayment Simulator"}
+                    <span className="badge-success text-[10px]">
+                      {displayLanguage === "hi" ? "स्मार्ट वित्तीय सलाहकार" : "Smart Advisory"}
+                    </span>
                   </h3>
                   <p className="text-[12px] text-[#6b7280]">
-                    Live interactive simulations: 1 extra EMI, step-up % increments, updated payoff graph, and full year-by-year amortization table
+                    {displayLanguage === "hi"
+                      ? "सक्रिय सिमुलेशन: १ अतिरिक्त ईएमआई, वार्षिक वृद्धि %, अद्यतन अदायगी ग्राफ, और पूर्ण वर्ष-वार परिशोधन तालिका"
+                      : "Live interactive simulations: 1 extra EMI, step-up % increments, updated payoff graph, and full year-by-year amortization table"}
                   </p>
                 </div>
               </div>
@@ -720,7 +803,9 @@ export default function LoanAnalytics({
             <div className="flex items-center justify-between flex-wrap gap-2">
               <span className="text-[13px] font-bold text-[#1a1d23] flex items-center gap-1.5">
                 <DollarSign className="h-4 w-4 text-[#0052cc]" />
-                Borrower Cash Flow & Affordability Assessment (FOIR / DTI)
+                {displayLanguage === "hi"
+                  ? "उधारकर्ता नकदी प्रवाह और वहनीयता मूल्यांकन (एफओआईआर / डीटीआई)"
+                  : "Borrower Cash Flow & Affordability Assessment (FOIR / DTI)"}
               </span>
               <span
                 className={`text-[11px] font-bold px-3 py-1 rounded-full uppercase ${
@@ -732,17 +817,19 @@ export default function LoanAnalytics({
                 }`}
               >
                 {dtiRatio <= 40
-                  ? "Comfortably Serviceable (<40%)"
+                  ? (displayLanguage === "hi" ? "सहज सेवा योग्य (<४०%)" : "Comfortably Serviceable (<40%)")
                   : dtiRatio <= 50
-                  ? "Moderate / Marginal (40-50%)"
-                  : "Stressed Debt Burden (>50%)"}
+                  ? (displayLanguage === "hi" ? "मध्यम / सीमांत (४०-५०%)" : "Moderate / Marginal (40-50%)")
+                  : (displayLanguage === "hi" ? "तनावग्रस्त ऋण बोझ (>५०%)" : "Stressed Debt Burden (>50%)")}
               </span>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label className="text-[12px] font-semibold text-[#374151] mb-1.5 block">
-                  Net Monthly Take-Home Income (₹)
+                  {displayLanguage === "hi"
+                    ? "शुद्ध मासिक आय (टेक-होम) (₹)"
+                    : "Net Monthly Take-Home Income (₹)"}
                 </label>
                 <input
                   type="number"
@@ -756,7 +843,9 @@ export default function LoanAnalytics({
               </div>
               <div>
                 <label className="text-[12px] font-semibold text-[#374151] mb-1.5 block">
-                  Existing Monthly Obligations / Other EMIs (₹)
+                  {displayLanguage === "hi"
+                    ? "मौजूदा मासिक देनदारियां / अन्य ईएमआई (₹)"
+                    : "Existing Monthly Obligations / Other EMIs (₹)"}
                 </label>
                 <input
                   type="number"
@@ -772,14 +861,20 @@ export default function LoanAnalytics({
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3 pt-1">
               <div className="p-3 bg-[#f9fafb] rounded-lg border border-[#e2e8f0]">
-                <span className="text-[10px] text-[#6b7280]">Total Monthly EMIs</span>
+                <span className="text-[10px] text-[#6b7280]">
+                  {displayLanguage === "hi" ? "कुल मासिक ईएमआई" : "Total Monthly EMIs"}
+                </span>
                 <p className="text-[14px] font-bold text-[#1a1d23]">
                   ₹{Math.round(totalEmis).toLocaleString("en-IN")}
                 </p>
-                <span className="text-[9px] text-[#9ca3af]">Existing + New EMI</span>
+                <span className="text-[9px] text-[#9ca3af]">
+                  {displayLanguage === "hi" ? "मौजूदा + नई ईएमआई" : "Existing + New EMI"}
+                </span>
               </div>
               <div className="p-3 bg-[#f9fafb] rounded-lg border border-[#e2e8f0]">
-                <span className="text-[10px] text-[#6b7280]">Fixed Obligation Ratio (DTI)</span>
+                <span className="text-[10px] text-[#6b7280]">
+                  {displayLanguage === "hi" ? "निश्चित देनदारी अनुपात (डीटीआई)" : "Fixed Obligation Ratio (DTI)"}
+                </span>
                 <p
                   className={`text-[14px] font-bold ${
                     dtiRatio <= 40
@@ -791,10 +886,14 @@ export default function LoanAnalytics({
                 >
                   {dtiRatio.toFixed(1)}%
                 </p>
-                <span className="text-[9px] text-[#9ca3af]">Industry threshold ≤ 40%</span>
+                <span className="text-[9px] text-[#9ca3af]">
+                  {displayLanguage === "hi" ? "उद्योग मानक सीमा ≤ ४०%" : "Industry threshold ≤ 40%"}
+                </span>
               </div>
               <div className="p-3 bg-[#f9fafb] rounded-lg border border-[#e2e8f0]">
-                <span className="text-[10px] text-[#6b7280]">Net Disposable Buffer</span>
+                <span className="text-[10px] text-[#6b7280]">
+                  {displayLanguage === "hi" ? "शुद्ध प्रयोज्य अधिशेष" : "Net Disposable Buffer"}
+                </span>
                 <p
                   className={`text-[14px] font-bold ${
                     disposableIncome >= 0 ? "text-[#0d9f6e]" : "text-[#dc2626]"
@@ -802,12 +901,20 @@ export default function LoanAnalytics({
                 >
                   ₹{Math.round(disposableIncome).toLocaleString("en-IN")}
                 </p>
-                <span className="text-[9px] text-[#9ca3af]">Cash left for living</span>
+                <span className="text-[9px] text-[#9ca3af]">
+                  {displayLanguage === "hi" ? "जीवन-यापन हेतु शेष नकदी" : "Cash left for living"}
+                </span>
               </div>
               <div className="p-3 bg-[#f9fafb] rounded-lg border border-[#e2e8f0]">
-                <span className="text-[10px] text-[#6b7280]">Underlying Rule</span>
-                <p className="text-[12px] font-semibold text-[#1a1d23]">Lending Heuristic</p>
-                <span className="text-[9px] text-[#9ca3af]">Not an RBI mandate (§6.4)</span>
+                <span className="text-[10px] text-[#6b7280]">
+                  {displayLanguage === "hi" ? "अंतर्निहित नियम" : "Underlying Rule"}
+                </span>
+                <p className="text-[12px] font-semibold text-[#1a1d23]">
+                  {displayLanguage === "hi" ? "उधार देने की स्वयंसिद्ध विधि" : "Lending Heuristic"}
+                </p>
+                <span className="text-[9px] text-[#9ca3af]">
+                  {displayLanguage === "hi" ? "आरबीआई का वैधानिक आदेश नहीं (§6.4)" : "Not an RBI mandate (§6.4)"}
+                </span>
               </div>
             </div>
           </div>
@@ -817,10 +924,12 @@ export default function LoanAnalytics({
             <div className="flex items-center justify-between flex-wrap gap-2">
               <span className="text-[13px] font-bold text-[#1a1d23] flex items-center gap-1.5">
                 <Sliders className="h-4 w-4 text-[#f59e0b]" />
-                Interactive Prepayment Acceleration Controls
+                {displayLanguage === "hi"
+                  ? "इंटरैक्टिव पूर्वभुगतान त्वरण नियंत्रण"
+                  : "Interactive Prepayment Acceleration Controls"}
               </span>
               <span className="text-[11px] text-[#059669] font-semibold">
-                Instant Recalculation
+                {displayLanguage === "hi" ? "तात्कालिक पुनर्गणना" : "Instant Recalculation"}
               </span>
             </div>
 
@@ -837,7 +946,9 @@ export default function LoanAnalytics({
               >
                 <div className="flex items-center justify-between mb-1.5">
                   <span className="text-[12px] font-bold text-[#1a1d23]">
-                    1 Extra EMI / Year (13th EMI)
+                    {displayLanguage === "hi"
+                      ? "प्रति वर्ष १ अतिरिक्त ईएमआई (१३वीं ईएमआई)"
+                      : "1 Extra EMI / Year (13th EMI)"}
                   </span>
                   <input
                     type="checkbox"
@@ -847,7 +958,9 @@ export default function LoanAnalytics({
                   />
                 </div>
                 <p className="text-[11px] text-[#6b7280] leading-snug">
-                  Pay 1 additional EMI every 12 months using your annual bonus or tax refund.
+                  {displayLanguage === "hi"
+                    ? "अपने वार्षिक बोनस या टैक्स रिफंड का उपयोग करके प्रत्येक १२ महीने में १ अतिरिक्त ईएमआई का भुगतान करें।"
+                    : "Pay 1 additional EMI every 12 months using your annual bonus or tax refund."}
                 </p>
               </button>
 
@@ -855,12 +968,16 @@ export default function LoanAnalytics({
               <div className="p-3.5 rounded-xl border border-[#e5e7eb] bg-white space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="text-[12px] font-bold text-[#1a1d23]">
-                    Annual EMI Step-Up
+                    {displayLanguage === "hi" ? "वार्षिक ईएमआई वृद्धि (स्टेप-अप)" : "Annual EMI Step-Up"}
                   </span>
-                  <span className="badge-info text-[10px]">+{stepUpPct}% / yr</span>
+                  <span className="badge-info text-[10px]">
+                    +{stepUpPct}% {displayLanguage === "hi" ? "/ वर्ष" : "/ yr"}
+                  </span>
                 </div>
                 <p className="text-[11px] text-[#6b7280] leading-snug">
-                  Increase EMI as your salary grows annually:
+                  {displayLanguage === "hi"
+                    ? "वार्षिक वेतन वृद्धि के साथ अपनी ईएमआई बढ़ाएं:"
+                    : "Increase EMI as your salary grows annually:"}
                 </p>
                 <div className="flex items-center gap-1.5 pt-1">
                   {[0, 5, 10, 15].map((pct) => (
@@ -874,7 +991,7 @@ export default function LoanAnalytics({
                           : "bg-[#f3f4f6] text-[#4b5563] hover:bg-[#e5e7eb]"
                       }`}
                     >
-                      {pct === 0 ? "Off" : `${pct}%`}
+                      {pct === 0 ? (displayLanguage === "hi" ? "बंद" : "Off") : `${pct}%`}
                     </button>
                   ))}
                 </div>
@@ -884,7 +1001,9 @@ export default function LoanAnalytics({
               <div className="p-3.5 rounded-xl border border-[#e5e7eb] bg-white space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="text-[12px] font-bold text-[#1a1d23]">
-                    Custom Extra Monthly (₹)
+                    {displayLanguage === "hi"
+                      ? "कस्टम अतिरिक्त मासिक भुगतान (₹)"
+                      : "Custom Extra Monthly (₹)"}
                   </span>
                 </div>
                 <input
@@ -897,7 +1016,9 @@ export default function LoanAnalytics({
                   className="input-field text-[12px] py-1.5"
                 />
                 <p className="text-[10px] text-[#9ca3af]">
-                  Adds ₹{parseFloat(extraMonthlyPayment) || 0} to every single monthly EMI.
+                  {displayLanguage === "hi"
+                    ? `प्रत्येक मासिक ईएमआई में ₹${parseFloat(extraMonthlyPayment) || 0} जोड़ता है।`
+                    : `Adds ₹${parseFloat(extraMonthlyPayment) || 0} to every single monthly EMI.`}
                 </p>
               </div>
             </div>
@@ -908,12 +1029,16 @@ export default function LoanAnalytics({
                 <div className="flex items-center gap-2">
                   <TrendingDown className="h-5 w-5 text-[#34d399]" />
                   <span className="text-[14px] font-bold text-white">
-                    Simulation Outcome: Fast-Track Freedom
+                    {displayLanguage === "hi"
+                      ? "सिमुलेशन परिणाम: तीव्र ऋणमुक्ति"
+                      : "Simulation Outcome: Fast-Track Freedom"}
                   </span>
                 </div>
                 {interestSaved > 0 && (
                   <span className="text-[11px] font-bold bg-[#34d399]/20 text-[#34d399] px-3 py-1 rounded-full border border-[#34d399]/30">
-                    🎉 Save {yearsReduced} Years of Debt
+                    {displayLanguage === "hi"
+                      ? `🎉 ऋण के ${yearsReduced} वर्ष बचाएं`
+                      : `🎉 Save ${yearsReduced} Years of Debt`}
                   </span>
                 )}
               </div>
@@ -921,48 +1046,50 @@ export default function LoanAnalytics({
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
                 <div className="p-3 bg-white/5 rounded-xl border border-white/10">
                   <span className="text-[10px] text-[#94a3b8] uppercase tracking-wider font-semibold">
-                    Original Baseline
+                    {displayLanguage === "hi" ? "मूल आधार रेखा" : "Original Baseline"}
                   </span>
                   <p className="text-[16px] font-bold text-white mt-1">
-                    {baseSchedule.actualMonths} Months
+                    {baseSchedule.actualMonths} {displayLanguage === "hi" ? "महीने" : "Months"}
                   </p>
                   <span className="text-[10px] text-[#94a3b8]">
-                    ({(baseSchedule.actualMonths / 12).toFixed(1)} Years)
+                    ({(baseSchedule.actualMonths / 12).toFixed(1)} {displayLanguage === "hi" ? "वर्ष" : "Years"})
                   </span>
                 </div>
 
                 <div className="p-3 bg-white/5 rounded-xl border border-white/10">
                   <span className="text-[10px] text-[#94a3b8] uppercase tracking-wider font-semibold">
-                    Simulated Fast-Track
+                    {displayLanguage === "hi" ? "सिम्युलेटेड त्वरित मार्ग" : "Simulated Fast-Track"}
                   </span>
                   <p className="text-[16px] font-bold text-[#38bdf8] mt-1">
-                    {simulatedSchedule.actualMonths} Months
+                    {simulatedSchedule.actualMonths} {displayLanguage === "hi" ? "महीने" : "Months"}
                   </p>
                   <span className="text-[10px] text-[#38bdf8]">
-                    ({(simulatedSchedule.actualMonths / 12).toFixed(1)} Years)
+                    ({(simulatedSchedule.actualMonths / 12).toFixed(1)} {displayLanguage === "hi" ? "वर्ष" : "Years"})
                   </span>
                 </div>
 
                 <div className="p-3 bg-white/5 rounded-xl border border-white/10">
                   <span className="text-[10px] text-[#94a3b8] uppercase tracking-wider font-semibold">
-                    Tenure Saved
+                    {displayLanguage === "hi" ? "बचाई गई अवधि" : "Tenure Saved"}
                   </span>
                   <p className="text-[16px] font-bold text-[#34d399] mt-1">
-                    -{yearsReduced} Years
+                    -{yearsReduced} {displayLanguage === "hi" ? "वर्ष" : "Years"}
                   </p>
                   <span className="text-[10px] text-[#34d399]">
-                    {monthsReduced} fewer EMIs
+                    {monthsReduced} {displayLanguage === "hi" ? "कम ईएमआई" : "fewer EMIs"}
                   </span>
                 </div>
 
                 <div className="p-3 bg-gradient-to-br from-[#059669]/30 to-[#047857]/30 rounded-xl border border-[#34d399]/40">
                   <span className="text-[10px] text-[#a7f3d0] uppercase tracking-wider font-semibold">
-                    Total Interest Saved
+                    {displayLanguage === "hi" ? "कुल बचाया गया ब्याज" : "Total Interest Saved"}
                   </span>
                   <p className="text-[18px] font-extrabold text-[#34d399] mt-0.5">
                     ₹{Math.round(interestSaved).toLocaleString("en-IN")}
                   </p>
-                  <span className="text-[10px] text-[#a7f3d0]">Direct Cash Kept in Pocket</span>
+                  <span className="text-[10px] text-[#a7f3d0]">
+                    {displayLanguage === "hi" ? "सीधे आपकी जेब में बची नकदी" : "Direct Cash Kept in Pocket"}
+                  </span>
                 </div>
               </div>
             </div>
@@ -974,20 +1101,28 @@ export default function LoanAnalytics({
               <div>
                 <h4 className="text-[14px] font-bold text-[#1a1d23] flex items-center gap-2">
                   <BarChart3 className="h-4 w-4 text-[#0052cc]" />
-                  Updated Loan Balance Payoff Graph (Baseline vs. Simulated Prepayment)
+                  {displayLanguage === "hi"
+                    ? "अद्यतन ऋण शेष अदायगी ग्राफ (मूल बनाम सिम्युलेटेड पूर्वभुगतान)"
+                    : "Updated Loan Balance Payoff Graph (Baseline vs. Simulated Prepayment)"}
                 </h4>
                 <p className="text-[11px] text-[#6b7280]">
-                  Visualizing how your principal balance decreases over time under baseline vs. fast-track simulation
+                  {displayLanguage === "hi"
+                    ? "देखें कि मूल आधार रेखा बनाम त्वरित सिमुलेशन के तहत आपका मूलधन शेष समय के साथ कैसे घटता है"
+                    : "Visualizing how your principal balance decreases over time under baseline vs. fast-track simulation"}
                 </p>
               </div>
               <div className="flex items-center gap-4 text-[11px]">
                 <div className="flex items-center gap-1.5">
                   <span className="h-3 w-3 rounded-full bg-[#0052cc]" />
-                  <span className="text-[#374151]">Original Baseline</span>
+                  <span className="text-[#374151]">
+                    {displayLanguage === "hi" ? "मूल आधार रेखा" : "Original Baseline"}
+                  </span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <span className="h-3 w-3 rounded-full bg-[#10b981]" />
-                  <span className="text-[#374151] font-semibold">Simulated Fast-Track</span>
+                  <span className="text-[#374151] font-semibold">
+                    {displayLanguage === "hi" ? "सिम्युलेटेड त्वरित मार्ग" : "Simulated Fast-Track"}
+                  </span>
                 </div>
               </div>
             </div>
@@ -1097,20 +1232,26 @@ export default function LoanAnalytics({
                             fontWeight="bold"
                             fill="#ffffff"
                           >
-                            🎉 Paid Off {yearsReduced} Yrs Early
+                            {displayLanguage === "hi"
+                              ? `🎉 ${yearsReduced} वर्ष पहले चुकता`
+                              : `🎉 Paid Off ${yearsReduced} Yrs Early`}
                           </text>
                         </g>
                       )}
 
                       {/* Milestone labels at bottom */}
                       <text x="15" y="238" fontSize="9" fill="#94a3b8">
-                        Month 1 (Start)
+                        {displayLanguage === "hi" ? "माह १ (प्रारंभ)" : "Month 1 (Start)"}
                       </text>
                       <text x={simEndX} y="238" textAnchor="middle" fontSize="9" fontWeight="bold" fill="#047857">
-                        Yr {(simulatedSchedule.actualMonths / 12).toFixed(1)}
+                        {displayLanguage === "hi"
+                          ? `वर्ष ${(simulatedSchedule.actualMonths / 12).toFixed(1)}`
+                          : `Yr ${(simulatedSchedule.actualMonths / 12).toFixed(1)}`}
                       </text>
                       <text x="785" y="238" textAnchor="end" fontSize="9" fill="#94a3b8">
-                        Yr {(baseSchedule.actualMonths / 12).toFixed(0)} (Original)
+                        {displayLanguage === "hi"
+                          ? `वर्ष ${(baseSchedule.actualMonths / 12).toFixed(0)} (मूल)`
+                          : `Yr ${(baseSchedule.actualMonths / 12).toFixed(0)} (Original)`}
                       </text>
                     </>
                   );
@@ -1125,10 +1266,14 @@ export default function LoanAnalytics({
               <div>
                 <h4 className="text-[14px] font-bold text-[#1a1d23] flex items-center gap-2">
                   <Table className="h-4 w-4 text-[#0052cc]" />
-                  Full Year-by-Year Amortization Schedule
+                  {displayLanguage === "hi"
+                    ? "पूर्ण वर्ष-वार ऋण परिशोधन अनुसूची"
+                    : "Full Year-by-Year Amortization Schedule"}
                 </h4>
                 <p className="text-[11px] text-[#6b7280]">
-                  Complete annual breakdown showing how EMI reduces principal and interest every single year
+                  {displayLanguage === "hi"
+                    ? "प्रत्येक वर्ष ईएमआई मूलधन और ब्याज को कैसे कम करती है, इसका संपूर्ण वार्षिक विवरण"
+                    : "Complete annual breakdown showing how EMI reduces principal and interest every single year"}
                 </p>
               </div>
 
@@ -1143,7 +1288,7 @@ export default function LoanAnalytics({
                       : "text-[#64748b] hover:text-[#0f172a]"
                   }`}
                 >
-                  ⚡ Simulated Fast-Track Schedule
+                  {displayLanguage === "hi" ? "⚡ सिम्युलेटेड त्वरित अनुसूची" : "⚡ Simulated Fast-Track Schedule"}
                 </button>
                 <button
                   type="button"
@@ -1154,7 +1299,7 @@ export default function LoanAnalytics({
                       : "text-[#64748b] hover:text-[#0f172a]"
                   }`}
                 >
-                  📅 Original Baseline Schedule
+                  {displayLanguage === "hi" ? "📅 मूल आधार अनुसूची" : "📅 Original Baseline Schedule"}
                 </button>
                 <button
                   type="button"
@@ -1165,7 +1310,7 @@ export default function LoanAnalytics({
                       : "text-[#64748b] hover:text-[#0f172a]"
                   }`}
                 >
-                  ⚖️ Side-by-Side Comparison
+                  {displayLanguage === "hi" ? "⚖️ साथ-साथ तुलना" : "⚖️ Side-by-Side Comparison"}
                 </button>
               </div>
             </div>
@@ -1177,23 +1322,23 @@ export default function LoanAnalytics({
                   <thead className="bg-[#f8fafc] text-[#475569] font-bold text-[11px] uppercase tracking-wider sticky top-0 z-10 border-b border-[#e2e8f0]">
                     {activeAmortizationView === "comparison" ? (
                       <tr>
-                        <th className="py-3 px-3">Year</th>
-                        <th className="py-3 px-3">Baseline Ending Balance</th>
-                        <th className="py-3 px-3">Simulated Ending Balance</th>
-                        <th className="py-3 px-3">Base Interest</th>
-                        <th className="py-3 px-3">Simulated Interest</th>
-                        <th className="py-3 px-3 text-[#059669]">Annual Interest Saved</th>
-                        <th className="py-3 px-3">Progress</th>
+                        <th className="py-3 px-3">{displayLanguage === "hi" ? "वर्ष" : "Year"}</th>
+                        <th className="py-3 px-3">{displayLanguage === "hi" ? "मूल अंतिम शेष" : "Baseline Ending Balance"}</th>
+                        <th className="py-3 px-3">{displayLanguage === "hi" ? "सिम्युलेटेड अंतिम शेष" : "Simulated Ending Balance"}</th>
+                        <th className="py-3 px-3">{displayLanguage === "hi" ? "मूल ब्याज" : "Base Interest"}</th>
+                        <th className="py-3 px-3">{displayLanguage === "hi" ? "सिम्युलेटेड ब्याज" : "Simulated Interest"}</th>
+                        <th className="py-3 px-3 text-[#059669]">{displayLanguage === "hi" ? "वार्षिक बचत ब्याज" : "Annual Interest Saved"}</th>
+                        <th className="py-3 px-3">{displayLanguage === "hi" ? "प्रगति" : "Progress"}</th>
                       </tr>
                     ) : (
                       <tr>
-                        <th className="py-3 px-3">Year</th>
-                        <th className="py-3 px-3">Opening Principal (₹)</th>
-                        <th className="py-3 px-3">Total Annual EMI (₹)</th>
-                        <th className="py-3 px-3 text-[#0052cc]">Principal Paid (₹)</th>
-                        <th className="py-3 px-3 text-[#d97706]">Interest Paid (₹)</th>
-                        <th className="py-3 px-3">Closing Principal (₹)</th>
-                        <th className="py-3 px-3">% Repaid</th>
+                        <th className="py-3 px-3">{displayLanguage === "hi" ? "वर्ष" : "Year"}</th>
+                        <th className="py-3 px-3">{displayLanguage === "hi" ? "प्रारंभिक मूलधन (₹)" : "Opening Principal (₹)"}</th>
+                        <th className="py-3 px-3">{displayLanguage === "hi" ? "कुल वार्षिक ईएमआई (₹)" : "Total Annual EMI (₹)"}</th>
+                        <th className="py-3 px-3 text-[#0052cc]">{displayLanguage === "hi" ? "चुकाया गया मूलधन (₹)" : "Principal Paid (₹)"}</th>
+                        <th className="py-3 px-3 text-[#d97706]">{displayLanguage === "hi" ? "चुकाया गया ब्याज (₹)" : "Interest Paid (₹)"}</th>
+                        <th className="py-3 px-3">{displayLanguage === "hi" ? "अंतिम मूलधन (₹)" : "Closing Principal (₹)"}</th>
+                        <th className="py-3 px-3">{displayLanguage === "hi" ? "% चुकता" : "% Repaid"}</th>
                       </tr>
                     )}
                   </thead>
@@ -1212,7 +1357,7 @@ export default function LoanAnalytics({
                             }`}
                           >
                             <td className="py-2.5 px-3 font-sans font-bold text-[#1e293b]">
-                              Year {bRow.year}
+                              {displayLanguage === "hi" ? `वर्ष ${bRow.year}` : `Year ${bRow.year}`}
                             </td>
                             <td className="py-2.5 px-3 text-[#64748b]">
                               ₹{Math.round(bRow.closingBalance).toLocaleString("en-IN")}
@@ -1221,7 +1366,9 @@ export default function LoanAnalytics({
                               {sRow && sRow.closingBalance > 0 ? (
                                 `₹${Math.round(sRow.closingBalance).toLocaleString("en-IN")}`
                               ) : (
-                                <span className="badge-success text-[10px]">₹0 (Fully Paid)</span>
+                                <span className="badge-success text-[10px]">
+                                  {displayLanguage === "hi" ? "₹0 (पूर्णतः चुकता)" : "₹0 (Fully Paid)"}
+                                </span>
                               )}
                             </td>
                             <td className="py-2.5 px-3 text-[#d97706]">
@@ -1259,7 +1406,7 @@ export default function LoanAnalytics({
                           className="hover:bg-[#f8fafc] transition-colors"
                         >
                           <td className="py-2.5 px-3 font-sans font-bold text-[#1e293b]">
-                            Year {row.year}
+                            {displayLanguage === "hi" ? `वर्ष ${row.year}` : `Year ${row.year}`}
                           </td>
                           <td className="py-2.5 px-3 text-[#64748b]">
                             ₹{Math.round(row.openingBalance).toLocaleString("en-IN")}
@@ -1275,7 +1422,9 @@ export default function LoanAnalytics({
                           </td>
                           <td className="py-2.5 px-3 font-bold text-[#1e293b]">
                             {row.closingBalance <= 0 ? (
-                              <span className="badge-success text-[10px]">₹0 (Paid Off)</span>
+                              <span className="badge-success text-[10px]">
+                                {displayLanguage === "hi" ? "₹0 (पूर्णतः चुकता)" : "₹0 (Paid Off)"}
+                              </span>
                             ) : (
                               `₹${Math.round(row.closingBalance).toLocaleString("en-IN")}`
                             )}
@@ -1300,7 +1449,9 @@ export default function LoanAnalytics({
                   {/* Summary Totals Footer */}
                   <tfoot className="bg-[#f8fafc] font-bold border-t border-[#e2e8f0] text-[11px] text-[#1e293b]">
                     <tr>
-                      <td className="py-3 px-3 font-sans">Total Lifetime</td>
+                      <td className="py-3 px-3 font-sans">
+                        {displayLanguage === "hi" ? "जीवनकाल कुल" : "Total Lifetime"}
+                      </td>
                       <td className="py-3 px-3 font-mono">₹{principal.toLocaleString("en-IN")}</td>
                       <td className="py-3 px-3 font-mono">
                         ₹{Math.round(
@@ -1320,7 +1471,9 @@ export default function LoanAnalytics({
                         ).toLocaleString("en-IN")}
                       </td>
                       <td className="py-3 px-3 text-[#059669] font-mono">₹0.00</td>
-                      <td className="py-3 px-3 text-[#059669]">100% Repaid</td>
+                      <td className="py-3 px-3 text-[#059669]">
+                        {displayLanguage === "hi" ? "१००% चुकता" : "100% Repaid"}
+                      </td>
                     </tr>
                   </tfoot>
                 </table>
@@ -1333,30 +1486,44 @@ export default function LoanAnalytics({
             <div className="flex items-center gap-2">
               <Scale className="h-5 w-5 text-[#b45309]" />
               <h5 className="text-[14px] font-bold text-[#92400e]">
-                Economic Reality Check: Is Prepayment Really Necessary? (ROI vs. Inflation)
+                {displayLanguage === "hi"
+                  ? "आर्थिक वास्तविकता परीक्षण: क्या पूर्वभुगतान वास्तव में आवश्यक है? (प्रतिफल बनाम मुद्रास्फीति)"
+                  : "Economic Reality Check: Is Prepayment Really Necessary? (ROI vs. Inflation)"}
               </h5>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-[12px]">
               <div className="p-3.5 bg-white/80 rounded-xl border border-[#fde68a] space-y-1">
-                <span className="text-[11px] text-[#78350f] font-semibold">1. Nominal Loan ROI</span>
-                <p className="text-[16px] font-bold text-[#1a1d23]">{rate}% p.a.</p>
-                <p className="text-[10px] text-[#6b7280]">The interest rate charged by lender</p>
+                <span className="text-[11px] text-[#78350f] font-semibold">
+                  {displayLanguage === "hi" ? "१. नाममात्र ऋण आरओआई" : "1. Nominal Loan ROI"}
+                </span>
+                <p className="text-[16px] font-bold text-[#1a1d23]">{rate}% {displayLanguage === "hi" ? "वार्षिक" : "p.a."}</p>
+                <p className="text-[10px] text-[#6b7280]">
+                  {displayLanguage === "hi" ? "ऋणदाता द्वारा लगाया जाने वाला ब्याज" : "The interest rate charged by lender"}
+                </p>
               </div>
 
               <div className="p-3.5 bg-white/80 rounded-xl border border-[#fde68a] space-y-1">
-                <span className="text-[11px] text-[#78350f] font-semibold">2. India CPI Inflation</span>
-                <p className="text-[16px] font-bold text-[#d97706]">~{inflationRate}% p.a.</p>
-                <p className="text-[10px] text-[#6b7280]">RBI Target & Macroeconomic average</p>
+                <span className="text-[11px] text-[#78350f] font-semibold">
+                  {displayLanguage === "hi" ? "२. भारत सीपीआई मुद्रास्फीति" : "2. India CPI Inflation"}
+                </span>
+                <p className="text-[16px] font-bold text-[#d97706]">~{inflationRate}% {displayLanguage === "hi" ? "वार्षिक" : "p.a."}</p>
+                <p className="text-[10px] text-[#6b7280]">
+                  {displayLanguage === "hi" ? "आरबीआई लक्ष्य एवं व्यापक आर्थिक औसत" : "RBI Target & Macroeconomic average"}
+                </p>
               </div>
 
               <div className="p-3.5 bg-white/80 rounded-xl border border-[#fde68a] space-y-1">
-                <span className="text-[11px] text-[#78350f] font-semibold">3. Real Cost of Debt</span>
+                <span className="text-[11px] text-[#78350f] font-semibold">
+                  {displayLanguage === "hi" ? "३. ऋण की वास्तविक लागत" : "3. Real Cost of Debt"}
+                </span>
                 <p className="text-[16px] font-bold text-[#0052cc]">
-                  {realInterestRate.toFixed(2)}% p.a.
+                  {realInterestRate.toFixed(2)}% {displayLanguage === "hi" ? "वार्षिक" : "p.a."}
                 </p>
                 <p className="text-[10px] text-[#6b7280]">
-                  Nominal Rate ({rate}%) - Inflation ({inflationRate}%)
+                  {displayLanguage === "hi"
+                    ? `नाममात्र दर (${rate}%) - मुद्रास्फीति (${inflationRate}%)`
+                    : `Nominal Rate (${rate}%) - Inflation (${inflationRate}%)`}
                 </p>
               </div>
             </div>
@@ -1365,34 +1532,51 @@ export default function LoanAnalytics({
             <div className="p-4 rounded-xl bg-white border border-[#fde68a] space-y-2.5">
               <div className="flex items-center justify-between flex-wrap gap-2">
                 <h6 className="text-[12px] font-bold text-[#1a1d23]">
-                  Financial Strategy Recommendation:
+                  {displayLanguage === "hi"
+                    ? "वित्तीय रणनीति अनुशंसा:"
+                    : "Financial Strategy Recommendation:"}
                 </h6>
                 {isHighInterestLoan ? (
                   <span className="badge-danger text-[10px]">
-                    Aggressive Prepayment Optimal
+                    {displayLanguage === "hi"
+                      ? "आक्रामक पूर्वभुगतान सर्वोत्तम"
+                      : "Aggressive Prepayment Optimal"}
                   </span>
                 ) : isLowInterestLoan ? (
                   <span className="badge-success text-[10px]">
-                    Consider Investing Surplus (Hybrid Allocation)
+                    {displayLanguage === "hi"
+                      ? "अधिशेष निवेश पर विचार करें (हाइब्रिड आवंटन)"
+                      : "Consider Investing Surplus (Hybrid Allocation)"}
                   </span>
                 ) : (
                   <span className="badge-warning text-[10px]">
-                    Balanced Repayment Recommended
+                    {displayLanguage === "hi"
+                      ? "संतुलित पुनर्भुगतान अनुशंसित"
+                      : "Balanced Repayment Recommended"}
                   </span>
                 )}
               </div>
 
               {isLowInterestLoan ? (
                 <p className="text-[11px] text-[#451a03] leading-relaxed">
-                  🎯 <strong>Housing Loan Arbitrage Insight:</strong> Your loan ROI ({rate}%) is low. After accounting for inflation ({inflationRate}%) and Section 24(b) tax deductions (up to ₹2 Lakh/year), your <em>effective real cost of borrowing is only ~1.5% to 3.0%</em>. Over a 15–20 year horizon, inflation systematically erodes the real burden of your fixed debt. If you instead systematically invest that extra 1 EMI into Indian Equity Index Funds / Mutual Funds (which have historically delivered <strong>~12%–14% CAGR</strong>), your accumulated wealth will significantly exceed the ₹{Math.round(interestSaved).toLocaleString("en-IN")} saved on interest!
+                  🎯 <strong>{displayLanguage === "hi" ? "आवास ऋण आर्बिट्रेज अंतर्दृष्टि:" : "Housing Loan Arbitrage Insight:"}</strong>{" "}
+                  {displayLanguage === "hi"
+                    ? `आपके ऋण का आरओआई (${rate}%) कम है। मुद्रास्फीति (${inflationRate}%) और धारा 24(बी) कर कटौती (₹2 लाख/वर्ष तक) को ध्यान में रखते हुए, आपकी उधार लेने की प्रभावी वास्तविक लागत केवल ~1.5% से 3.0% है। 15-20 वर्षों की अवधि में, मुद्रास्फीति व्यवस्थित रूप से आपके ऋण के वास्तविक बोझ को कम करती है। यदि आप उस अतिरिक्त 1 ईएमआई को भारतीय इक्विटी इंडेक्स फंड / म्यूचुअल फंड (जिन्होंने ऐतिहासिक रूप से ~12%-14% सीएजीआर दिया है) में व्यवस्थित रूप से निवेश करते हैं, तो आपकी संचित संपत्ति ब्याज पर बचाए गए ₹${Math.round(interestSaved).toLocaleString("en-IN")} से कहीं अधिक होगी!`
+                    : `Your loan ROI (${rate}%) is low. After accounting for inflation (${inflationRate}%) and Section 24(b) tax deductions (up to ₹2 Lakh/year), your effective real cost of borrowing is only ~1.5% to 3.0%. Over a 15–20 year horizon, inflation systematically erodes the real burden of your fixed debt. If you instead systematically invest that extra 1 EMI into Indian Equity Index Funds / Mutual Funds (which have historically delivered ~12%–14% CAGR), your accumulated wealth will significantly exceed the ₹${Math.round(interestSaved).toLocaleString("en-IN")} saved on interest!`}
                 </p>
               ) : isHighInterestLoan ? (
                 <p className="text-[11px] text-[#451a03] leading-relaxed">
-                  🚨 <strong>High-Cost Debt Warning:</strong> Your loan interest rate ({rate}%) substantially exceeds India's inflation rate ({inflationRate}%) and safe fixed-income yields. Prepaying this loan gives you a <strong>guaranteed, risk-free, tax-free return of {rate}% p.a.</strong> Prepaying as aggressively as possible is mathematically the most rewarding choice you can make.
+                  🚨 <strong>{displayLanguage === "hi" ? "उच्च लागत ऋण चेतावनी:" : "High-Cost Debt Warning:"}</strong>{" "}
+                  {displayLanguage === "hi"
+                    ? `आपके ऋण की ब्याज दर (${rate}%) भारत की मुद्रास्फीति दर (${inflationRate}%) और सुरक्षित सावधि आय प्रतिफल से काफी अधिक है। इस ऋण का पूर्वभुगतान करने से आपको ${rate}% प्रति वर्ष का गारंटीकृत, जोखिम-मुक्त और कर-मुक्त प्रतिफल मिलता है। गणितीय रूप से जितनी जल्दी हो सके पूर्वभुगतान करना आपके लिए सबसे अधिक फायदेमंद विकल्प है।`
+                    : `Your loan interest rate (${rate}%) substantially exceeds India's inflation rate (${inflationRate}%) and safe fixed-income yields. Prepaying this loan gives you a guaranteed, risk-free, tax-free return of ${rate}% p.a. Prepaying as aggressively as possible is mathematically the most rewarding choice you can make.`}
                 </p>
               ) : (
                 <p className="text-[11px] text-[#451a03] leading-relaxed">
-                  ⚖️ <strong>Balanced Approach:</strong> Your loan rate of {rate}% sits moderately above inflation. A hybrid approach—prepaying 1 extra EMI per year while keeping the rest invested for emergency liquidity—gives you both psychological peace of mind and wealth generation.
+                  ⚖️ <strong>{displayLanguage === "hi" ? "संतुलित दृष्टिकोण:" : "Balanced Approach:"}</strong>{" "}
+                  {displayLanguage === "hi"
+                    ? `आपके ऋण की दर ${rate}% मुद्रास्फीति से मध्यम रूप से ऊपर है। एक हाइब्रिड दृष्टिकोण—प्रति वर्ष 1 अतिरिक्त ईएमआई का पूर्वभुगतान करते हुए शेष को आपातकालीन तरलता के लिए निवेशित रखना—आपको मानसिक शांति और धन निर्माण दोनों प्रदान करता है।`
+                    : `Your loan rate of ${rate}% sits moderately above inflation. A hybrid approach—prepaying 1 extra EMI per year while keeping the rest invested for emergency liquidity—gives you both psychological peace of mind and wealth generation.`}
                 </p>
               )}
             </div>
