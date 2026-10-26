@@ -16,27 +16,33 @@
    - [Module 2: 3-Way Consistency Checking & Discrepancy Matching](#module-2-3-way-consistency-checking--discrepancy-matching)
    - [Module 3: The Sacred Verification Gate & Dual Groundedness Verifier](#module-3-the-sacred-verification-gate--dual-groundedness-verifier)
    - [Module 4: Vernacular Translation & Bidirectional Fidelity Verification](#module-4-vernacular-translation--bidirectional-fidelity-verification)
-   - [Module 5: Evidence-Backed Grievance Redressal & CMS Dispute Engine](#module-5-evidence-backed-grievance-redressal--cms-dispute-engine)
+   - [Module 5: Evidence-Backed Grievance Redressal & Dispute Engine](#module-5-evidence-backed-grievance-redressal--dispute-engine)
    - [Module 6: RAG-Grounded AI Advisory Chatbot](#module-6-rag-grounded-ai-advisory-chatbot)
    - [RAG Regulatory Knowledge Layer & Scoped Vector Store](#rag-regulatory-knowledge-layer--scoped-vector-store)
    - [Pipeline State Machine Orchestration](#pipeline-state-machine-orchestration)
    - [Institutional PDF Audit Report Generator](#institutional-pdf-audit-report-generator)
 7. [Mathematical Formulations, Algorithms & Financial Modeling](#7-mathematical-formulations-algorithms--financial-modeling)
-8. [Complete Technology Stack](#8-complete-technology-stack)
-9. [Database Schema & Data Model](#9-database-schema--data-model)
+8. [Complete Technology Stack & Dependency Architecture](#8-complete-technology-stack--dependency-architecture)
+9. [Database Schema, Relational Data Model & RLS Policies](#9-database-schema-relational-data-model--rls-policies)
 10. [REST API Directory & Gateway Reference](#10-rest-api-directory--gateway-reference)
 11. [Frontend Web Application & Interactive Analytics Suite](#11-frontend-web-application--interactive-analytics-suite)
 12. [Security Architecture, Compliance Invariants & Threat Mitigation](#12-security-architecture-compliance-invariants--threat-mitigation)
 13. [Empirical Evaluation, Benchmarks & Validation Results](#13-empirical-evaluation-benchmarks--validation-results)
-14. [End-to-End User Journey & Operational Workflows](#14-end-to-end-user-journey--operational-workflows)
-15. [Non-Technical & Socio-Economic Impact](#15-non-technical--socio-economic-impact)
-16. [Project Evolution, Design Trade-Offs & Honest Scope Disclosures](#16-project-evolution-design-trade-offs--honest-scope-disclosures)
+14. [Automated Test Suite & Verification Infrastructure](#14-automated-test-suite--verification-infrastructure)
+15. [Environment Configuration & Step-by-Step Setup Guide](#15-environment-configuration--step-by-step-setup-guide)
+16. [End-to-End Operational Workflows & User Journeys](#16-end-to-end-operational-workflows--user-journeys)
+17. [Academic Capstone Context, Viva Preparation & Demo Contingencies](#17-academic-capstone-context-viva-preparation--demo-contingencies)
+18. [Target User Personas & Practical Use Case Scenarios](#18-target-user-personas--practical-use-case-scenarios)
+19. [Non-Technical, Socio-Economic & Ethical Impact](#19-non-technical-socio-economic--ethical-impact)
+20. [Legal, Regulatory & Ethical Disclaimers](#20-legal-regulatory--ethical-disclaimers)
+21. [Project Evolution, Honest Scope Disclosures & Future Roadmap](#21-project-evolution-honest-scope-disclosures--future-roadmap)
+22. [Summary & Conclusion](#22-summary--conclusion)
 
 ---
 
 ## 1. Executive Summary & Project Overview
 
-**GUARDIAN** (*Groundedness-Verified Agentic Financial Advocate*) is an institutional-grade, autonomous regulatory technology (RegTech) and consumer advocacy platform engineered specifically for the retail lending sector. Its mission is to protect individual borrowers from predatory credit terms, concealed upfront deductions, understated Annual Percentage Rates (APR), deceptive contractual fine print, and statutory violations under the regulatory framework established by the **Reserve Bank of India (RBI)**.
+**GUARDIAN** (*Groundedness-Verified Agentic Financial Advocate for Loans*) is an institutional-grade, autonomous regulatory technology (RegTech) and consumer advocacy platform engineered specifically for the retail lending sector. Its mission is to protect individual borrowers from predatory credit terms, concealed upfront deductions, understated Annual Percentage Rates (APR), deceptive contractual fine print, and statutory violations under the regulatory framework established by the **Reserve Bank of India (RBI)**.
 
 Modern financial technology (FinTech) and digital lending apps (DLAs) in emerging economies have democratized credit access, but they have also introduced sophisticated forms of predatory exploitation:
 - Disclosing low flat nominal interest rates (e.g., "1.5% per month") while masking effective annualized rates exceeding 40%–80%.
@@ -51,9 +57,9 @@ GUARDIAN solves this fundamental crisis through an architectural breakthrough ca
 ### High-Level System Snapshot
 - **Core Domain**: Retail and MSME Loans (Home Loans, Personal Loans, Digital Credit Lines, Vehicle Loans, Gold Loans, Education Loans).
 - **Core Problem Addressed**: 3-Way contractual inconsistency (User typed terms vs. T&C PDF prose vs. KFS PDF parameters) + APR obfuscation + Unverified generative AI in finance.
-- **Backend Architecture**: FastAPI (Python 3.11), SQLAlchemy 2.0 / Supabase PostgreSQL 15, ChromaDB Vector Store (Dockerized), PyMuPDF institutional PDF engine.
-- **Frontend Architecture**: Next.js 16 (App Router), React 19, TailwindCSS v4, Lucide React, SVG dynamic charting.
-- **ML & NLP Stack**: Groq API (`llama-3.3-70b-versatile` / `llama-3.1-8b-instant`), RoBERTa-MNLI (`roberta-large-mnli`), IndicTrans2 / mT5, TF-IDF + Balanced Logistic Regression, PaddleOCR + `pdfplumber` / PyMuPDF.
+- **Backend Architecture**: FastAPI (Python 3.11), SQLAlchemy 2.0 / `asyncpg`, Hosted Supabase PostgreSQL 15, ChromaDB Vector Store (Docker container `0.5.23`), PyMuPDF institutional PDF engine.
+- **Frontend Architecture**: Next.js 16.3.6 (App Router), React 19.2.8, TailwindCSS v4, Lucide React, Dynamic SVG financial charting.
+- **ML & NLP Stack**: Groq Cloud API (`llama-3.3-70b-versatile`), RoBERTa-MNLI (`roberta-large-mnli`), IndicTrans2 / Multilingual T5 (mT5) / Banking Lexicons, TF-IDF + Balanced Logistic Regression, PaddleOCR + `pdfplumber` / PyMuPDF.
 
 ---
 
@@ -135,13 +141,13 @@ $$\text{The true effective rate is } \mathbf{12.42\%} \text{ p.a., NOT } 10.00\%
 Borrowers lack access to financial bisection solvers to calculate true Internal Rate of Return (IRR) cash flows on the fly.
 
 ### 3.3 The Dangers of Generic Generative AI in Consumer Finance
-With the rise of ChatGPT, Claude, and general-purpose LLMs, borrowers have attempted to upload loan documents to chatbot interfaces for advice. This introduces catastrophic risks:
+With the rise of generic LLMs (ChatGPT, Claude), borrowers attempt to upload financial contracts to chatbots for advice. This introduces catastrophic risks:
 - **Numerical Hallucination**: LLMs are autoregressive token predictors, not calculators. They routinely fabricate EMI amounts, miscalculate compounding frequencies, and report fictitious APRs.
 - **Legal Sycophancy**: Generic LLMs often agree with borrower misconceptions or validate non-compliant bank clauses because they cannot verify legal facts against canonical regulatory code.
 - **Lack of Evidentiary Grounding**: Generic chat outputs cite nonexistent clauses, fail to link assertions to specific contract excerpts, and lack tenant isolation.
 
 ### 3.4 Language Barrier & Semantic Translation Drift
-Over 80% of Indian retail borrowers do not speak English as their primary language. However, standard machine translation engines (e.g., basic Google Translate) frequently mutate numerical figures, alter legal qualifiers (e.g., turning *"may levy"* into *"shall not levy"*), or drop statutory caveats entirely. Translating financial advice into Hindi, Marathi, or Tamil without bidirectional verification creates significant legal and financial peril.
+Over 80% of Indian retail borrowers do not speak English as their primary language. However, standard machine translation engines (e.g., generic online translators) frequently mutate numerical figures, alter legal qualifiers (e.g., turning *"may levy"* into *"shall not levy"*), or drop statutory caveats entirely. Translating financial advice into regional Indian languages without bidirectional verification creates significant legal and financial peril.
 
 ### 3.5 Grievance Friction & Ombudsman Intimidation
 When borrowers detect illegal deductions or harassment, they rarely file formal disputes. Drafting an evidence-backed legal notice citing specific clauses of the RBI Master Directions, calculating excess interest to the decimal, and compiling an RBI CMS dossier requires legal counsel that retail borrowers cannot afford.
@@ -162,9 +168,9 @@ GUARDIAN operates as an autonomous, consumer-side financial advocate. It inverts
 ### 4.2 Non-Negotiable System Invariants
 From inception, GUARDIAN is governed by strict system rules (`RULES.md`):
 - **Verification Gate Inviolability (Rule §1)**: No `Claim` object can reach the user without a verified row in the database. No bypass flags, debug modes, or admin overrides exist anywhere in the codebase.
-- **Single Source of Math (Rule §1.7)**: Exactly one implementation of financial math (`apr_recompute.py`) exists across the entire repository.
+- **Single Source of Math (Rule §1.7)**: Exactly one implementation of financial math (`apr_recompute.py` and `serviceability.py`) exists across the entire repository.
 - **Zero Cross-Tenant Leakage (Rule §2)**: Vector database queries must enforce mandatory `{user_id, loan_id}` metadata filtering.
-- **Append-Only Audit Trail (Rule §3 S-21)**: All audit records and compliance checks are written to an immutable database table.
+- **Append-Only Audit Trail (Rule §3 S-21)**: All audit records and compliance checks are written to an immutable database table protected by PostgreSQL rules.
 - **Regulatory Honesty (Rule §6.4)**: Underwriting rules such as DTI thresholds are always labeled as industry heuristics, never as RBI mandates.
 
 ---
@@ -177,15 +183,16 @@ GUARDIAN is built as a microservice-style, decoupled platform comprising a high-
 
 ```
                                       BORROWER / CLIENT INTAKE
-                           (Next.js 16 UI: Manual Terms + KFS & T&C PDFs)
-                                                  │
-                                                  ▼
+                            (Next.js 16 UI: Manual Terms + KFS & T&C PDFs)
+                                                   │
+                                                   ▼
 ┌──────────────────────────────────────────────────────────────────────────────────────────────────┐
 │ STAGE 1: INGESTION & DOCUMENT EXTRACTION (Module 0)                                              │
 │ - Dual-Path Extraction: Native pdfplumber / PyMuPDF text layer parsing                           │
-│ - OCR Fallback: PaddleOCR triggered automatically if scanned/rasterized                          │
-│ - Chunking & Embedding: User documents isolated into ChromaDB {user_id, loan_id}                 │
+│ - OCR Fallback: PaddleOCR triggered automatically if scanned/rasterized (< 50 chars/page)        │
+│ - Chunker: Clause-level boundary-aware chunking into ChromaDB {user_id, loan_id}                 │
 │ - Structured Extraction: Groq Llama-3.3-70B with strict Pydantic v2 schema (extra="forbid")      │
+│ - Deterministic Fallback: Offline regex engine extracting bank names, rates, EMIs, and terms     │
 │ - Faulty KFS Detector: Blank, zero-value, or missing mandatory RBI disclosures flagged           │
 └─────────────────────────────────┬────────────────────────────────┬───────────────────────────────┘
                                   │                                │
@@ -217,9 +224,9 @@ GUARDIAN is built as a microservice-style, decoupled platform comprising a high-
 │                                                                                                  │
 │   ┌─────────────────────────────────────────┐   ┌─────────────────────────────────────────┐      │
 │   │ NUMERIC VERIFIER (numeric_verifier.py)  │   │ SEMANTIC VERIFIER (semantic_verifier.py)│      │
-│   │ - Strict regex entity extraction        │   │ - RoBERTa-MNLI / DeBERTa Cross-Encoder  │      │
+│   │ - Strict regex entity extraction        │   │ - RoBERTa-MNLI Cross-Encoder            │      │
 │   │ - Recomputes via Module 1 & 1b          │   │ - Premise (retrieved) vs Hypothesis     │      │
-│   │ - Zero tolerance on currency / rates    │   │ - Threshold-gated entailment check      │      │
+│   │ - Zero tolerance on currency / rates    │   │ - Entailment >= 0.55, Contradiction<=0.70│     │
 │   └────────────────────┬────────────────────┘   └────────────────────┬────────────────────┘      │
 │                        │                                             │                           │
 │                        └──────────────────────┬──────────────────────┘                           │
@@ -233,12 +240,12 @@ GUARDIAN is built as a microservice-style, decoupled platform comprising a high-
                  ▼                   ▼                   ▼
 ┌─────────────────────────┐ ┌─────────────────┐ ┌─────────────────┐
 │ STAGE 6: VERNACULAR     │ │ STAGE 7:        │ │ STAGE 8: GATED  │
-│ TRANSLATION (Module 4)  │ │ GRIEVANCE & CMS │ │ AI ADVISOR      │
-│ - IndicTrans2 / mT5     │ │ DISPUTES (M5)   │ │ CHATBOT (M6)    │
-│ - Round-Trip Back-Check │ │ - 6 RBI Classes │ │ - RAG Scoped    │
-│ - Cross-Lingual Numeric │ │ - Legal Notices │ │ - Module 3 Gate │
-│   Preservation Metric   │ │ - Ombudsman CMS │ │   Enforced on   │
-│ - Zero Semantic Drift   │ │   Dossiers      │ │   All Answers   │
+│ TRANSLATION (Module 4)  │ │ GRIEVANCE &     │ │ AI ADVISOR      │
+│ - Tier 1: Demo Cache    │ │ DISPUTES (M5)   │ │ CHATBOT (M6)    │
+│ - Tier 2: IndicTrans2   │ │ - 6 RBI Classes │ │ - RAG Scoped    │
+│ - Tier 3: mT5 Fallback  │ │ - TF-IDF + LR   │ │ - Module 3 Gate │
+│ - Tier 4: Banking Lex   │ │ - 30-Day TAT    │ │   Enforced on   │
+│ - Round-Trip M3 Verify  │ │ - Tracking Claim│ │   All Answers   │
 └─────────────────────────┘ └─────────────────┘ └─────────────────┘
                                      │
                                      ▼
@@ -259,24 +266,32 @@ GUARDIAN is built as a microservice-style, decoupled platform comprising a high-
 ### Module 0: Loan Intake, Document Ingestion & Faulty KFS Detection
 - **Directory**: `modules/m0_intake/`
 - **Core Files**: `extraction.py`, `ocr_fallback.py`, `chunker.py`
-- **Purpose**: Ingests borrower manual terms, ingests uploaded PDF documents (KFS and T&C), executes dual-path text extraction, performs LLM structured field parsing, and audits KFS health.
+- **Purpose**: Ingests borrower manual terms, ingests uploaded PDF documents (KFS and T&C), executes dual-path text extraction, performs LLM structured field parsing with offline regex fallback, and audits KFS health.
 
 #### Detailed Technical Operations
 1. **Dual-Path Text Extraction**:
-   - Primary Path: Inspects uploaded PDF documents using `pdfplumber` and `PyMuPDF` (`fitz`). It evaluates text density across pages.
-   - Secondary Path (OCR Fallback): If page character density drops below 50 characters per page (indicating scanned images, camera photos, or rasterized documents), the pipeline automatically activates `PaddleOCR` (`ocr_fallback.py`). PaddleOCR processes English and Devanagari scripts with high spatial accuracy.
-2. **Statutory Structured Field Extraction**:
+   - Primary Path: Inspects uploaded PDF documents using `pdfplumber` and `PyMuPDF` (`fitz`). Evaluates text density across pages.
+   - Secondary Path (OCR Fallback): If page character density drops below 50 characters per page (indicating scanned images, camera photos, or rasterized documents), the pipeline automatically activates `PaddleOCR` (`ocr_fallback.py`). PaddleOCR processes English and Devanagari scripts with high spatial accuracy at 200 DPI.
+2. **Statutory Structured Field Extraction via Groq LLM**:
    - Sends extracted document text (up to 25,000 characters) to Groq's high-throughput `llama-3.3-70b-versatile` model.
    - Enforces a strict Pydantic v2 schema (`ExtractedTerms`) configured with `extra="forbid"`.
    - Extracted standardized parameters include:
      - `principal`, `disclosed_rate`, `tenure_months`, `processing_fee`, `net_disbursed_amount`
      - `monthly_emi`, `total_interest_amount`, `total_repayment_amount`, `apr`
-     - `interest_type` (Floating vs Fixed), `benchmark_rate`, `spread`, `reset_periodicity`
+     - `interest_type` (Floating vs Fixed), `bank_name`, `loan_type`
      - `prepayment_clause`, `penal_charges`, `bounce_charges`, `cooling_off_period`
-     - `grievance_email`, `grievance_phone` (Nodal Officer details)
+     - `grievance_email`, `grievance_phone` (Principal Nodal Officer details)
    - Every extracted field includes a model `confidence` score (0.0 to 1.0). If any critical field has confidence $< 0.85$, the platform flags `needs_manual_confirmation` to prevent garbage-in contamination.
-   - If external APIs are unreachable, a deterministic regex extraction fallback (`fallback_regex_extraction`) extracts numerical terms.
-3. **Automated Faulty / Blank KFS Detection Engine**:
+3. **Deterministic Regex Fallback Engine (`fallback_regex_extraction`)**:
+   - If external APIs are unreachable, a deterministic regex extraction fallback extracts terms without any cloud dependency:
+     - Bank Name regex: matches HDFC Bank, State Bank of India (SBI), ICICI Bank, Axis Bank, Kotak Mahindra Bank, Bajaj Finance.
+     - Loan Type regex: matches Housing Finance / Home Loan, Personal Loan, Vehicle Loan, Digital Lending.
+     - Rate, Tenor, EMI, Net Disbursal, Fees, Bounce Charges, Penal Charges regex matching.
+     - Cooling-off period and Grievance Nodal Officer phone (`1800-xxx-xxxx` or STD codes) and email.
+4. **Boundary-Aware Clause Chunker (`chunker.py`)**:
+   - Splits extracted text into overlapping clause-level chunks (default size 500 characters, overlap 100 characters).
+   - Searches for natural sentence and clause boundaries (`. `, `; `, `\n`, `: `) within a 50-character window.
+5. **Automated Faulty / Blank KFS Detection Engine (`evaluateKfsHealth`)**:
    - Evaluates whether the KFS contains unpopulated placeholders, zero values, or missing mandatory disclosures under RBI/2024-25/18.
    - Flags the document as **"Faulty or Incomplete — RBI Non-Compliant"** with an itemized deficiency list if Principal, Rate, or Tenor are missing.
 
@@ -303,7 +318,7 @@ GUARDIAN is built as a microservice-style, decoupled platform comprising a high-
    Solves for the monthly discount rate $r_{\text{irr}}$ satisfying the net cash flow equation:
    $$\text{Net Disbursed} = \sum_{t=1}^N \frac{\text{EMI}}{(1 + r_{\text{irr}})^t}$$
    Implemented using a high-precision numerical bisection algorithm (`solve_monthly_irr`):
-   - Lower bound: $0.0$, Upper bound: $10.0$ (representing up to 1000% monthly interest).
+   - Lower bound: $0.0$, Upper bound: $2.0$ (representing up to 200% monthly rate / 2400% p.a.).
    - Iterates until residual $|f(r)| < 10^{-7}$ or maximum 100 iterations.
    - Guaranteed mathematical convergence.
 4. **Annualized APR & Fee Impact**:
@@ -344,7 +359,7 @@ GUARDIAN is built as a microservice-style, decoupled platform comprising a high-
    - `fees`: Relative difference $\le 0.5\%$ OR absolute difference $\le ₹10.00$.
    Produces status: `match`, `mismatch`, or `missing`.
 2. **Prose Clause Disagreement Detection**:
-   - Compares legal clauses (specifically prepayment and foreclosure terms) using dense semantic embeddings (`all-MiniLM-L6-v2`) and heuristic rule matching.
+   - Compares legal clauses (specifically prepayment and foreclosure terms) using dense semantic embeddings (`DefaultEmbeddingFunction` with Jaccard token fallback) and heuristic regulatory rule matching.
    - Evaluates compliance with RBI Master Directions: floating-rate term loans to individual borrowers for non-business purposes **cannot** levy prepayment penalties. If T&C specifies a penalty while KFS states zero, a critical mismatch is flagged.
 3. **Non-Blocking Standalone Evaluation**: If only a KFS is provided without T&C, internal statutory consistency is audited without raising missing errors.
 
@@ -357,18 +372,20 @@ GUARDIAN is built as a microservice-style, decoupled platform comprising a high-
 
 #### Detailed Technical Operations
 1. **Numeric Verifier (`numeric_verifier.py`)**:
-   - Parses all numeric tokens, currency figures (INR / Rs / ₹), percentages, and month tenors from claim text via strict regular expressions.
-   - Cross-references extracted figures against deterministic calculations stored in Supabase (`recompute_apr` and `assess_serviceability`).
-   - If any number deviates beyond configured tolerances ($₹1.00$ currency tolerance, $0.05\%$ rate tolerance), the claim is rejected as ungrounded (`NUMERIC_MISMATCH`).
+   - Parses all numeric tokens, currency figures (INR / Rs / ₹), percentages, and month tenors from claim text via regular expressions.
+   - Cross-references extracted figures against deterministic calculations computed directly by Module 1 (`recompute_apr`) and Module 1b (`assess_serviceability`).
+   - If any number deviates beyond configured tolerances ($₹1.00$ currency tolerance, $0.05\%$ rate tolerance), the claim is rejected as ungrounded (`numeric_mismatch`).
 2. **Semantic Verifier (`semantic_verifier.py`)**:
-   - Employs a pre-warmed cross-encoder Natural Language Inference model (`roberta-large-mnli` / `cross-encoder/nli-deberta-v3-small`).
+   - Employs a pre-warmed cross-encoder Natural Language Inference model (`roberta-large-mnli`).
    - Pairs premise (retrieved evidence chunk from loan documents or RBI corpus) against hypothesis (claim text).
-   - Computes softmax probabilities: $P(\text{entailment})$, $P(\text{neutral})$, $P(\text{contradiction})$.
-   - A claim is verified only if:
-     $$P(\text{entailment}) \ge 0.70 \quad \text{AND} \quad P(\text{contradiction}) \le 0.15$$
+   - Evaluates softmax probabilities: $P(\text{contradiction})$, $P(\text{neutral})$, $P(\text{entailment})$.
+   - Implemented thresholds:
+     - Flagged on direct contradiction: $P(\text{contradiction}) \ge 0.70$ and $P(\text{contradiction}) > P(\text{entailment})$.
+     - Grounded on strong entailment: $P(\text{entailment}) \ge 0.55$ and $P(\text{entailment}) \ge P(\text{contradiction})$.
+     - Flagged on insufficient evidence: Neither condition met.
 3. **Verification Verdicts**:
    - `grounded`: Mathematically exact and semantically entailed. Safe to present to borrower.
-   - `flagged`: Blocked or rendered with a high-priority warning banner explaining the specific reason (`NUMERIC_MISMATCH`, `SEMANTIC_CONTRADICTION`, or `UNVERIFIED_EVIDENCE`).
+   - `flagged`: Blocked from factual display, rendered with a high-priority warning banner explaining the specific reason (`numeric_mismatch`, `semantic_mismatch`, or `insufficient_evidence`).
 
 ---
 
@@ -378,23 +395,27 @@ GUARDIAN is built as a microservice-style, decoupled platform comprising a high-
 - **Purpose**: Implements statutory protections under **RBI Annexure D (Vernacular Declaration)**, translating complex credit audits into regional Indian languages while preventing semantic drift.
 
 #### Detailed Technical Operations
-1. **Supported Languages**: Hindi (`hi`), Bengali (`bn`), Marathi (`mr`), Gujarati (`gu`), Kannada (`kn`), Telugu (`te`), Tamil (`ta`), Odia (`or`), Punjabi (`pa`), Malayalam (`ml`), Assamese (`as`), and Urdu (`ur`).
-2. **Bidirectional Round-Trip Verification Architecture**:
-   - Translates verified English claim into target regional language via `IndicTrans2` (AI4Bharat) / `mT5`.
+1. **Supported Languages**: Primary deep support and automated benchmark suites for **Hindi (`hi`)** and **Marathi (`mr`)**, with infrastructure prepared for broader Indic coverage.
+2. **4-Tiered Translation Hierarchy**:
+   - **Tier 1: Pre-computed Cache (`translations_cache.json`)**: < 1ms response time, zero network latency during live demonstrations.
+   - **Tier 2: IndicTrans2 (AI4Bharat)**: State-of-the-art neural sequence-to-sequence translation for Indian languages.
+   - **Tier 3: Multilingual T5 (mT5) / MarianMT Fallback**: Robust local transformer translation.
+   - **Tier 4: Financial Domain Lexicon & Heuristic Engine**: Comprehensive bilingual dictionary mappings (`EN_TO_HI_TERMS`, `HI_TO_EN_TERMS`, `EN_TO_MR_TERMS`, `MR_TO_EN_TERMS`) and regex sentence patterns preserving 100% of numeric tokens.
+3. **Bidirectional Round-Trip Verification Architecture**:
+   - Translates verified English claim into target regional language.
    - Immediately translates the vernacular text back into English.
-   - Evaluates the back-translated text using Module 3's own verifier functions (`verify_semantic_entailment` and `_extract_all_numbers`), preserving invariant §1.6.
-3. **Fidelity Verification Metrics**:
-   - **Cross-Lingual Numeric Preservation Rate**: Verifies 100% of numeric values (rupee figures, tenors, percentages) remain intact.
-   - **Semantic Drift Score**: Measures cosine embedding distance and entailment between original and back-translated text ($> 0.90$).
-   - **Clause-Drop Rate**: Verifies no statutory conditions, rights, or penalties were omitted during translation.
-4. **Persistent Demo Caching**: Pre-computes and caches common translations in `data/cache/translations_cache.json` for sub-millisecond responses during live demonstrations.
+   - Evaluates the back-translated text using Module 3's own verifier functions (`verify_claim` and `verify_semantic_entailment`), preserving Rule §1.6 (no duplicated verifier logic).
+4. **Fidelity Verification Metrics**:
+   - **Cross-Lingual Numeric Preservation Rate**: 100.0% of numeric values (rupee figures, tenors, percentages) remain intact.
+   - **Semantic Drift Score**: Cosine embedding similarity between original and back-translated text ($> 0.95$).
+   - **Clause-Drop Rate**: 0.0% statutory conditions, rights, or penalties omitted.
 
 ---
 
-### Module 5: Evidence-Backed Grievance Redressal & CMS Dispute Engine
+### Module 5: Evidence-Backed Grievance Redressal & Dispute Engine
 - **Directory**: `modules/m5_grievance/`
 - **Core Files**: `classifier.py`, `dataset.py`, `dispute_service.py`
-- **Purpose**: Empowers borrowers to formally contest illegal lending practices by generating legally binding dispute notices and RBI Ombudsman CMS complaints.
+- **Purpose**: Empowers borrowers to formally contest illegal lending practices by categorizing grievances under RBI Master Directions and assigning statutory resolution timelines.
 
 #### Detailed Technical Operations
 1. **Machine Learning Violation Classifier**:
@@ -408,10 +429,12 @@ GUARDIAN is built as a microservice-style, decoupled platform comprising a high-
      5. `repayment_and_noc_delay` (RBI Clause 5.2 & CIC Regulations)
      6. `general_service_deficiency` (RBI Clause 6.1)
    - Evaluates classification with confidence scoring and assigns mandatory statutory 30-day resolution Turnaround Time (TAT).
-2. **Formal Legal Notice Generator**:
-   - Generates a formal legal grievance notice addressed to the lender's Principal Nodal Officer (PNO).
-   - Injects exact contractual proof, recomputed APR deltas, calculated excess interest, and legal citations.
-3. **RBI CMS Complaint Dossier**: Generates formatted submission packets for direct filing on the **RBI Complaint Management System (CMS)** under the Reserve Bank - Integrated Ombudsman Scheme.
+2. **User-Initiated Only Invariant (Rule §1.3, §6.3)**:
+   - Disputes are strictly user-initiated. The system never files disputes or sends notices autonomously without explicit human action (`test_user_initiated_only.py`).
+3. **Tracking Claim & Dispute Ledger**:
+   - Persists dispute records to Supabase `public.disputes`.
+   - Emits a tracking `Claim` object (`source_module="grievance"`).
+   - Generates statutory dispute records citing exact RBI clauses, helping borrowers formulate formal notices to the lender's Principal Nodal Officer (PNO) or appeal to the RBI Integrated Ombudsman (RB-IOS).
 
 ---
 
@@ -424,15 +447,16 @@ GUARDIAN is built as a microservice-style, decoupled platform comprising a high-
 1. **Scoped Multi-Collection Retrieval**:
    - Queries `user_documents` collection in ChromaDB, strictly filtered by `{user_id, loan_id}`.
    - Concurrently queries `rbi_corpus` collection in ChromaDB for relevant statutory clauses.
-   - Merges top-$k$ contextual evidence passages.
+   - Merges top-$k$ contextual evidence passages with citation tracking.
 2. **Grounded Prompt Synthesis**:
    - Instructs Groq Llama-3.3-70B to generate answers strictly grounded in retrieved evidence.
    - Injects current loan financial parameters (sanctioned principal, recomputed APR, amortization progress).
 3. **Mandatory Module 3 Verification Routing**:
    - The chatbot response is **never** sent directly to the borrower.
-   - It is wrapped in a canonical `Claim` schema (`source_module="chatbot"`, `verification_status="pending"`).
+   - Wrapped in a canonical `Claim` schema (`source_module="chatbot"`, `verification_status="pending"`).
    - Routed through `verify_and_resolve_claim()` in `app/orchestration/pipeline.py`.
    - If the answer contains unverified statements, it is returned with a warning disclaimer.
+4. **Pre-computed Cache**: Pre-computed demo questions cached in `data/cache/chat_cache.json` for sub-millisecond offline demo performance.
 
 ---
 
@@ -442,7 +466,7 @@ GUARDIAN is built as a microservice-style, decoupled platform comprising a high-
 - **Purpose**: Semantic vector search engine for regulatory and contractual intelligence.
 
 #### Detailed Technical Operations
-1. **Regulatory Ingestion**: Indexes all 15 clauses from the *Reserve Bank of India Digital Lending Directions, 2025* into ChromaDB collection `rbi_corpus`.
+1. **Regulatory Ingestion**: Indexes all 15 clauses from the *Reserve Bank of India Digital Lending Directions, 2025* into ChromaDB collection `rbi_corpus`. Each clause includes rich metadata: `section_id`, `section_title`, `clause_id`.
 2. **Single Choke-Point Security Wrapper (`rag/chroma_client.py`)**:
    - ChromaDB does not feature native row-level security.
    - All access to `user_documents` must pass through `query_user_documents()`.
@@ -464,9 +488,9 @@ GUARDIAN is built as a microservice-style, decoupled platform comprising a high-
 - **Purpose**: Coordinates all modules into an atomic, observable, multi-stage state machine.
 
 #### Canonical Pipeline Flow:
-$$\text{INGESTING} \rightarrow \text{EXTRACTING} \rightarrow \text{CONSISTENCY\_CHECKING} \rightarrow \text{RECOMPUTING\_SERVICEABILITY} \rightarrow \text{GENERATING\_CLAIMS} \rightarrow \text{RETRIEVING\_EVIDENCE} \rightarrow \text{VERIFYING\_CLAIMS} \rightarrow \text{TRANSLATING} \rightarrow \text{RESPONDING}$$
+$$\text{INGESTING} \rightarrow \text{EXTRACTING} \rightarrow \text{CONSISTENCY\_CHECKING} \rightarrow \text{RECOMPUTING\_SERVICEABILITY} \rightarrow \text{GENERATING\_CLAIM} \rightarrow \text{RETRIEVING\_REGULATORY} \rightarrow \text{VERIFYING} \rightarrow \text{TRANSLATING\_VERNACULAR} \rightarrow \text{COMPLETED}$$
 
-The orchestrator enforces the **Sacred Verification Gate Choke Point** (`verify_and_resolve_claim`), tracks stage latencies in microseconds, records execution logs to `audit_log`, and guarantees sub-5-second end-to-end execution.
+The orchestrator enforces the **Sacred Verification Gate Choke Point** (`verify_and_resolve_claim`), tracks stage latencies in milliseconds (`StageTiming`), records execution logs to `audit_log`, and guarantees sub-5-second end-to-end execution (reference performance: 1.1s – 2.8s).
 
 ---
 
@@ -481,7 +505,7 @@ The orchestrator enforces the **Sacred Verification Gate Choke Point** (`verify_
 3. **Statutory KFS Disclosure Schedule**: Tabular breakdown of principal, rate, tenor, upfront fees, net disbursed amount, monthly EMI, total interest, and total repayment amount.
 4. **Recomputed APR vs Disclosed Rate Analysis**: Clear representation of true IRR APR and fee drag.
 5. **3-Way Consistency Audit Matrix**: Field-by-field verification of manual vs T&C vs KFS values with tolerance status.
-6. **Verified Claims & Groundedness Ledger**: Detailed record of verified statements and evidence sources.
+6. **Verified Claims & Groundedness Ledger**: Detailed record of verified statements, semantic NLI scores, and evidence sources.
 7. **Legal Disclaimers & Regulatory Notes**: Academic demonstration notices and statutory RBI citations.
 
 ---
@@ -502,7 +526,7 @@ If $R = 0$, $\text{EMI} = \frac{P}{N}$.
 
 ### 7.2 Net Disbursed Amount
 $$\text{Net Disbursed} = P - \sum_{i=1}^k F_i$$
-Where $F_i$ represents upfront fees, processing charges, administrative levies, and upfront insurance deductions.
+Where $F_i$ represents upfront fees, processing charges, administrative levies, and upfront deductions.
 
 ---
 
@@ -515,23 +539,23 @@ $$\sum_{t=1}^N \frac{1}{(1+r)^t} = \frac{1 - (1+r)^{-N}}{r}$$
 The objective function simplifies to:
 $$f(r) = \text{Net Disbursed} - \text{EMI} \cdot \left[ \frac{1 - (1+r)^{-N}}{r} \right] = 0$$
 
-#### Numerical Bisection Algorithm:
+#### Numerical Bisection Algorithm (`solve_monthly_irr`):
 ```
 Algorithm: Solve Monthly IRR via Bisection
 Inputs: NetDisbursed, EMI, N, Tolerance = 1e-7, MaxIter = 100
 Outputs: Annualized True APR (%)
 
-1. Set low = 0.0, high = 10.0 (equivalent to 1000% monthly rate)
-2. If f(low) * f(high) > 0: Raise Error("Root not bracketed")
+1. Set low = 0.0, high = 2.0 (equivalent to 200% monthly rate / 2400% p.a.)
+2. If NetDisbursed >= EMI * N: Return 0.0
 3. For iteration = 1 to MaxIter:
     a. mid = (low + high) / 2.0
-    b. residual = NetDisbursed - EMI * (1.0 - (1.0 + mid)^(-N)) / mid
-    c. If |residual| < Tolerance:
+    b. pv = EMI * (1.0 - (1.0 + mid)^(-N)) / mid
+    c. If |pv - NetDisbursed| < Tolerance:
         Return mid * 12.0 * 100.0
-    d. If residual > 0:
-        high = mid   // Rate too high, discounted PV too low
+    d. If pv > NetDisbursed:
+        low = mid    // Discount rate too low, PV too high
     e. Else:
-        low = mid    // Rate too low, discounted PV too high
+        high = mid   // Discount rate too high, PV too low
 4. Return mid * 12.0 * 100.0
 ```
 
@@ -539,13 +563,13 @@ Outputs: Annualized True APR (%)
 
 ### 7.4 Fee Drag Metric
 $$\text{Fee Drag} = \text{True APR} - R_{\text{disclosed}}$$
-Measures the annualized percentage point escalation attributable to upfront fees.
+Measures the annualized percentage point escalation attributable to upfront deductions.
 
 ---
 
 ### 7.5 Serviceability & Debt-to-Income (FOIR) Ratios
-$$\text{DTI} = \frac{\text{Existing Monthly EMIs} + \text{New Loan EMI}}{\text{Net Monthly Take-Home Income}}$$
-$$\text{Net Disposable Income} = \text{Monthly Income} - \text{Total EMIs} - \text{Living Expenses}$$
+$$\text{DTI} = \frac{\text{Existing Monthly Obligations} + \text{New Loan EMI}}{\text{Net Monthly Take-Home Income}}$$
+$$\text{Net Disposable Buffer} = \text{Monthly Income} - \text{Monthly Expenses} - \text{Total Obligations}$$
 
 ---
 
@@ -564,34 +588,40 @@ Where $\pi_{\text{CPI}}$ is India's Consumer Price Index (CPI) inflation rate (b
 
 ---
 
-## 8. Complete Technology Stack
+## 8. Complete Technology Stack & Dependency Architecture
 
 | Layer | Technology | Version | Architectural Rationale |
 |---|---|---|---|
-| **Programming Language** | Python | 3.11+ | Optimal ecosystem for ML, NLP, asynchronous APIs, and numerical computing. |
-| **Backend API Framework** | FastAPI | 0.115.0 | High-performance asynchronous execution, native OpenAPI documentation, strict Pydantic v2 validation. |
+| **Programming Language** | Python | 3.11+ | Ecosystem for ML, NLP, asynchronous APIs, and numerical computing. |
+| **Backend API Framework** | FastAPI | 0.115.0 | Asynchronous execution, native OpenAPI documentation, strict Pydantic v2 validation. |
 | **Relational Database** | PostgreSQL | 15 (Supabase Hosted) | ACID compliance, Row-Level Security (RLS), managed cloud infrastructure. |
 | **Database ORM & Driver** | SQLAlchemy / `asyncpg` | 2.0.30 / 0.29.0 | Asynchronous query execution, SQL injection elimination. |
-| **Vector Store (RAG)** | ChromaDB | 0.5.5 | Self-hosted vector store in Docker container; zero external cloud dependency for vector layer. |
-| **PDF Extraction** | `pdfplumber` / PyMuPDF (`fitz`) | 0.11.0 / 1.24.0 | High-fidelity digital text extraction, table extraction, spatial bounding-box parsing. |
-| **OCR Fallback** | PaddleOCR | 2.8.0 | High-accuracy character recognition on scanned/photographed PDFs in English and Devanagari. |
-| **LLM Inference** | Groq API (`llama-3.3-70b-versatile`) | Cloud API | Fast token generation, strict JSON output adherence, low inference latency. |
-| **Semantic Verifier (NLI)** | RoBERTa-MNLI (`roberta-large-mnli`) | HuggingFace | Standardized Natural Language Inference cross-encoder for entailment and contradiction detection. |
-| **Vernacular Translation** | IndicTrans2 / mT5 | AI4Bharat / HuggingFace | Indian language translation models with Devanagari financial token support. |
-| **Grievance Classifier** | Scikit-Learn | 1.5.0 | Balanced Logistic Regression with TF-IDF n-gram vectorization. |
+| **Vector Store (RAG)** | ChromaDB | 0.5.23 (Docker container) | Self-hosted vector store in Docker; zero cloud egress cost; isolated regulatory and tenant collections. |
+| **PDF Extraction** | `pdfplumber` / PyMuPDF (`fitz`) | 0.11.0 / 1.24.0 | Text extraction, table extraction, spatial bounding-box parsing. |
+| **OCR Fallback** | PaddleOCR | 2.8.0 | Optical character recognition on scanned/photographed PDFs in English and Devanagari. |
+| **LLM Inference** | Groq Cloud API (`llama-3.3-70b-versatile`) | Cloud API | High token throughput, strict JSON output adherence, low inference latency. |
+| **Semantic Verifier (NLI)** | RoBERTa-MNLI (`roberta-large-mnli`) | HuggingFace | Natural Language Inference cross-encoder for entailment and contradiction detection. |
+| **Vernacular Translation** | IndicTrans2 / mT5 / Banking Lexicons | AI4Bharat / HuggingFace | Tiered translation architecture with Indian financial token preservation. |
+| **Grievance Classifier** | Scikit-Learn | 1.5.0 | Balanced Logistic Regression with TF-IDF n-gram vectorization across 6 RBI violation categories. |
 | **PDF Generation Engine** | PyMuPDF (`fitz`) | 1.24.0 | Programmatic generation of multi-page bank-grade audit reports with SHA-256 seals. |
 | **Frontend Framework** | Next.js | 16.3.6 (App Router) | React Server Components, server-side data fetching, optimized client bundles. |
 | **UI Library** | React | 19.2.8 | Declarative component UI architecture with state hooks. |
 | **Styling** | TailwindCSS | v4 | Modern styling with CSS variables and responsive design. |
-| **Iconography** | Lucide React | 1.48.0 | Clean icons for financial dashboards and status indicators. |
-| **Rate Limiting** | `slowapi` | 0.1.9 | IP and user rate limiting preventing resource exhaustion. |
-| **Containerization** | Docker & Docker Compose | Latest | Reproducible local deployment orchestration. |
+| **Iconography** | Lucide React | 1.48.0 | Icons for financial dashboards and status indicators. |
+| **Rate Limiting** | `slowapi` | 0.1.9 | IP (10/min) and user (60/min) rate limiting preventing resource exhaustion. |
+| **Containerization** | Docker & Docker Compose | Latest | Local deployment orchestration. |
+
+### Dependency Architecture (Three-Tier Split)
+Per `RULES.md §5.3`, dependencies are isolated into three distinct tiers installed in sequence:
+1. `requirements.txt`: Core API, FastAPI, Uvicorn, Pydantic, Supabase, SQLAlchemy, Groq, SlowAPI.
+2. `requirements-ml.txt`: Machine learning and data processing: ChromaDB, PyMuPDF, `pdfplumber`, Scikit-Learn, Transformers, PyTorch, PaddlePaddle, PaddleOCR.
+3. `requirements-dev.txt`: Development and security: Pytest, `pytest-asyncio`, `detect-secrets`, `pre-commit`, `pip-audit`, Black, Ruff.
 
 ---
 
-## 9. Database Schema & Data Model
+## 9. Database Schema, Relational Data Model & RLS Policies
 
-GUARDIAN uses a normalized relational schema hosted on Supabase PostgreSQL 15, protected by Row-Level Security (RLS) on all user-facing tables.
+GUARDIAN uses a normalized relational schema hosted on Supabase PostgreSQL 15, protected by Row-Level Security (RLS) on all 14 tables.
 
 ```mermaid
 erDiagram
@@ -610,19 +640,19 @@ erDiagram
     users ||--o{ audit_log : traces
 ```
 
-### Table Definitions
+### Table Definitions & Primary Keys (`20260927000000_phase0_init.sql`)
 
 1. `users`: Handled via Supabase Auth (`auth.users`), stores user identity, email, and JWT metadata.
 2. `loans`:
-   - `id` (UUID, PK), `user_id` (UUID, FK), `loan_name` (Text), `lender_name` (Text), `loan_type` (Text), `created_at` (Timestamp).
+   - `id` (UUID, PK), `user_id` (UUID, FK), `loan_name` (Text), `lender_name` (Text), `status` (Text), `created_at` (Timestamp).
 3. `loan_manual_terms`:
    - `id` (UUID, PK), `loan_id` (UUID, FK), `principal` (Numeric), `disclosed_rate` (Numeric), `tenure_months` (Int), `fees` (Numeric), `entered_at` (Timestamp).
 4. `loan_documents`:
-   - `id` (UUID, PK), `loan_id` (UUID, FK), `doc_type` (`"tnc"` | `"kfs"`), `storage_path` (Text), `version` (Int), `uploaded_at` (Timestamp).
+   - `doc_id` (UUID, PK), `loan_id` (UUID, FK), `doc_type` (`"tnc"` | `"kfs"`), `storage_path` (Text), `version` (Int), `uploaded_at` (Timestamp).
 5. `extracted_fields`:
-   - `id` (UUID, PK), `doc_id` (UUID, FK), `field_name` (Text), `extracted_value` (JSONB), `confidence` (Float), `extraction_method` (Text).
+   - `id` (UUID, PK), `doc_id` (UUID, FK), `field_name` (Text), `extracted_value` (JSONB), `confidence` (Float), `extraction_method` (Text), `created_at` (Timestamp).
 6. `consistency_checks`:
-   - `id` (UUID, PK), `loan_id` (UUID, FK), `field_name` (Text), `manual_value` (Numeric/Text), `tnc_value` (Numeric/Text), `kfs_value` (Numeric/Text), `match_status` (`"match"` | `"mismatch"` | `"missing"`), `checked_at` (Timestamp).
+   - `id` (UUID, PK), `loan_id` (UUID, FK), `field_name` (Text), `manual_value` (JSONB), `tnc_value` (JSONB), `kfs_value` (JSONB), `match_status` (`"match"` | `"mismatch"` | `"missing"`), `checked_at` (Timestamp).
 7. `income_expense_inputs`:
    - `id` (UUID, PK), `loan_id` (UUID, FK), `monthly_income` (Numeric), `existing_emis` (Numeric), `monthly_expenses` (Numeric), `entered_at` (Timestamp).
 8. `serviceability_results`:
@@ -630,100 +660,113 @@ erDiagram
 9. `claims`:
    - `claim_id` (UUID, PK), `source_module` (`"recompute"` | `"consistency"` | `"serviceability"` | `"chatbot"` | `"grievance"`), `user_id` (UUID, FK), `loan_id` (UUID, FK), `claim_text` (Text), `supporting_figures` (JSONB), `source_record_id` (Text), `generated_at` (Timestamp), `verification_status` (`"pending"` | `"grounded"` | `"flagged"`).
 10. `verification_results`:
-    - `id` (UUID, PK), `claim_id` (UUID, FK), `semantic_verdict` (Text), `semantic_score` (Float), `numeric_verdict` (Text), `numeric_discrepancy` (JSONB), `final_verdict` (`"grounded"` | `"flagged"`), `error_type` (Text), `verified_at` (Timestamp).
+    - `id` (UUID, PK), `claim_id` (UUID, FK), `semantic_verdict` (Text), `numeric_verdict` (Text), `final_verdict` (`"grounded"` | `"flagged"`), `error_type` (Text), `verified_at` (Timestamp).
 11. `disputes`:
-    - `id` (UUID, PK), `loan_id` (UUID, FK), `user_id` (UUID, FK), `category` (Text), `free_text` (Text), `confidence` (Float), `rbi_clause` (Text), `tat_days` (Int), `status` (Text), `created_at` (Timestamp).
-12. `chat_sessions` & `chat_messages`:
-    - Per-user session history and verification-gated conversational records.
-13. `audit_log`:
-    - `id` (UUID, PK), `user_id` (UUID), `action` (Text), `entity_type` (Text), `entity_id` (Text), `metadata` (JSONB), `timestamp` (Timestamp). **Append-Only**.
+    - `id` (UUID, PK), `loan_id` (UUID, FK), `user_id` (UUID, FK), `category` (Text), `free_text` (Text), `status` (Text), `created_at` (Timestamp).
+12. `chat_sessions`:
+    - `id` (UUID, PK), `loan_id` (UUID, FK), `user_id` (UUID, FK), `created_at` (Timestamp).
+13. `chat_messages`:
+    - `id` (UUID, PK), `session_id` (UUID, FK), `role` (`"user"` | `"assistant"` | `"system"`), `content` (Text), `claim_id` (UUID, FK, nullable), `created_at` (Timestamp).
+14. `audit_log`:
+    - `id` (UUID, PK), `user_id` (UUID, FK, nullable), `action` (Text), `entity_type` (Text), `entity_id` (Text), `metadata` (JSONB), `timestamp` (Timestamp).
+    - **Database Rules**:
+      ```sql
+      CREATE OR REPLACE RULE audit_log_no_update AS ON UPDATE TO public.audit_log DO INSTEAD NOTHING;
+      CREATE OR REPLACE RULE audit_log_no_delete AS ON DELETE TO public.audit_log DO INSTEAD NOTHING;
+      ```
 
 ---
 
 ## 10. REST API Directory & Gateway Reference
 
-All endpoints are mounted behind the unified API Gateway prefix `/api/v1` in `app/main.py`:
+All application endpoints are mounted under the unified API Gateway prefix `/api/v1` in `app/main.py`:
 
 | Method | Endpoint | Description | Module | Security |
 |---|---|---|---|---|
-| `GET` | `/api/v1/health` | Health status of API, Supabase DB, and ChromaDB | Core | Public |
-| `POST` | `/api/v1/loans` | Register a new loan audit session | Module 0 | JWT Auth (S-3) |
+| `GET` | `/api/v1/health` | Health status of API, Supabase DB, and ChromaDB container | Core | Public |
+| `POST` | `/api/v1/loans` | Create new loan audit session | Module 0 | JWT Auth (S-3) |
 | `GET` | `/api/v1/loans` | List loans owned by authenticated borrower | Module 0 | JWT Auth (S-3) |
-| `GET` | `/api/v1/loans/{id}` | Retrieve specific loan profile | Module 0 | JWT Auth (S-3) |
-| `POST` | `/api/v1/loans/{id}/terms` | Save manual loan terms | Module 0 | JWT Auth (S-3) |
-| `POST` | `/api/v1/loans/{id}/documents/upload` | Upload PDF (T&C or KFS) with dual-path OCR | Module 0 | JWT Auth (S-3) |
-| `POST` | `/api/v1/loans/{id}/recompute` | Run reducing-balance EMI and true APR IRR solver | Module 1 | JWT Auth (S-3) |
-| `POST` | `/api/v1/loans/{id}/serviceability` | Calculate DTI ratio and living cash buffer | Module 1b | JWT Auth (S-3) |
-| `POST` | `/api/v1/loans/{id}/consistency` | Run 3-way consistency check across sources | Module 2 | JWT Auth (S-3) |
-| `POST` | `/api/v1/loans/{id}/verify` | Run dual numeric & RoBERTa-MNLI verification | Module 3 | JWT Auth (S-3) |
-| `POST` | `/api/v1/loans/{id}/vernacular` | Translate claims with bidirectional back-verification | Module 4 | JWT Auth (S-3) |
-| `POST` | `/api/v1/loans/{id}/disputes` | Classify dispute & generate legal PNO notice | Module 5 | JWT Auth (S-3) |
-| `GET` | `/api/v1/loans/{id}/disputes` | List filed disputes and resolution tracking | Module 5 | JWT Auth (S-3) |
-| `POST` | `/api/v1/chat/session` | Create new RAG chat session | Module 6 | JWT Auth (S-3) |
-| `POST` | `/api/v1/chat` | Chat with RAG-grounded, verification-gated advisor | Module 6 | JWT Auth (S-3) |
-| `POST` | `/api/v1/loans/{id}/pipeline` | Run complete end-to-end audit pipeline | Orchestration | JWT Auth (S-3) |
-| `GET` | `/api/v1/audit` | View immutable audit trail for user | Core | JWT Auth (S-22) |
-| `POST` | `/api/v1/loans/{id}/report/pdf` | Generate certified institutional audit PDF report | PDF Service | JWT Auth (S-3) |
+| `GET` | `/api/v1/loans/{loan_id}` | Retrieve specific loan profile | Module 0 | JWT Auth (S-3) |
+| `POST` | `/api/v1/loans/{loan_id}/terms` | Save manual loan terms | Module 0 | JWT Auth (S-3) |
+| `GET` | `/api/v1/loans/{loan_id}/terms` | Retrieve saved manual loan terms | Module 0 | JWT Auth (S-3) |
+| `POST` | `/api/v1/loans/{loan_id}/documents/upload` | Upload PDF (T&C or KFS) with dual-path OCR | Module 0 | JWT Auth (S-3, S-8) |
+| `GET` | `/api/v1/loans/{loan_id}/documents` | List uploaded documents for a loan | Module 0 | JWT Auth (S-3) |
+| `GET` | `/api/v1/loans/{loan_id}/documents/{doc_id}/fields` | List structured fields extracted from document | Module 0 | JWT Auth (S-3) |
+| `POST` | `/api/v1/loans/{loan_id}/recompute` | Run reducing-balance EMI and true APR IRR solver | Module 1 | JWT Auth (S-3) |
+| `POST` | `/api/v1/loans/{loan_id}/serviceability` | Calculate DTI ratio, living buffer & verdict | Module 1b | JWT Auth (S-3) |
+| `GET` | `/api/v1/loans/{loan_id}/serviceability` | Retrieve latest serviceability assessment | Module 1b | JWT Auth (S-3) |
+| `POST` | `/api/v1/loans/{loan_id}/consistency` | Run 3-way consistency check across sources | Module 2 | JWT Auth (S-3) |
+| `POST` | `/api/v1/loans/{loan_id}/claims/{claim_id}/verify` | Run dual numeric & RoBERTa-MNLI verification | Module 3 | JWT Auth (S-3, S-17) |
+| `GET` | `/api/v1/loans/{loan_id}/claims/{claim_id}/verification`| Retrieve verification result for a claim | Module 3 | JWT Auth (S-3) |
+| `POST` | `/api/v1/loans/{loan_id}/claims/{claim_id}/translate` | Translate claim with bidirectional back-verification | Module 4 | JWT Auth (S-3) |
+| `POST` | `/api/v1/loans/{loan_id}/disputes` | Classify dispute into RBI category with 30-day TAT | Module 5 | JWT Auth (S-3) |
+| `GET` | `/api/v1/loans/{loan_id}/disputes` | List filed disputes and resolution tracking | Module 5 | JWT Auth (S-3) |
+| `GET` | `/api/v1/loans/{loan_id}/disputes/{dispute_id}` | Retrieve specific dispute record | Module 5 | JWT Auth (S-3) |
+| `POST` | `/api/v1/loans/{loan_id}/chat/sessions` | Create new consultation chat session | Module 6 | JWT Auth (S-3) |
+| `GET` | `/api/v1/loans/{loan_id}/chat/sessions` | List chat sessions for a loan | Module 6 | JWT Auth (S-3) |
+| `POST` | `/api/v1/loans/{loan_id}/chat/sessions/{session_id}/messages` | Send message to verification-gated advisor | Module 6 | JWT Auth (S-3) |
+| `GET` | `/api/v1/loans/{loan_id}/chat/sessions/{session_id}/messages` | Retrieve message history for chat session | Module 6 | JWT Auth (S-3) |
+| `POST` | `/api/v1/loans/{loan_id}/pipeline/analyze` | Run complete end-to-end audit pipeline | Orchestration | JWT Auth (S-3) |
+| `GET` | `/api/v1/audit` | View immutable audit trail for user | Core | JWT Auth (S-21, S-22) |
+| `POST` | `/api/v1/loans/{loan_id}/report/pdf` | Generate certified institutional audit PDF report | PDF Service | JWT Auth (S-3) |
+| `GET` | `/api/v1/loans/{loan_id}/report/pdf` | Download audit PDF report for saved loan | PDF Service | JWT Auth (S-3) |
 
 ---
 
 ## 11. Frontend Web Application & Interactive Analytics Suite
 
-The frontend is built using **Next.js 16** with React 19, TailwindCSS v4, and Lucide React icons. It delivers a fast, responsive user experience for auditing loan documents.
+The frontend is built using **Next.js 16.3.6** with React 19.2.8, TailwindCSS v4, and Lucide React icons.
 
-### 11.1 Workflow Steps
-1. **Step 1: Loan Profile Intake (`/analysis/new`)**:
-   - Register loan facility name, lender name, and baseline manual terms (Principal, Disclosed Interest Rate, Tenor, Upfront Fees).
-   - One-click presets (e.g., Bandhan Bank Housing Finance Loan, Shriram Finance Personal Loan) for rapid demonstration.
-2. **Step 2: Document Ingestion**:
-   - Drag-and-drop file upload for Key Fact Statement (KFS) PDF and Terms & Conditions (T&C) PDF.
-   - Target regional language selection (Hindi, Marathi, Gujarati, Tamil, etc.).
-3. **Step 3: Comprehensive Verification Audit Report**:
-   - Displays RBI Compliance Verdict Banner (`COMPLIANT` vs `NON-COMPLIANT / DEFICIENT`).
+### 11.1 Workflow Pages
+1. **Home / Dashboard (`/`)**:
+   - Quick statistics: Active Sessions, Verified Documents, Detected Issues.
+   - Recent audit sessions list with direct navigation links.
+   - Quick action shortcuts to start a new analysis or chat with the AI Advisor.
+2. **User Authentication (`/auth`)**:
+   - Supabase Auth integration supporting email/password sign-up and sign-in.
+   - Client session token storage and automatic bearer token injection into API requests.
+3. **Loan Intake & Ingestion (`/analysis/new`)**:
+   - Step 1: Input manual loan terms (Principal, Disclosed Rate, Tenor, Fees).
+   - One-Click RBI Presets for rapid demonstration:
+     - 🏠 **Housing Loan**: ₹25,00,000 @ 8.75%, 240 months, ₹9,250 fees
+     - 💼 **Personal Loan**: ₹5,00,000 @ 13.50%, 36 months, ₹2,500 fees
+     - 📱 **Digital Loan**: ₹1,00,000 @ 18.00%, 12 months, ₹1,500 fees
+   - Step 2: Drag-and-drop document upload for KFS and T&C PDFs, monthly income and obligations inputs, target language selection.
+   - Step 3: Single-click execution of the full end-to-end compliance pipeline.
+4. **Loan Audit Verification Dashboard (`/analysis/[id]`)**:
+   - RBI Compliance Verdict Banner (`COMPLIANT` vs `NON-COMPLIANT / DEFICIENT`).
    - Standardized KFS Mandatory Disclosure Schedule.
-   - 3-Way Consistency Matrix highlighting field-level matches or mismatches.
-   - Dual Groundedness Verification Gate summary showing semantic entailment and numeric validation status.
-   - Step-by-Step Mathematical Calculation Breakdown explaining how monthly EMI and true APR are derived.
-4. **Step 4: Interactive Financial Serviceability & Prepayment Suite**:
-   - Interactive Debt-to-Income (DTI) slider and disposable income buffer display.
-   - Real-time prepayment simulation controls.
+   - 3-Way Consistency Matrix highlighting field-level matches, mismatches, or missing parameters.
+   - Dual Groundedness Verification Gate summary showing semantic entailment scores and numeric checks.
+   - Step-by-Step Mathematical Calculation Breakdown.
+5. **AI Advisory Chatbot Interface (`/chat`)**:
+   - Conversational assistant grounded in retrieved loan chunks and RBI directions.
+   - Displays real-time verification badges (`grounded` vs `flagged`) on every message.
+   - Prominent warning banners on unverified or contradictory statements.
+6. **Dispute & Grievance Filing Center (`/disputes`)**:
+   - Form to submit complaints regarding lender misconduct.
+   - Instant AI classification into 6 RBI violation categories.
+   - Statutory RBI clause citations and 30-day resolution countdown tracker.
+7. **Security Audit Log Viewer (`/audit`)**:
+   - Append-only event history viewer with loan filter and JSON metadata inspector.
 
----
-
-### 11.2 Interactive Prepayment Simulator
-The prepayment simulation engine (`LoanAnalytics.tsx`) allows borrowers to model accelerated payoff strategies:
-- **1 Extra EMI per Year (13th EMI Strategy)**: Models making one extra installment every 12 months.
+### 11.2 Interactive Prepayment Simulator (`LoanAnalytics.tsx`)
+Enables borrowers to model accelerated payoff strategies:
+- **1 Extra EMI per Year (13th EMI Strategy)**: One extra monthly installment every 12 months.
 - **Annual Step-Up (% Escalation)**: Simulates increasing monthly EMIs by 5%, 10%, or 15% annually in tandem with salary increments.
 - **Custom Extra Monthly Payment**: Simulates adding a fixed surplus amount (e.g., $+₹2,000/\text{month}$) to standard EMIs.
-- **Lump Sum Prepayment**: Models injecting a one-time capital prepayment (e.g., annual bonus) at a specific month.
-- **Immediate Feedback**: Calculates exact months/years saved and total interest saved ($₹$).
-
----
+- **Lump Sum Prepayment**: Models injecting a one-time capital prepayment at a specific month.
+- **Real-Time Savings**: Calculates exact months saved, years saved, and total interest saved ($₹$).
 
 ### 11.3 Responsive SVG Dual-Curve Payoff Visualization
-Renders an SVG graph overlaying the baseline loan amortization curve against the accelerated prepayment payoff curve:
-- **Baseline Curve (Navy)**: Represents the conventional loan amortization schedule to full term.
-- **Simulated Accelerated Curve (Emerald)**: Illustrates the steepened principal reduction curve under active prepayment.
+- **Baseline Curve (Navy)**: Conventional loan amortization schedule to full term.
+- **Simulated Accelerated Curve (Emerald)**: Principal reduction curve under active prepayment.
 - **Payoff Marker**: Highlights the exact month and year when loan balance reaches $₹0$.
-- **Three Schedule Views**:
-  1. *Simulated Fast-Track Schedule*: Month-by-month and year-by-year projections with prepayments.
-  2. *Original Baseline Schedule*: Standard contractual amortization.
-  3. *Side-by-Side Comparison*: Annual table detailing opening balance, payments, interest, closing balance, and percentage paid off.
+- **Year-by-Year Amortization Schedule Table**: Details opening balance, annual EMI paid, principal repaid, interest paid, closing balance, and percentage paid off.
 
----
-
-### 11.4 Macroeconomic Reality Check: Loan ROI vs. CPI Inflation (~5.5%)
-Provides contextual financial advice by comparing loan interest rates against India's Consumer Price Index (CPI) inflation rate:
-- **Real Cost of Borrowing**: Computes $\text{Nominal Rate} - \text{Inflation (5.5\%)}$.
-- **Housing Credit ($\le 9.25\%$)**: Highlights that after inflation and Section 24(b) tax relief, the real interest burden is low ($\sim 1.5\% - 3.0\%$). Warns borrowers against aggressive prepayment when surplus capital could generate higher returns in equity index funds (Nifty 50 historical 12%–14% CAGR).
-- **High-Cost Digital Credit ($> 11.5\%$)**: Advises aggressive prepayment to eliminate high compounding interest charges.
-
----
-
-### 11.5 Institutional PDF & JSON Audit Export
-- **Certified PDF Download**: Generates an audit report via PyMuPDF with SHA-256 cryptographic verification hashes.
-- **Structured JSON Download**: Exports the complete machine-readable audit certificate.
-- **Print Layout**: Includes print-optimized CSS styles (`window.print()`).
+### 11.4 Macroeconomic Reality Check
+- Compares loan interest rates against India's CPI inflation rate (~5.5%).
+- Contextual guidance: Advises prepaying high-cost digital loans (> 11.5%) while cautioning against aggressive prepayment of low-cost housing loans (≤ 9.25%) where surplus capital yields higher real returns in equity index funds.
 
 ---
 
@@ -733,72 +776,193 @@ GUARDIAN adheres to an enterprise security posture (`RULES.md`) covering authent
 
 ### 12.1 Security Checklist Verification Matrix
 
-| Invariant | Security Control | Implementation Mechanism | Verification Result |
+| Invariant | Security Control | Implementation Mechanism | Verification Status in `STATUS.md` |
 |---|---|---|---|
-| **S-1** | JWT Access & Refresh Lifespan | Supabase Auth rotating access tokens ($\le 15$ min) and refresh tokens ($\le 7$ days). | Verified |
-| **S-2** | Password Hashing | Handled by Supabase Auth (bcrypt/Argon2); passwords never enter application code. | Verified |
-| **S-3** | Server-Side Row-Level Auth | FastAPI dependency `verify_user_ownership` in `app/deps/auth.py` validates JWT `sub` against `user_id` and `loan_id` on every request. | Verified |
-| **S-6** | Strict Request Validation | Pydantic v2 schemas enforce `extra="forbid"`, rejecting extra or malformed parameters. | Verified |
-| **S-7** | Zero Raw SQL Interpolation | All database operations use Supabase client ORM methods; zero string-concatenated SQL queries across the repo. | Verified |
-| **S-8** | File Upload Sanitization | Strict MIME validation (`application/pdf`), size limits ($\le 10$ MB), in-memory extraction, non-executable storage. | Verified |
-| **S-9** | Untrusted LLM Boundary | All LLM outputs treated as unverified claims, assigned `verification_status="pending"`, and routed through Module 3. | Verified |
-| **S-11** | User Rate Limiting | `slowapi` rate limiter limits authenticated requests to 60/min and anonymous requests to 10/min. | Verified |
-| **S-12** | Mandatory TLS / SSL | Supabase connections enforce `sslmode=require` via Pydantic validator in `app/core/config.py`. | Verified |
-| **S-15** | Secret Management | Environment variables loaded via `BaseSettings`; `.env` gitignored; `.env.example` contains dummy keys; pre-commit `detect-secrets` hook. | Verified |
-| **S-17** | Mandatory Verifier Choke Point | Centralized choke point `verify_and_resolve_claim()` in `app/orchestration/pipeline.py` wraps all claim output. | Verified |
-| **S-18** | Zero Verification Bypass Flags | Static code scanning (`test_no_verification_bypass_flags`) confirms zero bypass tokens or debug flags. | Verified |
-| **S-21** | Append-Only Audit Trail | `audit_log` table supports `INSERT` only; no `UPDATE` or `DELETE` endpoints exposed. | Verified |
-| **S-22** | Audit Log Read Scoping | `GET /api/v1/audit` enforces user ownership filtering. | Verified |
-| **S-23** | ChromaDB Multi-Tenant Scoping | All `user_documents` queries pass through `rag/chroma_client.py` with mandatory `{user_id, loan_id}` filters. | Verified |
-| **S-24** | Cross-User Vector Isolation | Automated unit tests (`test_phase5_security.py`) confirm User B cannot access User A's vector documents. | Verified |
+| **S-1** | JWT Access & Refresh Lifespan | Supabase Auth rotating access tokens ($\le 15$ min) and refresh tokens ($\le 7$ days). | Configured via Supabase Auth defaults |
+| **S-2** | Password Hashing | Handled by Supabase Auth (bcrypt/Argon2); passwords never enter application code. | Handled by Supabase Auth |
+| **S-3** | Server-Side Row-Level Auth | FastAPI dependency `verify_user_ownership` in `app/deps/auth.py` validates JWT `sub` against `user_id` and `loan_id` on every request. | **Verified** |
+| **S-6** | Strict Request Validation | Pydantic v2 schemas enforce `extra="forbid"`, rejecting extra or malformed parameters. | **Verified** |
+| **S-7** | Zero Raw SQL Interpolation | All database operations use Supabase client ORM methods; zero string-concatenated SQL queries across the repo. | **Verified** |
+| **S-8** | File Upload Sanitization | Strict MIME validation (`application/pdf`), size limits ($\le 10$ MB), magic byte verification (`%PDF`), non-executable storage. | **Verified** |
+| **S-9** | Untrusted LLM Boundary | All LLM outputs treated as unverified claims, assigned `verification_status="pending"`, and routed through Module 3. | **Verified** |
+| **S-11** | User Rate Limiting | `slowapi` rate limiter limits authenticated requests to 60/min and anonymous requests to 10/min. | **Verified** |
+| **S-12** | Mandatory TLS / SSL | Supabase connections enforce `sslmode=require` via Pydantic validator in `app/core/config.py`. | **Verified** |
+| **S-15** | Secret Management | Environment variables loaded via `BaseSettings`; `.env` gitignored; `.env.example` contains dummy keys; pre-commit `detect-secrets` hook. | **Verified** |
+| **S-17** | Mandatory Verifier Choke Point | Centralized choke point `verify_and_resolve_claim()` in `app/orchestration/pipeline.py` wraps all claim output. | **Verified** |
+| **S-18** | Zero Verification Bypass Flags | Static code scanning (`test_no_verification_bypass_flags`) confirms zero bypass tokens or debug flags. | **Verified** |
+| **S-21** | Append-Only Audit Trail | `audit_log` table supports `INSERT` only; protected by PostgreSQL rules `audit_log_no_update` and `audit_log_no_delete`. | **Verified** |
+| **S-22** | Audit Log Read Scoping | `GET /api/v1/audit` enforces user ownership filtering. | **Verified** |
+| **S-23** | ChromaDB Multi-Tenant Scoping | All `user_documents` queries pass through `rag/chroma_client.py` with mandatory `{user_id, loan_id}` filters. | **Verified** |
+| **S-24** | Cross-User Vector Isolation | Automated unit tests (`test_phase5_security.py`) confirm User B cannot access User A's vector documents. | **Verified** |
 
 ---
 
 ## 13. Empirical Evaluation, Benchmarks & Validation Results
 
-Every module in GUARDIAN includes an isolated `tests/` directory and a recorded `metrics.json` benchmark file.
+Every module in GUARDIAN includes recorded metrics files in `modules/mX/metrics.json` and ground-truth benchmark datasets in `data/test_cases/`.
 
 ### 13.1 Benchmark Summary Table
 
-| Module | Benchmark Dataset / Evaluation Target | Key Performance Metric | Target | Achieved Score | Evaluation Status |
+| Module | Benchmark Dataset / Evaluation Target | Key Performance Metric | Target | Achieved Score | Status |
 |---|---|---|---|---|---|
-| **Module 0 (Intake)** | Hand-labeled sample of 25 loan contracts & KFS | Structured Field Extraction Accuracy | $\ge 90.0\%$ | **96.0%** | **PASSED** |
+| **Module 0 (Intake)** | 25 Hand-labeled loan contracts & KFS | Structured Field Extraction Accuracy | $\ge 90.0\%$ | **96.0%** | **PASSED** |
 | | Scanned document OCR text recall | Character Recall Rate | $\ge 90.0\%$ | **94.2%** | **PASSED** |
-| **Module 1 (Recompute)** | 4 Hand-computed ground-truth loan schedules | Bisection IRR True APR Error | $\le 0.05\%$ | **0.02%** | **PASSED** |
+| **Module 1 (Recompute)** | 4 Hand-computed ground-truth schedules (`hand_computed_apr.json`) | Bisection IRR True APR Error | $\le 0.05\%$ | **0.02%** | **PASSED** |
 | | Monthly reducing-balance EMI error | Maximum Error in Rupees | $\le ₹1.00$ | **₹0.04** | **PASSED** |
 | | Calculation latency per schedule | Average Latency | $\le 100\mu\text{s}$ | **8.5 $\mu\text{s}$** | **PASSED** |
-| **Module 1b (Serviceability)**| 4 Multi-scenario financial cash flow cases | DTI Calculation Error | $\le 0.001$ | **0.0001** | **PASSED** |
+| **Module 1b (Serviceability)**| 4 Multi-scenario financial cash flow cases (`hand_computed_dti.json`) | DTI Calculation Error | $\le 0.001$ | **0.0001** | **PASSED** |
 | | Verdict classification accuracy | Accuracy on Heuristic Bands | $100\%$ | **100.0%** | **PASSED** |
-| **Module 2 (Consistency)** | 5 Canonical consistency test cases with injected mismatches | Mismatch Detection Accuracy | $\ge 95.0\%$ | **100.0%** | **PASSED** |
+| **Module 2 (Consistency)** | 5 Canonical consistency test cases (`consistency_test_cases.json`) | Mismatch Detection Accuracy | $\ge 95.0\%$ | **100.0%** | **PASSED** |
 | | False positive mismatch alerts | False Positive Rate | $\le 5.0\%$ | **0.0%** | **PASSED** |
-| **Module 3 (Verifier)** | 14 Adversarially constructed loan claim defects | Adversarial Catch Rate | $\ge 90.0\%$ | **100.0%** (14/14) | **PASSED** |
+| **Module 3 (Verifier)** | 14 Adversarially constructed loan claim defects (`adversarial_verification_cases.json`) | Adversarial Catch Rate | $\ge 90.0\%$ | **100.0%** (14/14) | **PASSED** |
 | | Groundedness Improvement over unverified LLM | Percentage Point Uplift | $\ge +15\text{pp}$ | **+22.0 pp** | **PASSED** |
 | | Semantic RoBERTa NLI inference latency | Latency per claim | $\le 150\text{ms}$ | **48.5 ms** | **PASSED** |
-| **Module 4 (Vernacular)** | 11 Hindi & Marathi loan audit translation cases | Numeric Preservation Rate | $100.0\%$ | **100.0%** | **PASSED** |
+| **Module 4 (Vernacular)** | 11 Hindi & Marathi test cases (`vernacular_test_cases.json`) | Numeric Preservation Rate | $100.0\%$ | **100.0%** | **PASSED** |
 | | Clause-Drop Rate on back-translation | Drop Rate | $0.0\%$ | **0.0%** | **PASSED** |
 | | Average semantic drift score | Semantic Cosine Similarity | $\ge 0.90$ | **0.965** | **PASSED** |
 | **Module 5 (Grievance)** | 60 Augmented consumer complaint records | Macro F1-Score (6 RBI classes) | $\ge 0.80$ | **1.00** | **PASSED** |
-| **Module 6 (Chatbot)** | Benchmark loan rights questions | Chatbot Groundedness Rate | $\ge 95.0\%$ | **100.0%** | **PASSED** |
+| **Module 6 (Chatbot)** | Benchmark loan rights questions (`chat_benchmark_cases.json`) | Chatbot Groundedness Rate | $\ge 95.0\%$ | **100.0%** | **PASSED** |
 | | Traceability to retrieved documents | Document Traceability | $100.0\%$ | **100.0%** | **PASSED** |
 | **Orchestration** | Full 8-stage pipeline execution | End-to-End Latency SLA | $\le 5.0\text{s}$ | **1.1s – 2.8s** | **PASSED** |
 
 ---
 
-## 14. End-to-End User Journey & Operational Workflows
+## 14. Automated Test Suite & Verification Infrastructure
+
+The repository features comprehensive automated test suites divided into module-level unit tests and end-to-end integration test suites:
+
+### 14.1 Phased Integration Test Suite (`tests/`)
+- `tests/test_phase1_pipeline.py`: Tests document upload, storage versioning, text extraction, structured extraction, and automatic trigger of recompute.
+- `tests/test_phase2_pipeline.py`: Tests reducing-balance EMI, bisection IRR APR, and multi-scenario DTI affordability calculations.
+- `tests/test_phase3_consistency.py`: Tests 3-way consistency checking across manual terms, T&C, and KFS with tolerance handling.
+- `tests/test_phase4_rbi_rag.py`: Tests clause parsing and semantic retrieval accuracy across the 15 RBI Digital Lending Directions clauses.
+- `tests/test_phase5_security.py`: Tests ChromaDB multi-tenant isolation, ensuring User B cannot query User A's uploaded documents under any parameter variation.
+- `tests/test_phase6_verification.py`: Tests RoBERTa-MNLI semantic entailment and numeric verification over adversarial claim fixtures.
+- `tests/test_phase7_vernacular.py`: Tests Hindi and Marathi translation, back-translation, Module 3 import integrity, and numeric preservation.
+- `tests/test_phase8_disputes.py`: Tests grievance classification F1 accuracy, 30-day TAT assignment, and user-initiated only constraints.
+- `tests/test_phase9_chat.py`: Tests RAG retrieval merging, claim generation, and enforcement of the verification gate on conversational output.
+- `tests/test_phase10_orchestration.py`: Tests full 8-stage pipeline execution, latency SLA (<5.0s), and standardized `{error_code, message, request_id}` error responses.
+- `tests/test_audit_pdf_report.py`: Tests programmatic PyMuPDF generation of bank-grade audit reports, SHA-256 seal integrity, and content rendering.
+
+### 14.2 Module Unit Test Directory (`modules/mX/tests/`)
+Each module maintains its own dedicated unit test directory:
+- `modules/m0_intake/tests/`: `test_chunker.py`, `test_extraction.py`, `test_ocr_fallback.py`
+- `modules/m1_recompute/tests/`: `test_apr_recompute.py`
+- `modules/m1b_serviceability/tests/`: `test_serviceability.py`
+- `modules/m2_consistency/tests/`: `test_consistency.py`
+- `modules/m3_verifier/tests/`: `test_adversarial_verification.py`, `test_numeric_verifier.py`, `test_semantic_verifier.py`, `test_verification_gate.py`
+- `modules/m4_vernacular/tests/`: `test_cache.py`, `test_metrics.py`, `test_module3_import_integrity.py`, `test_translator.py`, `test_vernacular_verifier.py`
+- `modules/m5_grievance/tests/`: `test_classifier.py`, `test_dispute_workflow.py`, `test_user_initiated_only.py`
+- `modules/m6_chatbot/tests/`: `test_chat_verification_gate.py`, `test_chat_workflow.py`, `test_groundedness_metric.py`, `test_retriever.py`
+
+---
+
+## 15. Environment Configuration & Step-by-Step Setup Guide
+
+### 15.1 Environment Variables Configuration (`.env`)
+Create a `.env` file in the project root based on `.env.example`:
+
+```bash
+# Hosted Supabase Configuration
+SUPABASE_URL=https://your-project.supabase.co
+SUPABASE_ANON_KEY=your-supabase-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-supabase-service-role-key
+DATABASE_URL=postgresql://postgres:<YOUR_DB_PASSWORD>@db.your-project.supabase.co:5432/postgres?sslmode=require
+
+# Supabase Auth Configuration
+JWT_AUDIENCE=authenticated
+JWT_JWKS_URL=https://your-project.supabase.co/auth/v1/.well-known/jwks.json
+
+# Groq Cloud LLM Configuration
+GROQ_API_KEY=gsk_your_groq_api_key_here
+GROQ_MODEL=llama-3.3-70b-versatile
+LLM_PROVIDER=groq
+
+# ChromaDB Vector Store Configuration (Dockerized)
+CHROMA_HOST=localhost
+CHROMA_PORT=8000
+
+# HuggingFace Cache Path
+HF_HOME=./hf_cache
+
+# Application Settings
+ENVIRONMENT=development
+LOG_LEVEL=INFO
+APP_HOST=0.0.0.0
+APP_PORT=8080
+RATE_LIMIT_PER_MINUTE_AUTH=60
+RATE_LIMIT_PER_MINUTE_ANON=10
+```
+
+### 15.2 Step-by-Step Local Setup Guide
+
+1. **Clone the Repository & Create Virtual Environment**:
+   ```bash
+   git clone https://github.com/your-org/guardian-ai.git
+   cd guardian-ai
+   python3.11 -m venv .venv
+   source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+   ```
+
+2. **Install Dependencies in Required Sequence (`RULES.md §5.3`)**:
+   ```bash
+   pip install --upgrade pip
+   pip install -r requirements.txt
+   pip install -r requirements-ml.txt
+   pip install -r requirements-dev.txt
+   ```
+
+3. **Launch Docker Services (ChromaDB)**:
+   ```bash
+   docker compose up -d chromadb
+   ```
+   Verify ChromaDB heartbeat at `http://localhost:8000/api/v1/heartbeat`.
+
+4. **Initialize Database Migrations**:
+   Apply SQL migration `supabase/migrations/20260927000000_phase0_init.sql` to your Supabase PostgreSQL project using the Supabase CLI or SQL Editor.
+
+5. **Stage & Ingest Regulatory Corpus into ChromaDB**:
+   ```bash
+   python -m scripts.fetch_rbi_directions
+   python -m rag.ingest_rbi_corpus
+   ```
+
+6. **Launch FastAPI Backend**:
+   ```bash
+   uvicorn app.main:app --host 0.0.0.0 --port 8080 --reload
+   ```
+   Verify backend health at `http://localhost:8080/api/v1/health` and OpenAPI docs at `http://localhost:8080/docs`.
+
+7. **Launch Next.js Frontend Web Application**:
+   ```bash
+   cd frontend
+   npm install
+   npm run dev
+   ```
+   Open `http://localhost:3000` in your browser.
+
+8. **Execute Automated Test Suite**:
+   ```bash
+   pytest -v
+   ```
+
+---
+
+## 16. End-to-End Operational Workflows & User Journeys
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────────────────────┐
 │ 1. BORROWER ONBOARDING & PROFILE CREATION                                                   │
 │    - Borrower creates an account or logs in via Supabase Auth (JWT issued).                 │
 │    - Navigates to "Start New Analysis" (/analysis/new).                                     │
-│    - Enters manual loan terms or selects a preset facility (e.g., Bandhan Bank Housing).    │
+│    - Enters manual loan terms or selects a preset facility (e.g., Housing Loan ₹25L).       │
 └──────────────────────────────────────────────┬──────────────────────────────────────────────┘
                                                │
                                                ▼
 ┌─────────────────────────────────────────────────────────────────────────────────────────────┐
 │ 2. DOCUMENT UPLOAD & SETTINGS                                                               │
 │    - Borrower uploads Key Fact Statement (KFS) PDF and optional T&C PDF.                    │
-│    - Selects preferred vernacular language (e.g., Hindi, Marathi, Bengali, Tamil).          │
+│    - Selects preferred vernacular language (Hindi or Marathi).                              │
 │    - Clicks "Run Full Compliance Pipeline".                                                 │
 └──────────────────────────────────────────────┬──────────────────────────────────────────────┘
                                                │
@@ -836,38 +1000,104 @@ Every module in GUARDIAN includes an isolated `tests/` directory and a recorded 
 ┌─────────────────────────────────────────────────────────────────────────────────────────────┐
 │ 6. DISPUTE RESOLUTION & AI ADVISORY                                                         │
 │    - If illegal terms are flagged, borrower files a dispute via the Grievance Engine.       │
-│    - Module 5 classifies the grievance, generates a legal PNO notice, and prepares an       │
-│      RBI Complaint Management System (CMS) dossier.                                         │
+│    - Module 5 classifies grievance, maps statutory RBI clauses, and assigns 30-day TAT.     │
 │    - Borrower consults the RAG Chatbot for advice, with all responses verification-gated.   │
 └─────────────────────────────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## 15. Non-Technical & Socio-Economic Impact
+## 17. Academic Capstone Context, Viva Preparation & Demo Contingencies
 
-### 15.1 Consumer Empowerment & Asymmetry Reduction
+### 17.1 Academic Context
+GUARDIAN was developed as an advanced College Capstone Mini-Project focusing on autonomous agentic systems, regulatory compliance technology, and grounded generative AI.
+
+### 17.2 Evaluation Criteria Alignment
+1. **Mathematical Rigor**: Deterministic financial math (reducing-balance EMI, numerical bisection IRR APR) implemented in pure Python without ML approximation.
+2. **Architectural Novelty**: The Sacred Verification Gate prevents unverified generative AI claims from reaching consumers.
+3. **Regulatory Grounding**: Direct adherence to RBI Digital Lending Directions (2025) and Master Direction on KFS (RBI/2024-25/18).
+4. **Security Invariants**: Row-level security on all database tables, multi-tenant vector isolation in ChromaDB, rate limiting, and append-only audit logging.
+5. **Software Engineering Polish**: Production-grade Next.js 16 UI, PyMuPDF certified PDF generation, and automated test coverage across all modules.
+
+### 17.3 Scripted Viva Demonstration Workflow
+To demonstrate the platform during an academic evaluation or viva defense:
+1. **Test Scenario A (Compliant Home Loan)**: Use the Housing Loan Preset (Bandhan Bank, ₹25L @ 8.75%, 20Y). Upload `sample_kfs.pdf` and `sample_tnc.pdf`. Demonstrate 100% compliance pass and valid KFS schedule.
+2. **Test Scenario B (Concealed Fee & APR Escalation)**: Show a personal loan scenario where a ₹50,000 upfront fee causes the true APR to jump from 13.5% to 15.89% (demonstrating fee drag).
+3. **Test Scenario C (Fine Print Discrepancy)**: Inject a 3% prepayment penalty into T&C while KFS specifies zero. Demonstrate Module 2 highlighting the discrepancy and Module 3 citing RBI Clause 5.2.
+4. **Test Scenario D (Unserviceable DTI Shock)**: Enter income of ₹40,000 against monthly obligations of ₹35,000. Demonstrate the `not-serviceable` verdict and warning banner.
+5. **Test Scenario E (Adversarial Chatbot Rejection)**: Ask the AI Advisor a false assertion (e.g., "The bank can demand access to my contacts"). Demonstrate Module 3 intercepting the hallucinated statement and flagging it with a contradiction warning.
+
+### 17.4 Live Demo Contingency Mitigations (`RULES.md §5.2, §5.5`)
+- **Supabase Free-Tier Auto-Pause**: Execute a lightweight database query 24 hours and 1 hour before the viva to ensure hosted database instances remain active.
+- **Groq API Rate Limits / Wi-Fi Drops**: Fallback to deterministic pre-computed caches in `data/cache/chat_cache.json` and `data/cache/translations_cache.json`.
+- **Local ChromaDB Isolation**: ChromaDB operates in a local Docker container, ensuring vector search remains functional even if external internet access drops.
+
+---
+
+## 18. Target User Personas & Practical Use Case Scenarios
+
+### Persona 1: The First-Time Digital Borrower (Ramesh, Tier-3 Town)
+- **Profile**: Self-employed artisan applying for a ₹50,000 instant loan on a digital lending app.
+- **Challenge**: Limited English proficiency, unable to evaluate whether upfront ₹4,500 deductions represent fair processing fees or predatory APR obfuscation.
+- **GUARDIAN Solution**: Ingests the sanction KFS, translates the audit into Hindi, computes true APR (38.4%), and alerts Ramesh to undisclosed deductions before he accepts terms.
+
+### Persona 2: The Salaried Homebuyer (Priya, Metro City)
+- **Profile**: IT professional sanctioning a ₹65,00,000 floating-rate home loan.
+- **Challenge**: Sanction email promised zero prepayment charges, but the 45-page digital contract contains conflicting foreclosure penalty terms.
+- **GUARDIAN Solution**: Module 2 detects the clause discrepancy between KFS and T&C, flags the 3% prepayment charge as a violation of RBI Clause 5.2, and generates an audit certificate Priya uses to request contract correction.
+
+### Persona 3: The Consumer Rights Advocate / Paralegal (Kavita, NGO)
+- **Profile**: Legal aid worker supporting retail borrowers targeted by aggressive loan recovery harassment.
+- **Challenge**: Needs to assemble evidentiary dossiers citing specific clauses of RBI Digital Lending Directions within statutory turnaround times.
+- **GUARDIAN Solution**: Uses Module 5 to classify harassment complaints, map RBI Clause 5.4 & 7 violations, and track statutory 30-day ombudsman escalation timelines.
+
+### Persona 4: The Bank / NBFC Internal Compliance Auditor (Anand, RE Auditor)
+- **Profile**: Internal auditor verifying that digital distribution partners (LSPs) adhere to Master Direction RBI/2024-25/18.
+- **Challenge**: Auditing thousands of digital KFS documents for blank fields or understated APR disclosures.
+- **GUARDIAN Solution**: Automated batch ingestion audits KFS completeness, calculates bisection APR deltas, and verifies that partner contracts comply with statutory templates.
+
+---
+
+## 19. Non-Technical, Socio-Economic & Ethical Impact
+
+### 19.1 Consumer Empowerment & Asymmetry Reduction
 For decades, retail borrowers have signed financial contracts without understanding effective interest rates or hidden clauses. GUARDIAN bridges this literacy gap by translating complex financial jargon into clear, verified insights.
 
-### 15.2 Financial Inclusion in Vernacular India
-By extending verification-backed explanations into 12+ regional Indian languages (Hindi, Marathi, Bengali, Tamil, etc.), GUARDIAN supports semi-urban and rural borrowers who are frequently targeted by predatory digital lending apps.
+### 19.2 Financial Inclusion in Vernacular India
+By extending verification-backed explanations into regional Indian languages (Hindi, Marathi), GUARDIAN supports semi-urban and rural borrowers who are frequently targeted by predatory digital lending apps.
 
-### 15.3 Proactive Regulatory Compliance
+### 19.3 Proactive Regulatory Compliance
 Instead of relying on post-default litigation or consumer court complaints, GUARDIAN enables proactive compliance verification at the point of loan sanction, before borrowers commit to predatory terms.
 
-### 15.4 ESG & Ethical Banking Alignment
+### 19.4 ESG & Ethical Banking Alignment
 For ethical banks, NBFCs, and microfinance institutions, GUARDIAN provides an audit tool to verify that third-party Lending Service Providers (LSPs) and digital distribution partners comply with RBI Key Fact Statement guidelines.
 
 ---
 
-## 16. Project Evolution, Design Trade-Offs & Honest Scope Disclosures
+## 20. Legal, Regulatory & Ethical Disclaimers
 
-### 16.1 The Lateral Pivot from Multi-Module to Single-Domain Depth
+### 20.1 Not Financial Advice (NFA)
+The analysis, calculations, prepayment simulations, and macroeconomic comparisons generated by GUARDIAN are provided for informational and educational evaluation purposes only. They do not constitute certified financial advisory, investment advice, or credit underwriting guarantees.
+
+### 20.2 No Legal Representation
+GUARDIAN is not a law firm and does not provide legal representation. While the system cites authoritative clauses from the Reserve Bank of India Master Directions, outputs do not substitute for formal legal counsel.
+
+### 20.3 Disclaimer of Regulatory Certification
+GUARDIAN is an academic verification prototype designed to evaluate grounded AI and compliance auditing techniques. It does not claim formal certification from the Reserve Bank of India, accreditation under the Digital Personal Data Protection (DPDP) Act, or partnership with the RBI Complaint Management System (CMS).
+
+### 20.4 Serviceability Heuristic Disclosure (`RULES.md §6.4`)
+Debt-to-Income (DTI / FOIR) assessment bands (`serviceable`, `marginal`, `not-serviceable`) are based on lending industry underwriting heuristics, **not statutory RBI mandates**.
+
+---
+
+## 21. Project Evolution, Honest Scope Disclosures & Future Roadmap
+
+### 21.1 The Lateral Pivot from Multi-Module to Single-Domain Depth
 Earlier design iterations considered combining loan verification with multi-account cashflow forecasting and transaction anomaly detection. However, attempting to build forecasting models alongside document verification diluted architectural focus.
 
 The project executed a deliberate **lateral pivot**: dropping cashflow forecasting and transaction anomaly detection to focus deeply on a single, high-stakes domain: **retail credit agreement verification**. The core innovation—dual semantic and numeric groundedness verification—was applied to the complex challenge of 3-way document consistency (Manual Terms $\leftrightarrow$ T&C $\leftrightarrow$ KFS).
 
-### 16.2 Infrastructure Architecture Trade-Offs
+### 21.2 Infrastructure Architecture Trade-Offs
 1. **Hosted Supabase vs. Local PostgreSQL**:
    - *Decision*: Utilizing hosted Supabase PostgreSQL, Supabase Auth, and Supabase Storage rather than running local database containers.
    - *Trade-off*: Introduces an external network dependency during local development, but provides managed Row-Level Security, authentication, and cloud storage out of the box.
@@ -878,15 +1108,14 @@ The project executed a deliberate **lateral pivot**: dropping cashflow forecasti
    - *Decision*: Utilizing PaddleOCR as the optical character recognition fallback for scanned PDFs.
    - *Trade-off*: Higher memory footprint during inference, but significantly superior text recall on mixed English and Devanagari financial tables.
 
-### 16.3 Explicit Scope Disclosures & Academic Boundaries
-To maintain transparency:
-- **Academic and Evaluation Status**: GUARDIAN is an academic verification prototype designed to demonstrate grounded AI and compliance auditing techniques. It does not claim formal certification from the Reserve Bank of India or certification under the Digital Personal Data Protection (DPDP) Act.
-- **Serviceability Disclaimer**: Debt-to-Income (DTI / FOIR) assessment bands are based on lending industry underwriting heuristics, **not statutory RBI mandates**. This distinction is explicitly disclosed across all system interfaces (`RULES.md §6.4`).
-- **Human-in-the-Loop Advocacy**: The platform never communicates directly with lenders or files complaints autonomously. All legal notices and CMS dossiers require explicit borrower review and submission.
-- **Single Loan Focus**: The system analyzes one loan facility at a time; it does not operate as a multi-loan portfolio management system.
+### 21.3 Future Roadmap
+- **Account Aggregator (AA) Integration**: Connect with RBI-regulated Account Aggregators (Setu, OneMoney) to automatically ingest bank statements and verify declared income against live cash flow.
+- **Expanded Indic Language Suite**: Broaden validated translation models and cache suites to Tamil, Telugu, Kannada, Bengali, and Gujarati.
+- **Automated RBI CMS API Filing**: Direct API integration with the RBI Integrated Ombudsman Complaint Management System once public REST endpoints become accessible.
+- **Handwritten Document Support**: Enhance OCR preprocessing to interpret handwritten sanction letter annotations and physical endorsement stamps.
 
 ---
 
-## 17. Summary & Conclusion
+## 22. Summary & Conclusion
 
 GUARDIAN demonstrates that autonomous AI in high-stakes consumer finance must be grounded in mathematical truth and authoritative regulatory code. By enforcing the **Sacred Verification Gate**, combining pure Python financial mathematics with RoBERTa-MNLI semantic entailment, and cross-verifying terms across all three representations of a credit agreement, GUARDIAN provides retail borrowers with a dependable, institutional-grade financial advocate.
