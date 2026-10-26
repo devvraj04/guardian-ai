@@ -122,4 +122,37 @@ export const api = {
     params.set("limit", String(limit));
     return fetchApi(`/audit?${params.toString()}`);
   },
+
+  // Audit Verification Report PDF (PyMuPDF)
+  downloadLoanAuditPdf: (loanId: string, payload?: any) =>
+    downloadReportPdf(loanId, payload),
 };
+
+export async function downloadReportPdf(loanId: string, payload?: any): Promise<Blob> {
+  const url = `${API_BASE}/loans/${loanId || "kfs"}/report/pdf`;
+  const headers = new Headers();
+  const token = await getAuthToken();
+  if (token) {
+    headers.set("Authorization", `Bearer ${token}`);
+  }
+  headers.set("Content-Type", "application/json");
+
+  const res = await fetch(url, {
+    method: "POST",
+    headers,
+    body: JSON.stringify(payload || {}),
+  });
+
+  if (!res.ok) {
+    let errorMsg = `PDF generation failed (${res.status})`;
+    try {
+      const data = await res.json();
+      errorMsg = data.message || data.detail || errorMsg;
+    } catch (e) {
+      // Ignored
+    }
+    throw new Error(errorMsg);
+  }
+
+  return res.blob();
+}

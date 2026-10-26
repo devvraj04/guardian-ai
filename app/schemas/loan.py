@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Optional
 from pydantic import BaseModel, ConfigDict, Field
 
 
@@ -57,3 +58,14 @@ class LoanManualTermsResponse(BaseModel):
     tenure_months: int
     fees: float
     entered_at: datetime
+
+
+class AuditReportPdfRequest(BaseModel):
+    model_config = ConfigDict(extra="ignore")
+
+    loan_id: Optional[str] = None
+    loan_name: Optional[str] = None
+    lender_name: Optional[str] = None
+    kfs: Optional[dict] = None
+    apr: Optional[dict] = None
+    pipeline_result: Optional[dict] = None

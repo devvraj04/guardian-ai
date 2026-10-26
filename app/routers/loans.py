@@ -1,16 +1,18 @@
 from datetime import datetime, timezone
 from typing import List, Optional
 from uuid import uuid4
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Response, status
 from supabase import Client, create_client
 from app.core.config import settings
 from app.deps.auth import AuthenticatedUser, get_current_user, verify_user_ownership
 from app.schemas.loan import (
+    AuditReportPdfRequest,
     LoanCreate,
     LoanManualTermsCreate,
     LoanManualTermsResponse,
     LoanResponse,
 )
+from app.services.pdf_generator import generate_audit_verification_report_pdf
 
 router = APIRouter(prefix="/loans", tags=["Loans"])
 
@@ -179,3 +181,70 @@ async def get_manual_terms(
     if not res.data:
         return None
     return LoanManualTermsResponse(**res.data[0])
+
+
+@router.post("/{loan_id}/report/pdf")
+async def generate_loan_audit_pdf(
+    loan_id: str,
+    payload: Optional[AuditReportPdfRequest] = None,
+    current_user: AuthenticatedUser = Depends(get_current_user),
+) -> Response:
+    """
+    Generates a certified, multi-page Audit Verification Report PDF using PyMuPDF.
+    Accepts full in-memory report details from the client or queries Supabase for saved loan state.
+    """
+    supabase = get_db_client()
+    loan_name = payload.loan_name if payload else None
+    lender_name = payload.lender_name if payload else None
+    kfs_data = (payload.kfs if payload else None) or {}
+    apr_data = (payload.apr if payload else None) or {}
+    pipeline_res = (payload.pipeline_result if payload else None) or {}
+
+    # Check if loan_id is in DB and verify ownership
+    if loan_id and loan_id != "kfs":
+        loan_record = supabase.table("loans").select("*").eq("id", loan_id).execute()
+        if loan_record.data:
+            verify_user_ownership(loan_record.data[0]["user_id"], current_user)
+            if not loan_name:
+                loan_name = loan_record.data[0].get("loan_name")
+            if not lender_name:
+                lender_name = loan_record.data[0].get("lender_name")
+
+    loan_name = loan_name or "Retail Credit Facility"
+    lender_name = (
+        lender_name or kfs_data.get("bank_name") or "Regulated Lending Institution"
+    )
+
+    pdf_bytes = generate_audit_verification_report_pdf(
+        loan_id=loan_id,
+        loan_name=loan_name,
+        lender_name=lender_name,
+        kfs=kfs_data,
+        apr=apr_data,
+        pipeline_result=pipeline_res,
+    )
+
+    safe_name = "".join(c if c.isalnum() or c in ("-", "_") else "_" for c in loan_name)
+    filename = f"GUARDIAN_Audit_Report_{safe_name}.pdf"
+
+    return Response(
+        content=pdf_bytes,
+        media_type="application/pdf",
+        headers={
+            "Content-Disposition": f'attachment; filename="{filename}"',
+            "Access-Control-Expose-Headers": "Content-Disposition",
+        },
+    )
+
+
+@router.get("/{loan_id}/report/pdf")
+async def get_loan_audit_pdf(
+    loan_id: str,
+    current_user: AuthenticatedUser = Depends(get_current_user),
+) -> Response:
+    """
+    GET variant to generate or download the audit verification report PDF for a saved loan.
+    """
+    return await generate_loan_audit_pdf(
+        loan_id=loan_id, payload=None, current_user=current_user
+    )

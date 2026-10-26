@@ -26,7 +26,11 @@ import {
   ArrowUpRight,
   Sliders,
   Table,
+  FileDown,
+  Loader2,
+  FileText,
 } from "lucide-react";
+import { api } from "@/lib/api";
 
 // ==========================================
 // 1. FAULTY / EMPTY KFS DETECTION
@@ -321,9 +325,39 @@ export default function LoanAnalytics({
   const isLowInterestLoan = rate <= 9.25;
 
   // Export full report handlers
-  const handlePrintReport = () => {
-    window.print();
+  const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
+
+  const handleDownloadPdfReport = async () => {
+    try {
+      setIsGeneratingPdf(true);
+      const effectiveLoanId = loanId || "kfs";
+      const payload = {
+        loan_id: effectiveLoanId,
+        loan_name: loanName || "Retail Credit Facility",
+        lender_name: lenderName || kfs?.bank_name || "Regulated Entity",
+        kfs,
+        apr,
+        pipeline_result: pipelineResult,
+      };
+
+      const blob = await api.downloadLoanAuditPdf(effectiveLoanId, payload);
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      const safeName = (loanName || lenderName || "KFS").replace(/[^a-zA-Z0-9_-]/g, "_");
+      a.download = `GUARDIAN_Audit_Report_${safeName}.pdf`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (err: any) {
+      console.error("Failed to generate PDF:", err);
+      alert(err.message || "Failed to generate PDF report. Please try again.");
+    } finally {
+      setIsGeneratingPdf(false);
+    }
   };
+
 
   const handleDownloadJsonReport = () => {
     const auditData = {
@@ -487,7 +521,7 @@ export default function LoanAnalytics({
       <div className="card p-4 bg-gradient-to-r from-[#f8fafc] via-[#f1f5f9] to-[#f8fafc] border border-[#cbd5e1] flex items-center justify-between flex-wrap gap-3">
         <div className="flex items-center gap-3">
           <div className="h-9 w-9 rounded-xl bg-[#0052cc]/10 flex items-center justify-center">
-            <Printer className="h-4.5 w-4.5 text-[#0052cc]" />
+            <FileText className="h-4.5 w-4.5 text-[#0052cc]" />
           </div>
           <div>
             <h4 className="text-[13px] font-bold text-[#1a1d23]">
@@ -513,11 +547,21 @@ export default function LoanAnalytics({
           </button>
           <button
             type="button"
-            onClick={handlePrintReport}
-            className="btn-primary text-[12px] px-4 py-1.5 shadow-sm"
+            disabled={isGeneratingPdf}
+            onClick={handleDownloadPdfReport}
+            className="btn-primary text-[12px] px-4 py-1.5 shadow-sm flex items-center gap-1.5 disabled:opacity-75"
           >
-            <Printer className="h-3.5 w-3.5" />
-            {displayLanguage === "hi" ? "पूर्ण पीडीएफ रिपोर्ट डाउनलोड / प्रिंट करें" : "Download / Print Full PDF Report"}
+            {isGeneratingPdf ? (
+              <>
+                <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                <span>{displayLanguage === "hi" ? "पीडीएफ तैयार हो रहा है..." : "Generating Audit PDF..."}</span>
+              </>
+            ) : (
+              <>
+                <FileDown className="h-3.5 w-3.5" />
+                <span>{displayLanguage === "hi" ? "सत्यापन पीडीएफ डाउनलोड करें" : "Download Audit PDF Report"}</span>
+              </>
+            )}
           </button>
         </div>
       </div>
